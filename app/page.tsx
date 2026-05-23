@@ -27,6 +27,7 @@ import {
   getOpeningDayFixtures,
   getWorldCupFixtures,
 } from "@/lib/openfootball/fixtures";
+import History from "@/components/history";
 
 function buildTickerItems(
   stats: { ticker: string }[],
@@ -308,6 +309,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <History />
+
       <section id="notify" className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
         <div className="card-border relative overflow-hidden rounded-3xl p-px">
           <div className="relative rounded-3xl bg-navy-light/90 px-8 py-14 text-center backdrop-blur-md md:px-16">
@@ -349,6 +352,7 @@ export default async function Home() {
       </section>
 
       <SiteFooter />
+
     </PageShell>
   );
 }

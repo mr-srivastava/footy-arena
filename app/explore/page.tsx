@@ -48,25 +48,25 @@ export default function ExplorePage() {
           subtitle="Curated stories, players, and narratives to help you discover the tournament - no live data required."
         />
 
-        <PageSection variant="stack">
+        <PageSection variant="editorial">
           <SectionHeading
             eyebrow="Get started"
             title={startJourney.title.toUpperCase()}
             icon={Sparkles}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {startJourney.cards.map((card) => (
               <DiscoveryCard key={card.href} {...card} />
             ))}
           </div>
         </PageSection>
 
-        <PageSection variant="stack">
+        <PageSection variant="dense">
           <SectionHeading
             eyebrow="New to football?"
             title={catchMeUp.title.toUpperCase()}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {catchMeUp.cards.map((card) => (
               <DiscoveryCard key={card.href} {...card} />
             ))}
@@ -104,7 +104,7 @@ export default function ExplorePage() {
             eyebrow="Can't miss"
             title={nationsToWatch.title.toUpperCase()}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {nationsToWatch.cards.map((card) => (
               <DiscoveryCard key={card.href} {...card} />
             ))}

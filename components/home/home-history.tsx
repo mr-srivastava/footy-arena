@@ -3,10 +3,10 @@
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/section-heading";
 import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/seed/history";
 import type { HistoryEra, HistoryLegend } from "@/lib/discovery/types";
+import { artifactSurface } from "@/lib/utils";
 
 function subscribeToReducedMotion(onStoreChange: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -32,25 +32,49 @@ function usePrefersReducedMotion() {
 
 function HistoryLegendCard({ player }: { player: HistoryLegend }) {
   return (
-    <Card padding="none">
-      <CardContent className="flex flex-col p-4">
-        <div className="flex items-start gap-3">
-          <span className="text-2xl leading-none" aria-hidden>
+    <article
+      className={artifactSurface(
+        "group/legend relative flex h-full min-h-32 flex-col overflow-hidden bg-background/35 transition-colors hover:border-gold/30",
+      )}
+    >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-gold/10 to-transparent opacity-70"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-1 top-3 text-5xl leading-none opacity-[0.07] transition-opacity group-hover/legend:opacity-[0.12]"
+        aria-hidden
+      >
+        {player.flag}
+      </div>
+
+      <div className="relative flex items-start gap-3 border-b border-white/8 p-3">
+          <span
+            className="flex size-9 items-center justify-center rounded-sm border border-white/10 bg-white/5 text-xl leading-none"
+            aria-hidden
+          >
             {player.flag}
           </span>
-          <div className="min-w-0">
-            <h4 className="font-semibold leading-tight text-foreground">
+          <div className="min-w-0 flex-1">
+            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              {player.country}
+            </p>
+            <h4 className="mt-1 font-display text-xl leading-none tracking-wide text-foreground">
               {player.name}
             </h4>
-            <p className="mt-0.5 text-xs text-gold">{player.role}</p>
-            <p className="text-xs text-muted-foreground">{player.country}</p>
+            <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {player.role}
+            </p>
           </div>
-        </div>
-        <p className="mt-3 flex-1 text-xs leading-relaxed text-muted-foreground">
+      </div>
+
+      <div className="relative flex flex-1 flex-col justify-between p-3">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           {player.achievement}
         </p>
-      </CardContent>
-    </Card>
+        <div className="mt-3 h-px w-10 bg-gradient-to-r from-pitch-bright/70 to-transparent" />
+      </div>
+    </article>
   );
 }
 
@@ -59,10 +83,10 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
     <article
       data-slide={index}
       id={`history-slide-${index}`}
-      className="history-carousel-slide-item flex min-h-[min(85vh,780px)] w-full shrink-0 snap-start flex-col lg:min-h-[640px] lg:flex-row"
+      className="history-carousel-slide-item grid min-h-[520px] w-full shrink-0 snap-start lg:min-h-[500px] lg:grid-cols-[0.9fr_1.1fr]"
       aria-labelledby={`history-era-title-${index}`}
     >
-      <div className="relative h-52 shrink-0 bg-navy sm:h-64 lg:h-auto lg:min-h-full lg:w-[44%] lg:self-stretch">
+      <div className="relative min-h-48 bg-navy lg:min-h-full">
         <Image
           src={era.image}
           alt={`Atmosphere for ${era.title}`}
@@ -80,32 +104,35 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
           aria-hidden
         />
         <div className="grain absolute inset-0" aria-hidden />
-        <div className="absolute bottom-4 left-4 lg:bottom-8 lg:left-8">
+        <div className="absolute bottom-5 left-5 lg:bottom-8 lg:left-8">
+          <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/55">
+            Archive frame
+          </p>
           <p
-            className={`font-display text-4xl tracking-wide sm:text-5xl ${era.accent}`}
+            className={`font-display text-4xl leading-none tracking-wide sm:text-5xl ${era.accent}`}
           >
             {era.year}
           </p>
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-navy-light/95 px-6 py-8 sm:px-8 lg:px-10 lg:py-10">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-artifact-deep px-5 py-6 sm:px-6 lg:px-8 lg:py-7">
         <p className="section-eyebrow">{era.title}</p>
         <h3
           id={`history-era-title-${index}`}
-          className="mt-2 font-display text-3xl leading-tight tracking-wide text-foreground sm:text-4xl"
+          className="mt-2 max-w-xl font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl"
         >
           {era.headline}
         </h3>
-        <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
           {era.narrative}
         </p>
 
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-pitch-bright/80">
+        <div className="mt-6">
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-pitch-bright/80">
             Legends of the era
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {era.players.map((player) => (
               <HistoryLegendCard key={player.name} player={player} />
             ))}
@@ -188,9 +215,9 @@ export default function History() {
     <section
       id="history"
       aria-label="Why the World Cup matters"
-      className="relative z-10 border-y border-white/8"
+      className="relative z-10 border-y border-white/8 bg-background/45"
     >
-      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <div className="relative mx-auto max-w-6xl px-6 py-10 md:py-12">
         <SectionHeading
           align="center"
           className="mb-0"
@@ -201,16 +228,18 @@ export default function History() {
         />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-16 md:pb-20">
+      <div className="mx-auto max-w-6xl px-6 pb-10 md:pb-12">
         <div
-          className="history-carousel card-border relative rounded-3xl p-px"
+          className={artifactSurface(
+            "history-carousel relative overflow-hidden",
+          )}
           role="region"
           aria-roledescription="carousel"
           aria-label="World Cup history by era"
           tabIndex={0}
           onKeyDown={onKeyDown}
         >
-          <div className="relative overflow-hidden rounded-3xl bg-navy">
+          <div className="relative overflow-hidden bg-navy">
             <div
               className="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-gradient-to-r from-navy to-transparent"
               aria-hidden
@@ -246,23 +275,23 @@ export default function History() {
             <button
               type="button"
               onClick={goPrev}
-              className="absolute left-3 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
+              className="absolute left-3 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-sm border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
               aria-label="Previous era"
             >
-              <ChevronLeft className="h-5 w-5" aria-hidden />
+              <ChevronLeft className="h-4 w-4" aria-hidden />
             </button>
             <button
               type="button"
               onClick={goNext}
-              className="absolute right-3 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
+              className="absolute right-3 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-sm border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
               aria-label="Next era"
             >
-              <ChevronRight className="h-5 w-5" aria-hidden />
+              <ChevronRight className="h-4 w-4" aria-hidden />
             </button>
           </div>
 
           <div
-            className="flex flex-col gap-3 rounded-b-3xl bg-navy-light/40 px-4 py-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 border-t border-white/8 bg-background/30 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
             role="tablist"
             aria-label="Select an era"
           >
@@ -282,8 +311,8 @@ export default function History() {
                   aria-selected={i === index}
                   aria-controls={`history-slide-${i}`}
                   onClick={() => scrollToIndex(i)}
-                  className={`rounded-full px-3 py-1.5 font-display text-base tracking-wide transition-colors sm:px-4 sm:py-2 sm:text-lg ${i === index
-                    ? "bg-pitch/25 text-pitch-bright ring-1 ring-pitch-bright/35"
+                  className={`rounded-sm px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${i === index
+                    ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
                     : "text-muted hover:bg-white/5 hover:text-foreground"
                     }`}
                 >

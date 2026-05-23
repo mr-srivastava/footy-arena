@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-cta hover:bg-pitch-bright hover:text-navy [a]:hover:bg-pitch-bright/90",
         gold:
-          "bg-gold text-navy shadow-[0_4px_24px_rgba(240,192,32,0.35)] hover:bg-gold/90 hover:shadow-[0_4px_24px_rgba(240,192,32,0.45)]",
+          "bg-gold text-navy shadow-cta hover:bg-gold/90 hover:shadow-gold-glow",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

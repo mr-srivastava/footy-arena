@@ -1,40 +1,55 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { PlayerProfile } from "@/lib/discovery/types";
+import { artifactSurface } from "@/lib/utils";
 
 export function PlayerCard({ player }: { player: PlayerProfile }) {
   return (
     <Link href={`/players/${player.slug}`} className="group block h-full">
-      <Card accent="pitch" interactive padding="none" className="h-full">
+      <article
+        className={artifactSurface(
+          "relative flex h-full min-h-64 flex-col overflow-hidden transition-colors group-hover:border-gold/35",
+        )}
+      >
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pitch-bright/15 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pitch-bright/14 to-transparent"
           aria-hidden
         />
-        <CardContent className="relative p-5">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold">
+        <div
+          className="pointer-events-none absolute -right-2 top-7 font-display text-7xl leading-none text-white/[0.025] group-hover:text-gold/[0.05]"
+          aria-hidden
+        >
+          {player.nation.slice(0, 3).toUpperCase()}
+        </div>
+        <div className="relative flex items-center justify-between border-b border-white/8 px-5 py-3">
+          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-gold">
             {player.nation}
-          </p>
-          <h3 className="mt-1 font-display text-2xl tracking-wide text-foreground transition-colors group-hover:text-gold">
+          </span>
+          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {player.position}
+          </span>
+        </div>
+        <div className="relative flex flex-1 flex-col p-5">
+          <h3 className="font-display text-3xl leading-none tracking-wide text-foreground transition-colors group-hover:text-gold">
             {player.name.toUpperCase()}
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {player.position} · {player.archetype}
+          <p className="mt-3 text-sm font-medium text-pitch-bright">
+            {player.archetype}
           </p>
           <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {player.whyExcited}
           </p>
-        </CardContent>
-        <CardFooter className="relative border-0 bg-transparent px-5 pb-5 pt-0">
-          <span className="inline-flex items-center gap-1 text-xs font-semibold text-pitch-bright">
+        </div>
+        <div className="relative grid grid-cols-[1fr_auto] items-center gap-3 border-t border-white/8 px-5 py-3">
+          <span className="truncate text-xs font-semibold text-pitch-bright">
             Watch for: {player.watchFor}
-            <ChevronRight
-              className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-              aria-hidden
-            />
           </span>
-        </CardFooter>
-      </Card>
+          <ChevronRight
+            className="h-4 w-4 text-gold transition-transform group-hover:translate-x-1"
+            aria-hidden
+          />
+        </div>
+      </article>
     </Link>
   );
 }

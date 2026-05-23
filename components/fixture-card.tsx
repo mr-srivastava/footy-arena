@@ -1,13 +1,7 @@
 import { Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   formatKickoff,
   formatPlaceholderTeam,
@@ -15,17 +9,30 @@ import {
 } from "@/lib/openfootball/fixtures";
 import type { Fixture } from "@/lib/openfootball/types";
 import type { CardAccent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-function TeamName({ name, href }: { name: string; href?: string }) {
+function TeamName({
+  name,
+  href,
+  align = "left",
+}: {
+  name: string;
+  href?: string;
+  align?: "left" | "right";
+}) {
   const placeholder = isPlaceholderTeam(name);
   const label = placeholder ? formatPlaceholderTeam(name) : name;
-  const className = placeholder
-    ? "text-sm font-medium text-muted-foreground italic"
-    : "text-sm font-semibold leading-tight text-foreground";
+  const className = cn(
+    "block text-balance font-display text-2xl leading-none tracking-wide transition-colors md:text-3xl",
+    align === "right" ? "text-right" : "text-left",
+    placeholder
+      ? "font-body text-sm font-medium normal-case leading-snug tracking-normal text-muted-foreground italic md:text-base"
+      : "text-foreground",
+  );
 
   if (href && !placeholder) {
     return (
-      <Link href={href} className={`${className} hover:text-gold`}>
+      <Link href={href} className={cn(className, "hover:text-gold")}>
         {label}
       </Link>
     );
@@ -44,6 +51,16 @@ const stageAccent: Record<string, CardAccent> = {
   "round-of-32": "teal",
 };
 
+const stageTone: Record<string, string> = {
+  group: "from-pitch-bright/45 via-pitch/10",
+  final: "from-gold/45 via-gold/10",
+  "third-place": "from-gold/35 via-gold/10",
+  "semi-final": "from-gold/35 via-gold/10",
+  "quarter-final": "from-gold/30 via-gold/10",
+  "round-of-16": "from-teal/35 via-teal/10",
+  "round-of-32": "from-teal/30 via-teal/10",
+};
+
 export function FixtureCard({
   fixture,
   team1Href,
@@ -55,54 +72,71 @@ export function FixtureCard({
 }) {
   const knockout = fixture.stage !== "group";
   const accent = stageAccent[fixture.stage] ?? "pitch";
+  const tone = stageTone[fixture.stage] ?? stageTone.group;
+  const kickoff = formatKickoff(fixture.time);
 
   return (
-    <Card accent={accent} interactive padding="none" className="group">
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-0 pl-6">
-        <Badge variant={knockout ? "knockout" : "group"}>
-          {fixture.stageLabel}
-        </Badge>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {fixture.num ? (
-            <Badge variant="country">#{fixture.num}</Badge>
-          ) : null}
-          <span className="flex items-center gap-1">
-            <Clock aria-hidden />
-            {formatKickoff(fixture.time)}
-          </span>
-        </div>
-      </CardHeader>
+    <Card
+      accent={accent}
+      interactive
+      padding="none"
+      className="group rounded-sm bg-artifact-strong"
+    >
+      <CardContent className="relative overflow-hidden p-0">
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b to-transparent opacity-70",
+            tone,
+          )}
+          aria-hidden
+        />
 
-      <CardContent className="pl-6">
-        <div className="relative">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1 text-left">
-              <TeamName name={fixture.team1} href={team1Href} />
-            </div>
-            <div
-              className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-sunken/80 font-display text-sm text-muted-foreground transition-colors group-hover:border-pitch/30 group-hover:text-pitch-bright"
-              aria-hidden
-            >
-              VS
-            </div>
-            <div className="min-w-0 flex-1 text-right">
-              <TeamName name={fixture.team2} href={team2Href} />
-            </div>
+        <div className="relative flex items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
+          <div className="min-w-0">
+            <Badge variant={knockout ? "knockout" : "group"}>
+              {fixture.stageLabel}
+            </Badge>
+            <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Matchday signal
+            </p>
+          </div>
+          <div className="shrink-0 text-right">
+            {fixture.num ? (
+              <Badge variant="country" className="mb-2">
+                #{fixture.num}
+              </Badge>
+            ) : null}
+            <p className="flex items-center justify-end gap-1 text-xs font-medium text-muted-foreground">
+              <Clock className="h-3.5 w-3.5 text-pitch-bright/70" aria-hidden />
+              {kickoff}
+            </p>
+          </div>
+        </div>
+
+        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-7">
+          <div className="min-w-0">
+            <TeamName name={fixture.team1} href={team1Href} />
+          </div>
+          <div
+            className="relative flex size-11 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-background/80 font-display text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
+            aria-hidden
+          >
+            VS
+          </div>
+          <div className="min-w-0">
+            <TeamName name={fixture.team2} href={team2Href} align="right" />
           </div>
           <div
             className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-border to-transparent"
             aria-hidden
           />
         </div>
-      </CardContent>
 
-      <CardFooter className="mt-0 flex-col items-stretch gap-3 border-0 bg-transparent p-0 px-4 pb-4 pl-6 pt-0">
-        <Separator />
-        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-          <MapPin className="mt-0.5 shrink-0 text-pitch-bright/70" aria-hidden />
-          <span>{fixture.ground}</span>
-        </p>
-      </CardFooter>
+        <div className="relative flex items-start gap-2 border-t border-white/8 bg-background/25 px-5 py-3 text-xs text-muted-foreground">
+          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
+          <span className="leading-relaxed">{fixture.ground}</span>
+        </div>
+      </CardContent>
     </Card>
   );
 }

@@ -47,7 +47,9 @@ export function PageHero(props: PageHeroProps) {
     } = props;
 
     return (
-      <div className={`animate-fade-up py-12 md:py-16 ${className}`.trim()}>
+      <div
+        className={`animate-fade-up border-b border-white/8 py-12 md:py-16 ${className}`.trim()}
+      >
         <SectionHeading
           as="h1"
           eyebrow={eyebrow}
@@ -84,7 +86,7 @@ export function PageHero(props: PageHeroProps) {
     <div className={`animate-fade-up py-10 md:py-14 ${className}`.trim()}>
       <Link
         href={backHref}
-        className="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-gold"
+        className="mb-8 inline-flex items-center gap-2 rounded-sm border border-white/10 bg-white/5 px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         {backLabel}
@@ -96,7 +98,7 @@ export function PageHero(props: PageHeroProps) {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex min-w-0 items-center gap-5">
             {leading}
-            <div className="min-w-0">
+            <div className="min-w-0 border-l border-pitch-bright/35 pl-5">
               {eyebrow ? <p className="section-eyebrow">{eyebrow}</p> : null}
               {title ? (
                 <h1

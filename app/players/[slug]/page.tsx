@@ -8,9 +8,9 @@ import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SubsectionTitle } from "@/components/subsection-title";
-import { Card, CardContent } from "@/components/ui/card";
 import { getAllPlayers, getPlayerBySlug } from "@/lib/discovery";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
+import { artifactSurface } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -54,8 +54,8 @@ export default async function PlayerPage({ params }: PageProps) {
           }
         />
 
-        <Card accent="pitch" padding="none">
-          <CardContent className="flex flex-col gap-8 p-6 md:p-8">
+        <article className={artifactSurface("p-6 md:p-8")}>
+          <div className="flex flex-col gap-8">
             <section>
               <SubsectionTitle level="panel" icon={Sparkles}>
                 WHY PEOPLE ARE EXCITED
@@ -84,13 +84,13 @@ export default async function PlayerPage({ params }: PageProps) {
             {team ? (
               <Link
                 href={`/teams/${team.slug}`}
-                className="inline-flex text-sm font-semibold text-gold hover:text-foreground"
+                className="inline-flex w-fit rounded-sm border border-gold/25 px-4 py-2 text-sm font-semibold text-gold hover:border-gold/50 hover:text-foreground"
               >
                 View {team.displayName} at the World Cup →
               </Link>
             ) : null}
-          </CardContent>
-        </Card>
+          </div>
+        </article>
       </ContentContainer>
 
       <SiteFooter />

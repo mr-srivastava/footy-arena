@@ -1,9 +1,8 @@
-import { Calendar, Globe2, MapPin, Users } from "lucide-react";
+import { Calendar, Globe2, MapPin, Trophy, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ContentContainer } from "@/components/content-container";
-import { StatCard } from "@/components/stat-card";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { artifactSurface } from "@/lib/utils";
 import {
   HOST_CITIES,
   HOST_COUNTRIES,
@@ -26,8 +25,8 @@ export function HomeHeroSkeleton() {
       >
         <Skeleton className="mx-6 h-4 w-64" />
       </div>
-      <ContentContainer as="div" className="pb-24 pt-10 md:pt-16">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+      <ContentContainer as="div" className="pb-16 pt-10 md:pb-24 md:pt-16">
+        <div className="grid items-end gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="text-center lg:text-left">
             <Skeleton className="mx-auto h-4 w-32 lg:mx-0" />
             <Skeleton className="mx-auto mt-6 h-28 w-64 lg:mx-0" />
@@ -36,7 +35,7 @@ export function HomeHeroSkeleton() {
           </div>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 rounded-2xl" />
+              <Skeleton key={i} className="h-28 rounded-sm" />
             ))}
           </div>
         </div>
@@ -130,43 +129,73 @@ export async function HomeHero() {
               three countries united by the beautiful game.
             </p>
 
-            <div className="animate-fade-up animate-delay-4 mt-10 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-              <Card accent="gold" padding="none" className="rounded-2xl">
-                <CardContent className="px-8 py-4">
-                  <p className="flex items-center justify-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground lg:justify-start">
-                    <Calendar className="h-3.5 w-3.5" aria-hidden />
-                    Tournament Dates
-                  </p>
-                  <p className="font-display text-3xl tracking-wide text-gold">
-                    JUN 11 - JUL 19
-                  </p>
-                </CardContent>
-              </Card>
-              <div className="flex gap-2">
+            <div className="animate-fade-up animate-delay-4 mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+              <div className="relative overflow-hidden rounded-sm border border-gold/35 bg-gold/8 px-5 py-3 shadow-artifact-inset">
+                <div
+                  className="absolute inset-y-0 left-0 w-1 bg-gold"
+                  aria-hidden
+                />
+                <p className="flex items-center justify-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground lg:justify-start">
+                  <Calendar className="h-3.5 w-3.5" aria-hidden />
+                  Tournament Dates
+                </p>
+                <p className="font-display text-2xl tracking-wide text-gold md:text-3xl">
+                  JUN 11 - JUL 19
+                </p>
+              </div>
+              <div className="flex gap-2" aria-label="Host nations">
                 {["🇺🇸", "🇨🇦", "🇲🇽"].map((flag) => (
-                  <Card
+                  <div
                     key={flag}
-                    interactive
-                    padding="none"
-                    className="flex size-14 items-center justify-center rounded-xl text-2xl"
+                    className="flex size-12 items-center justify-center rounded-sm border border-white/10 bg-white/6 text-2xl shadow-artifact-inset md:size-14"
                   >
                     {flag}
-                  </Card>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="animate-fade-up animate-delay-5 grid grid-cols-2 gap-3 sm:gap-4">
-            {stats.map((stat) => (
-              <StatCard
-                key={stat.label}
-                value={stat.value}
-                label={stat.label}
-                icon={stat.icon}
-                layout="stacked"
-              />
-            ))}
+          <div className="animate-fade-up animate-delay-5 relative">
+            <div
+              className="absolute -inset-x-8 top-1/2 hidden h-px bg-gradient-to-r from-transparent via-pitch-bright/30 to-transparent lg:block"
+              aria-hidden
+            />
+            <div
+              className={artifactSurface(
+                "relative overflow-hidden shadow-board",
+              )}
+            >
+              <div className="flex items-center justify-between border-b border-white/8 px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                <span className="flex items-center gap-2 text-gold">
+                  <Trophy className="h-3.5 w-3.5" aria-hidden />
+                  Tournament Board
+                </span>
+                <span>North America</span>
+              </div>
+              <div className="grid grid-cols-4 divide-x divide-white/8">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="p-3 md:p-5">
+                    <stat.icon
+                      className="mb-3 h-3.5 w-3.5 text-pitch-bright/75 md:mb-8 md:h-4 md:w-4"
+                      aria-hidden
+                    />
+                    <p className="font-display text-3xl leading-none text-pitch-bright md:text-5xl">
+                      {stat.value}
+                    </p>
+                    <p className="mt-2 text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground md:text-[0.68rem] md:tracking-[0.16em]">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/8 px-4 py-3 text-xs text-muted-foreground">
+                <span>Expanded 48-team format</span>
+                <span className="font-display text-xl tracking-wide text-gold">
+                  2026
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </ContentContainer>

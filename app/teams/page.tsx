@@ -12,9 +12,9 @@ import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
 import { countAnnouncedSquads } from "@/lib/tournament/squads";
 
 export const metadata: Metadata = {
-  title: "Teams — Footy Arena",
+  title: "Teams - Footy Arena",
   description:
-    "All 48 nations at FIFA World Cup 2026 — flags, groups, confederations, and squad info.",
+    "All 48 nations at FIFA World Cup 2026 - flags, groups, confederations, and squad info.",
 };
 
 export default async function TeamsPage() {

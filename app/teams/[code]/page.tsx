@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
-import { FixtureCard } from "@/components/fixture-card";
+import { FixtureList } from "@/components/fixture-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SquadPanel } from "@/components/squad-panel";
@@ -18,7 +18,6 @@ import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
   getTeamFixtures,
   getWorldCupTeams,
-  teamPageHref,
 } from "@/lib/openfootball/teams";
 import { getTeamSquad } from "@/lib/tournament/squads";
 
@@ -36,12 +35,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const team = byCode.get(code.toUpperCase());
 
   if (!team) {
-    return { title: "Team — Footy Arena" };
+    return { title: "Team - Footy Arena" };
   }
 
   return {
-    title: `${team.displayName} — Footy Arena`,
-    description: `${team.displayName} at FIFA World Cup 2026 — ${team.groupLabel}, squad, manager, and fixtures.`,
+    title: `${team.displayName} - Footy Arena`,
+    description: `${team.displayName} at FIFA World Cup 2026 - ${team.groupLabel}, squad, manager, and fixtures.`,
   };
 }
 
@@ -129,16 +128,7 @@ export default async function TeamPage({ params }: PageProps) {
             </div>
 
             {teamFixtures.length > 0 ? (
-              <div className="reveal-grid grid gap-3">
-                {teamFixtures.map((fixture) => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    team1Href={teamPageHref(fixture.team1, byName)}
-                    team2Href={teamPageHref(fixture.team2, byName)}
-                  />
-                ))}
-              </div>
+              <FixtureList fixtures={teamFixtures} byName={byName} />
             ) : (
               <p className="text-sm text-muted">
                 No fixtures found for this team yet.

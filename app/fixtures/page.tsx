@@ -1,26 +1,26 @@
 import { Calendar, CalendarDays, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { ContentContainer } from "@/components/content-container";
-import { FixtureCard } from "@/components/fixture-card";
+import { FixtureList } from "@/components/fixture-list";
 import { OpenFootballLink } from "@/components/openfootball-link";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
-import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
-import { getWorldCupTeams, teamPageHref } from "@/lib/openfootball/teams";
+import { getFixtureStageCounts, getWorldCupFixtures } from "@/lib/openfootball/fixtures";
+import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const { fixtures } = await getWorldCupFixtures();
     return {
-      title: "Fixtures — Footy Arena",
-      description: `Full FIFA World Cup 2026 match schedule — all ${fixtures.length} fixtures across group stage and knockout rounds.`,
+      title: "Fixtures - Footy Arena",
+      description: `Full FIFA World Cup 2026 match schedule - all ${fixtures.length} fixtures across group stage and knockout rounds.`,
     };
   } catch {
     return {
-      title: "Fixtures — Footy Arena",
+      title: "Fixtures - Footy Arena",
       description:
         "Full FIFA World Cup 2026 match schedule across group stage and knockout rounds.",
     };
@@ -32,8 +32,7 @@ export default async function FixturesPage() {
     getWorldCupFixtures(),
     getWorldCupTeams(),
   ]);
-  const groupMatches = fixtures.filter((f) => f.stage === "group").length;
-  const knockoutMatches = fixtures.length - groupMatches;
+  const { groupMatches, knockoutMatches } = getFixtureStageCounts(fixtures);
 
   return (
     <PageShell>
@@ -105,16 +104,11 @@ export default async function FixturesPage() {
                   </div>
                 </div>
               </div>
-              <div className="reveal-grid mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {day.matches.map((fixture) => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    team1Href={teamPageHref(fixture.team1, byName)}
-                    team2Href={teamPageHref(fixture.team2, byName)}
-                  />
-                ))}
-              </div>
+              <FixtureList
+                fixtures={day.matches}
+                byName={byName}
+                className="mt-4 sm:grid-cols-2 lg:grid-cols-3"
+              />
             </section>
           ))}
         </div>

@@ -134,7 +134,7 @@ body {
   outline-offset: 2px;
 }
 
-/* —— Typography utilities —— */
+/* -- Typography utilities -- */
 .section-eyebrow {
   display: flex;
   align-items: center;
@@ -146,7 +146,7 @@ body {
   color: var(--gold);
 }
 
-/* —— Motion —— */
+/* -- Motion -- */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -225,7 +225,7 @@ body {
   }
 }
 
-/* —— Surfaces & atmosphere —— */
+/* -- Surfaces & atmosphere -- */
 .pitch-grid {
   background-image:
     linear-gradient(rgba(22, 128, 63, 0.05) 1px, transparent 1px),
@@ -394,7 +394,7 @@ body {
   contain-intrinsic-size: auto 120px;
 }
 
-/* —— History carousel (horizontal scroll) —— */
+/* -- History carousel (horizontal scroll) -- */
 .history-carousel-track {
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;

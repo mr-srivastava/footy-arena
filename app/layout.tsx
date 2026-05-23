@@ -3,7 +3,7 @@ import { Archivo, Bebas_Neue, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -17,13 +17,13 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "Footy Arena — FIFA World Cup 2026",
+  title: "Footy Arena - FIFA World Cup 2026",
   description:
-    "Your home for FIFA World Cup 2026. Follow every match across the USA, Canada, and Mexico — 48 nations, one unforgettable tournament.",
+    "Your home for FIFA World Cup 2026. Follow every match across the USA, Canada, and Mexico - 48 nations, one unforgettable tournament.",
   openGraph: {
-    title: "Footy Arena — FIFA World Cup 2026",
+    title: "Footy Arena - FIFA World Cup 2026",
     description:
-      "The biggest World Cup ever. June 11 – July 19, 2026 across North America.",
+      "The biggest World Cup ever. June 11 - July 19, 2026 across North America.",
     type: "website",
   },
 };

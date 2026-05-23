@@ -20,9 +20,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const topic = getCatchUpTopic(slug);
-  if (!topic) return { title: "Catch Up — Footy Arena" };
+  if (!topic) return { title: "Catch Up - Footy Arena" };
   return {
-    title: `${topic.title} — Footy Arena`,
+    title: `${topic.title} - Footy Arena`,
     description: topic.summary,
   };
 }

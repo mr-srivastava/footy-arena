@@ -100,6 +100,20 @@ export function teamPageHref(
   return team ? `/teams/${team.slug}` : undefined;
 }
 
+export function resolveTeamByFifaCode(
+  fifaCode: string | undefined,
+  byCode: Map<string, Team>,
+): { team?: Team; href?: string } {
+  if (!fifaCode) return {};
+  const team = byCode.get(fifaCode.toUpperCase());
+  if (!team) return {};
+  return { team, href: `/teams/${team.slug}` };
+}
+
+export function formatGroupConfederations(teams: Team[]): string {
+  return [...new Set(teams.map((team) => team.confed))].join(", ");
+}
+
 export function parseGroupLetter(groupLabel?: string): GroupLetter | null {
   if (!groupLabel) return null;
   const match = groupLabel.match(/^Group\s+([A-L])$/i);

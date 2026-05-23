@@ -1,15 +1,10 @@
 import { ArrowRight, CalendarDays } from "lucide-react";
 import Link from "next/link";
-import { FixtureCard } from "@/components/fixture-card";
+import { FixtureList } from "@/components/fixture-list";
 import { PageSection } from "@/components/page-section";
 import { SectionHeading } from "@/components/section-heading";
 import { Skeleton } from "@/components/ui/skeleton";
-import { OPENING_DAY } from "@/lib/openfootball/constants";
-import {
-  getOpeningDayFixtures,
-  getWorldCupFixtures,
-} from "@/lib/openfootball/fixtures";
-import { getWorldCupTeams, teamPageHref } from "@/lib/openfootball/teams";
+import { getHomeOpeningFixturesData } from "@/lib/page-data/home";
 
 export function HomeOpeningFixturesSkeleton() {
   return (
@@ -28,12 +23,8 @@ export function HomeOpeningFixturesSkeleton() {
 }
 
 export async function HomeOpeningFixtures() {
-  const [{ fixtures }, { byName }] = await Promise.all([
-    getWorldCupFixtures(),
-    getWorldCupTeams(),
-  ]);
-  const matchCount = fixtures.length;
-  const openingFixtures = getOpeningDayFixtures(fixtures, OPENING_DAY);
+  const { matchCount, openingFixtures, byName } =
+    await getHomeOpeningFixturesData();
 
   return (
     <PageSection id="schedule" variant="band">
@@ -54,16 +45,11 @@ export async function HomeOpeningFixtures() {
         </Link>
       </SectionHeading>
       {openingFixtures.length > 0 ? (
-        <div className="reveal-grid grid gap-3 md:grid-cols-3">
-          {openingFixtures.map((fixture) => (
-            <FixtureCard
-              key={fixture.id}
-              fixture={fixture}
-              team1Href={teamPageHref(fixture.team1, byName)}
-              team2Href={teamPageHref(fixture.team2, byName)}
-            />
-          ))}
-        </div>
+        <FixtureList
+          fixtures={openingFixtures}
+          byName={byName}
+          className="md:grid-cols-3"
+        />
       ) : (
         <p className="text-muted">
           Opening day fixtures are not available yet.{" "}

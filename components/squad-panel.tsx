@@ -2,24 +2,11 @@ import { ClipboardList, UserRound } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SubsectionTitle } from "@/components/subsection-title";
+import { groupPlayersByPosition } from "@/lib/tournament/squads";
 import type { TeamSquad } from "@/lib/tournament/types";
 
-const positionLabels: Record<string, string> = {
-  GK: "Goalkeepers",
-  DF: "Defenders",
-  MF: "Midfielders",
-  FW: "Forwards",
-};
-
-const positionOrder = ["GK", "DF", "MF", "FW"] as const;
-
 export function SquadPanel({ squad }: { squad: TeamSquad }) {
-  const playersByPosition = positionOrder.map((position) => ({
-    position,
-    label: positionLabels[position],
-    players: squad.players.filter((player) => player.position === position),
-  }));
-
+  const playersByPosition = groupPlayersByPosition(squad);
   const hasPlayers = squad.players.length > 0;
 
   return (
@@ -58,41 +45,41 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
               {playersByPosition.map(({ position, label, players }) =>
                 players.length > 0 ? (
                   <div key={position}>
-                      <SubsectionTitle level="label" tone="gold">
-                        {label}
-                      </SubsectionTitle>
-                      <ul className="mt-3">
-                        {players.map((player, index) => (
-                          <li key={`${player.name}-${player.number ?? ""}`}>
-                            {index > 0 ? <Separator className="my-2.5" /> : null}
-                            <div className="flex items-center justify-between gap-3 py-2.5">
-                              <div className="min-w-0">
-                                <p className="font-medium text-foreground">
-                                  {player.name}
+                    <SubsectionTitle level="label" tone="gold">
+                      {label}
+                    </SubsectionTitle>
+                    <ul className="mt-3">
+                      {players.map((player, index) => (
+                        <li key={`${player.name}-${player.number ?? ""}`}>
+                          {index > 0 ? <Separator className="my-2.5" /> : null}
+                          <div className="flex items-center justify-between gap-3 py-2.5">
+                            <div className="min-w-0">
+                              <p className="font-medium text-foreground">
+                                {player.name}
+                              </p>
+                              {player.club ? (
+                                <p className="text-xs text-muted-foreground">
+                                  {player.club}
                                 </p>
-                                {player.club ? (
-                                  <p className="text-xs text-muted-foreground">
-                                    {player.club}
-                                  </p>
-                                ) : null}
-                              </div>
-                              {player.number ? (
-                                <span className="font-mono text-sm text-muted-foreground">
-                                  {player.number}
-                                </span>
                               ) : null}
                             </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null,
+                            {player.number ? (
+                              <span className="font-mono text-sm text-muted-foreground">
+                                {player.number}
+                              </span>
+                            ) : null}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null,
               )}
             </div>
           ) : (
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {squad.status === "announced"
-                ? "Manager confirmed — full player roster will be added as squads are officially published."
+                ? "Manager confirmed - full player roster will be added as squads are officially published."
                 : "Squad and coaching staff to be confirmed closer to the tournament."}
             </p>
           )}

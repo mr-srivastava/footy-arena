@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
+import { getWorldCupTeams, teamPageHref } from "@/lib/openfootball/teams";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -26,7 +27,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FixturesPage() {
-  const { tournament, fixtures, byDate } = await getWorldCupFixtures();
+  const [{ tournament, fixtures, byDate }, { byName }] = await Promise.all([
+    getWorldCupFixtures(),
+    getWorldCupTeams(),
+  ]);
   const groupMatches = fixtures.filter((f) => f.stage === "group").length;
   const knockoutMatches = fixtures.length - groupMatches;
 
@@ -103,7 +107,12 @@ export default async function FixturesPage() {
               </div>
               <div className="fixture-grid mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {day.matches.map((fixture) => (
-                  <FixtureCard key={fixture.id} fixture={fixture} />
+                  <FixtureCard
+                    key={fixture.id}
+                    fixture={fixture}
+                    team1Href={teamPageHref(fixture.team1, byName)}
+                    team2Href={teamPageHref(fixture.team2, byName)}
+                  />
                 ))}
               </div>
             </section>

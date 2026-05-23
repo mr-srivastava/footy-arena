@@ -1,4 +1,5 @@
 import { Clock, MapPin } from "lucide-react";
+import Link from "next/link";
 import {
   formatKickoff,
   formatPlaceholderTeam,
@@ -6,20 +7,22 @@ import {
 } from "@/lib/openfootball/fixtures";
 import type { Fixture } from "@/lib/openfootball/types";
 
-function TeamName({ name }: { name: string }) {
+function TeamName({ name, href }: { name: string; href?: string }) {
   const placeholder = isPlaceholderTeam(name);
+  const label = placeholder ? formatPlaceholderTeam(name) : name;
+  const className = placeholder
+    ? "text-sm font-medium text-muted italic"
+    : "text-sm font-semibold leading-tight text-foreground";
 
-  return (
-    <span
-      className={
-        placeholder
-          ? "text-sm font-medium text-muted italic"
-          : "text-sm font-semibold leading-tight text-foreground"
-      }
-    >
-      {placeholder ? formatPlaceholderTeam(name) : name}
-    </span>
-  );
+  if (href && !placeholder) {
+    return (
+      <Link href={href} className={`${className} hover:text-gold`}>
+        {label}
+      </Link>
+    );
+  }
+
+  return <span className={className}>{label}</span>;
 }
 
 const stageAccent: Record<string, string> = {
@@ -32,7 +35,15 @@ const stageAccent: Record<string, string> = {
   "round-of-32": "from-teal/60",
 };
 
-export function FixtureCard({ fixture }: { fixture: Fixture }) {
+export function FixtureCard({
+  fixture,
+  team1Href,
+  team2Href,
+}: {
+  fixture: Fixture;
+  team1Href?: string;
+  team2Href?: string;
+}) {
   const knockout = fixture.stage !== "group";
   const accent = stageAccent[fixture.stage] ?? "from-pitch-bright/80";
 
@@ -69,7 +80,7 @@ export function FixtureCard({ fixture }: { fixture: Fixture }) {
       <div className="relative mt-4 pl-2">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1 text-left">
-            <TeamName name={fixture.team1} />
+            <TeamName name={fixture.team1} href={team1Href} />
           </div>
           <div
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-background/80 font-display text-sm text-muted transition-colors group-hover:border-pitch/30 group-hover:text-pitch-bright"
@@ -78,7 +89,7 @@ export function FixtureCard({ fixture }: { fixture: Fixture }) {
             VS
           </div>
           <div className="min-w-0 flex-1 text-right">
-            <TeamName name={fixture.team2} />
+            <TeamName name={fixture.team2} href={team2Href} />
           </div>
         </div>
         <div

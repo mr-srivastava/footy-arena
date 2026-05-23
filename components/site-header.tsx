@@ -1,14 +1,20 @@
 import {
   CalendarDays,
+  Compass,
   Globe2,
+  LayoutGrid,
   MapPin,
   Menu,
   Trophy,
+  Users,
   X,
 } from "lucide-react";
 import Link from "next/link";
 
 const navLinks = [
+  { href: "/explore", label: "Explore", icon: Compass },
+  { href: "/teams", label: "Teams", icon: Users },
+  { href: "/groups", label: "Groups", icon: LayoutGrid },
   { href: "/fixtures", label: "Fixtures", icon: CalendarDays },
   { href: "/#hosts", label: "Host Nations", icon: Globe2 },
   { href: "/#cities", label: "Cities", icon: MapPin },

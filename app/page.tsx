@@ -3,6 +3,7 @@ import {
   Bell,
   Calendar,
   CalendarDays,
+  Compass,
   Globe2,
   Landmark,
   MapPin,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { DiscoveryCard } from "@/components/discovery-card";
 import { FixtureCard } from "@/components/fixture-card";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
@@ -28,6 +30,8 @@ import {
   getWorldCupFixtures,
 } from "@/lib/openfootball/fixtures";
 import History from "@/components/history";
+import { getWorldCupTeams, teamPageHref } from "@/lib/openfootball/teams";
+import { HOMEPAGE_MODULES } from "@/lib/discovery";
 
 function buildTickerItems(
   stats: { ticker: string }[],
@@ -81,7 +85,10 @@ const hostCities = [
 ];
 
 export default async function Home() {
-  const { fixtures } = await getWorldCupFixtures();
+  const [{ fixtures }, { byName }] = await Promise.all([
+    getWorldCupFixtures(),
+    getWorldCupTeams(),
+  ]);
   const matchCount = fixtures.length;
   const openingFixtures = getOpeningDayFixtures(fixtures, OPENING_DAY);
 
@@ -91,33 +98,36 @@ export default async function Home() {
     icon: LucideIcon;
     ticker: string;
   }[] = [
-    {
-      value: TOURNAMENT_NATIONS,
-      label: "Nations",
-      icon: Users,
-      ticker: `${TOURNAMENT_NATIONS} NATIONS`,
-    },
-    {
-      value: matchCount,
-      label: "Matches",
-      icon: Calendar,
-      ticker: `${matchCount} MATCHES`,
-    },
-    {
-      value: HOST_CITIES,
-      label: "Host Cities",
-      icon: MapPin,
-      ticker: `${HOST_CITIES} CITIES`,
-    },
-    {
-      value: HOST_COUNTRIES,
-      label: "Countries",
-      icon: Globe2,
-      ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
-    },
-  ];
+      {
+        value: TOURNAMENT_NATIONS,
+        label: "Nations",
+        icon: Users,
+        ticker: `${TOURNAMENT_NATIONS} NATIONS`,
+      },
+      {
+        value: matchCount,
+        label: "Matches",
+        icon: Calendar,
+        ticker: `${matchCount} MATCHES`,
+      },
+      {
+        value: HOST_CITIES,
+        label: "Host Cities",
+        icon: MapPin,
+        ticker: `${HOST_CITIES} CITIES`,
+      },
+      {
+        value: HOST_COUNTRIES,
+        label: "Countries",
+        icon: Globe2,
+        ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
+      },
+    ];
 
   const tickerItems = buildTickerItems(stats);
+  const startJourney = HOMEPAGE_MODULES.find(
+    (module) => module.slug === "start-your-journey",
+  );
 
   return (
     <PageShell>
@@ -206,6 +216,37 @@ export default async function Home() {
         </div>
       </section>
 
+      {startJourney ? (
+        <section
+          id="discover"
+          className="relative z-10 border-b border-white/8 bg-navy-light/20 py-20"
+        >
+          <div className="mx-auto max-w-6xl px-6">
+            <SectionHeading
+              eyebrow="Discovery-first"
+              title="START YOUR JOURNEY"
+              icon={Compass}
+            >
+              <Link
+                href="/explore"
+                className="group flex items-center gap-2 text-sm font-semibold text-gold transition-colors hover:text-foreground"
+              >
+                Explore all stories
+                <ArrowRight
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  aria-hidden
+                />
+              </Link>
+            </SectionHeading>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {startJourney.cards.map((card) => (
+                <DiscoveryCard key={card.href} {...card} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section id="hosts" className="relative z-10 mx-auto max-w-6xl px-6 py-20">
         <SectionHeading
           eyebrow="First Tri-Host Tournament"
@@ -262,7 +303,12 @@ export default async function Home() {
           {openingFixtures.length > 0 ? (
             <div className="fixture-grid grid gap-3 md:grid-cols-3">
               {openingFixtures.map((fixture) => (
-                <FixtureCard key={fixture.id} fixture={fixture} />
+                <FixtureCard
+                  key={fixture.id}
+                  fixture={fixture}
+                  team1Href={teamPageHref(fixture.team1, byName)}
+                  team2Href={teamPageHref(fixture.team2, byName)}
+                />
               ))}
             </div>
           ) : (

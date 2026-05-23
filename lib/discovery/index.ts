@@ -19,7 +19,6 @@ import { MATCH_STORY_TEMPLATES } from "./seed/match-templates";
 import { METRIC_TRANSLATIONS } from "./seed/metrics";
 import { PLAYERS } from "./seed/players";
 import { TEAM_NARRATIVES } from "./seed/teams";
-import { WORLD_CUP_HISTORY_ERAS } from "./seed/history";
 
 const playersBySlug = new Map(PLAYERS.map((player) => [player.slug, player]));
 const narrativesByCode = new Map(
@@ -48,16 +47,11 @@ export const TEAM_NARRATIVE_ENTRIES = TEAM_NARRATIVES.map((narrative) => ({
 
 export {
   CATCH_UP_TOPICS,
-  DISCOVERY_CATEGORIES,
   DISCOVERY_COLLECTIONS,
   HOMEPAGE_MODULES,
   LOST_GLORIES,
   MATCH_STORY_TEMPLATES,
   METRIC_TRANSLATIONS,
-  PLAYERS,
-  RISING_UNDERDOGS,
-  TEAM_NARRATIVES,
-  WORLD_CUP_HISTORY_ERAS,
 };
 
 export function getAllPlayers(): PlayerProfile[] {
@@ -82,10 +76,6 @@ export function getTeamNarrative(
   fifaCode: string,
 ): TeamNarrative | undefined {
   return narrativesByCode.get(fifaCode.toUpperCase());
-}
-
-export function getCuratedTeamCodes(): string[] {
-  return TEAM_NARRATIVES.map((narrative) => narrative.fifaCode);
 }
 
 export function getDiscoveryCategory(

@@ -10,12 +10,6 @@ import {
 } from "@/lib/openfootball/constants";
 import { getHomeHeroData } from "@/lib/page-data/home";
 
-function buildTickerItems(stats: { ticker: string }[]): string[] {
-  const items = stats.flatMap((s) => [s.ticker, "·"]);
-  items.push("JUN 11 - JUL 19", "·");
-  return items;
-}
-
 export function HomeHeroSkeleton() {
   return (
     <>
@@ -79,25 +73,8 @@ export async function HomeHero() {
       },
     ];
 
-  const tickerItems = buildTickerItems(stats);
-
   return (
     <>
-      <div
-        className="relative z-10 overflow-hidden border-b border-white/6 bg-navy/80 py-2"
-        aria-hidden
-      >
-        <div className="flex w-max animate-ticker gap-8 whitespace-nowrap px-6 text-xs font-semibold uppercase tracking-[0.35em] text-muted">
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span
-              key={`${item}-${i}`}
-              className={item === "·" ? "text-pitch/50" : "text-pitch-bright/70"}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <ContentContainer as="div" className="pb-24 pt-10 md:pt-16">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">

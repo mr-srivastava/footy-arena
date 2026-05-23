@@ -1,16 +1,13 @@
 import {
   ArrowRight,
-  Bell,
   Compass,
   Globe2,
   Landmark,
   MapPin,
   RadioTower,
-  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ContentContainer } from "@/components/content-container";
 import History from "@/components/home/home-history";
 import {
   HomeHero,
@@ -26,9 +23,6 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { artifactSurface } from "@/lib/utils";
 import { HOST_CITIES } from "@/lib/openfootball/constants";
 import { HOST_CITY_VENUES, HOST_NATIONS } from "@/lib/openfootball/host-venues";
@@ -49,6 +43,7 @@ export default function Home() {
         <Suspense fallback={<HomeHeroSkeleton />}>
           <HomeHero />
         </Suspense>
+
 
         {startJourney ? (
           <PageSection id="discover" variant="editorial">
@@ -136,6 +131,10 @@ export default function Home() {
           </PageSection>
         ) : null}
 
+        <Suspense fallback={<HomeOpeningFixturesSkeleton />}>
+          <HomeOpeningFixtures />
+        </Suspense>
+
         <PageSection id="hosts" variant="feature">
           <SectionHeading
             eyebrow="First Tri-Host Tournament"
@@ -161,122 +160,83 @@ export default function Home() {
                       Host nation
                     </p>
                     <h3 className="font-display text-4xl tracking-wide text-foreground">
-                    {nation.country.toUpperCase()}
+                      {nation.country.toUpperCase()}
                     </h3>
                   </div>
                 </div>
                 <p className="flex items-center gap-1.5 font-display text-3xl tracking-wide text-gold">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden />
-                    {nation.cities} host cities
-                  </p>
+                  <MapPin className="h-3.5 w-3.5" aria-hidden />
+                  {nation.cities} host cities
+                </p>
                 <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:justify-self-end md:text-right">
-                    {nation.detail}
+                  {nation.detail}
                 </p>
               </div>
             ))}
           </div>
-        </PageSection>
 
-        <Suspense fallback={<HomeOpeningFixturesSkeleton />}>
-          <HomeOpeningFixtures />
-        </Suspense>
-
-        <PageSection id="cities" variant="dense">
-          <SectionHeading
-            eyebrow="Venues"
-            title={`${HOST_CITIES} HOST CITIES`}
-            icon={Landmark}
-          >
-            <p className="max-w-sm text-sm leading-relaxed text-muted">
-              From the Azteca&apos;s roar to SoFi&apos;s spectacle - world-class
-              stadiums across the continent.
-            </p>
-          </SectionHeading>
-          <div className="grid gap-8 md:grid-cols-[0.75fr_1.25fr]">
-            <div className="border-l border-gold/40 pl-5">
-              <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-gold">
-                <RadioTower className="h-4 w-4" aria-hidden />
-                Venue directory
+          <div id="cities" className="mt-16 pt-14 md:mt-16 md:pt-10">
+            <SectionHeading
+              eyebrow="Venues"
+              title={`${HOST_CITIES} HOST CITIES`}
+              icon={Landmark}
+              titleClassName="md:text-5xl"
+              className="mb-8 md:mb-10"
+            >
+              <p className="max-w-sm text-sm leading-relaxed text-muted">
+                From the Azteca&apos;s roar to SoFi&apos;s spectacle - world-class
+                stadiums across the continent.
               </p>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                Sixteen stadiums stretch from Pacific coast nights to Azteca
-                altitude and the final stage outside New York.
-              </p>
-            </div>
-            <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-              {["USA", "MEX", "CAN"].map((country) => (
-                <div key={country} className={country === "USA" ? "sm:row-span-2" : ""}>
-                  <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-                    <Badge variant="country">{country}</Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {
-                        HOST_CITY_VENUES.filter((city) => city.country === country)
-                          .length
-                      }{" "}
-                      cities
-                    </span>
+            </SectionHeading>
+            <div className="grid gap-8 md:grid-cols-[0.75fr_1.25fr]">
+              <div className="border-l border-gold/40 pl-5">
+                <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-gold">
+                  <RadioTower className="h-4 w-4" aria-hidden />
+                  Venue directory
+                </p>
+                <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                  Sixteen stadiums stretch from Pacific coast nights to Azteca
+                  altitude and the final stage outside New York.
+                </p>
+              </div>
+              <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                {["USA", "MEX", "CAN"].map((country) => (
+                  <div key={country} className={country === "USA" ? "sm:row-span-2" : ""}>
+                    <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+                      <Badge variant="country">{country}</Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {
+                          HOST_CITY_VENUES.filter((city) => city.country === country)
+                            .length
+                        }{" "}
+                        cities
+                      </span>
+                    </div>
+                    <ul className="space-y-3">
+                      {HOST_CITY_VENUES.filter((city) => city.country === country).map(
+                        (city) => (
+                          <li
+                            key={city.city}
+                            className="grid grid-cols-[1fr_auto] gap-3 text-sm"
+                          >
+                            <span className="font-medium text-foreground">
+                              {city.city}
+                            </span>
+                            <span className="text-right text-xs text-muted-foreground">
+                              {city.venue}
+                            </span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
                   </div>
-                  <ul className="space-y-3">
-                    {HOST_CITY_VENUES.filter((city) => city.country === country).map(
-                      (city) => (
-                        <li
-                          key={city.city}
-                          className="grid grid-cols-[1fr_auto] gap-3 text-sm"
-                        >
-                          <span className="font-medium text-foreground">
-                            {city.city}
-                          </span>
-                          <span className="text-right text-xs text-muted-foreground">
-                            {city.venue}
-                          </span>
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </PageSection>
 
         <History />
-
-        <ContentContainer as="div" id="notify">
-          <section className={artifactSurface("relative overflow-hidden text-center")}>
-            <div className="relative px-8 py-14 md:px-16">
-              <div
-                className="notify-glow pointer-events-none absolute inset-0"
-                aria-hidden
-              />
-              <Trophy
-                className="relative mx-auto h-14 w-14 text-gold drop-shadow-gold-glow"
-                aria-hidden
-              />
-              <h2 className="relative mt-6 font-display text-5xl tracking-wide md:text-6xl">
-                NEVER MISS A KICK
-              </h2>
-              <p className="relative mx-auto mt-4 max-w-md text-muted-foreground">
-                Be the first to know when fixtures drop, tickets go on sale, and
-                Footy Arena launches full tournament coverage.
-              </p>
-              <FieldGroup className="relative mx-auto mt-8 max-w-md">
-                <Field orientation="responsive" className="flex-col gap-3 sm:flex-row">
-                  <Input
-                    type="email"
-                    placeholder="you@email.com"
-                    aria-label="Email address"
-                    disabled
-                    className="h-11 flex-1 rounded-full px-5"
-                  />
-                  <Button type="button" disabled size="pill" className="h-11 px-6">
-                    <Bell data-icon="inline-start" aria-hidden />
-                    Coming soon
-                  </Button>
-                </Field>
-              </FieldGroup>
-            </div>
-          </section>
-        </ContentContainer>
       </main>
 
       <SiteFooter />

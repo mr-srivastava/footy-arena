@@ -17,7 +17,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 pitch-grid">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6">
       <div className="pointer-events-none absolute inset-0 hero-glow" aria-hidden />
       <div className={artifactSurface("relative z-10 max-w-md p-8 text-center")}>
         <AlertCircle className="mx-auto h-12 w-12 text-gold" aria-hidden />

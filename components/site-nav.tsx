@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  CalendarDays,
-  Compass,
-  Globe2,
-  LayoutGrid,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { CalendarDays, Compass, LayoutGrid, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,15 +10,11 @@ const navLinks: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/teams", label: "Teams", icon: Users },
   { href: "/groups", label: "Groups", icon: LayoutGrid },
   { href: "/fixtures", label: "Fixtures", icon: CalendarDays },
-  { href: "/#hosts", label: "Host Nations", icon: Globe2 },
-  { href: "/#cities", label: "Cities", icon: MapPin },
 ];
 
 function isNavActive(pathname: string, href: string): boolean {
-  if (href.startsWith("/#")) return false;
   if (href === "/") return pathname === "/";
-  const base = href.split("#")[0] ?? href;
-  return pathname === base || pathname.startsWith(`${base}/`);
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function navLinkClass(active: boolean, mobile: boolean) {

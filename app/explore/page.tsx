@@ -21,7 +21,7 @@ import {
 } from "@/lib/discovery";
 
 export const metadata: Metadata = {
-  title: "Explore — Footy Arena",
+  title: "Explore - Footy Arena",
   description:
     "Discover World Cup 2026 through stories, players, collections, and curated narratives.",
 };
@@ -45,7 +45,7 @@ export default function ExplorePage() {
           }
           icon={Compass}
           titleClassName="md:text-7xl"
-          subtitle="Curated stories, players, and narratives to help you discover the tournament — no live data required."
+          subtitle="Curated stories, players, and narratives to help you discover the tournament - no live data required."
         />
 
         <PageSection variant="stack">

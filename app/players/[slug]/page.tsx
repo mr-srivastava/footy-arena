@@ -23,9 +23,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const player = getPlayerBySlug(slug);
-  if (!player) return { title: "Player — Footy Arena" };
+  if (!player) return { title: "Player - Footy Arena" };
   return {
-    title: `${player.name} — Footy Arena`,
+    title: `${player.name} - Footy Arena`,
     description: player.whyExcited,
   };
 }

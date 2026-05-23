@@ -42,9 +42,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = getDiscoveryCategory(slug);
-  if (!category) return { title: "Explore — Footy Arena" };
+  if (!category) return { title: "Explore - Footy Arena" };
   return {
-    title: `${category.title} — Footy Arena`,
+    title: `${category.title} - Footy Arena`,
     description: category.description,
   };
 }
@@ -89,47 +89,47 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                       {entry.nation.toUpperCase()}
                     </CardTitle>
                     <dl className="mt-5 flex flex-col gap-4 text-sm">
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-widest text-gold">
-                        Then
-                      </dt>
-                      <dd className="mt-1 leading-relaxed text-muted">
-                        {entry.then}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
-                        What changed
-                      </dt>
-                      <dd className="mt-1 leading-relaxed text-muted">
-                        {entry.whatChanged}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
-                        Now
-                      </dt>
-                      <dd className="mt-1 leading-relaxed text-muted">
-                        {entry.currentStatus}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-widest text-pitch-bright">
-                        Hope ahead
-                      </dt>
-                      <dd className="mt-1 leading-relaxed text-foreground/90">
-                        {entry.hopeForTheFuture}
-                      </dd>
-                    </div>
-                  </dl>
-                  {teamHref && team ? (
-                    <Link
-                      href={teamHref}
-                      className="mt-5 text-sm font-semibold text-gold hover:text-foreground"
-                    >
-                      View {team.displayName} →
-                    </Link>
-                  ) : null}
+                      <div>
+                        <dt className="text-xs font-semibold uppercase tracking-widest text-gold">
+                          Then
+                        </dt>
+                        <dd className="mt-1 leading-relaxed text-muted">
+                          {entry.then}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
+                          What changed
+                        </dt>
+                        <dd className="mt-1 leading-relaxed text-muted">
+                          {entry.whatChanged}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
+                          Now
+                        </dt>
+                        <dd className="mt-1 leading-relaxed text-muted">
+                          {entry.currentStatus}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-semibold uppercase tracking-widest text-pitch-bright">
+                          Hope ahead
+                        </dt>
+                        <dd className="mt-1 leading-relaxed text-foreground/90">
+                          {entry.hopeForTheFuture}
+                        </dd>
+                      </div>
+                    </dl>
+                    {teamHref && team ? (
+                      <Link
+                        href={teamHref}
+                        className="mt-5 text-sm font-semibold text-gold hover:text-foreground"
+                      >
+                        View {team.displayName} →
+                      </Link>
+                    ) : null}
                   </CardContent>
                 </Card>
               );
@@ -163,27 +163,27 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                     <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                       {entry.whyCasualFansShouldWatch}
                     </p>
-                  {breakoutPlayers.length > 0 ? (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {breakoutPlayers.map((player) => (
-                        <Link
-                          key={player.slug}
-                          href={`/players/${player.slug}`}
-                          className="rounded-full border border-white/10 px-3 py-1 text-sm hover:text-gold"
-                        >
-                          {player.name}
-                        </Link>
-                      ))}
-                    </div>
-                  ) : null}
-                  {teamHref && team ? (
-                    <Link
-                      href={teamHref}
-                      className="mt-auto pt-5 text-sm font-semibold text-gold hover:text-foreground"
-                    >
-                      View {team.displayName} →
-                    </Link>
-                  ) : null}
+                    {breakoutPlayers.length > 0 ? (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {breakoutPlayers.map((player) => (
+                          <Link
+                            key={player.slug}
+                            href={`/players/${player.slug}`}
+                            className="rounded-full border border-white/10 px-3 py-1 text-sm hover:text-gold"
+                          >
+                            {player.name}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                    {teamHref && team ? (
+                      <Link
+                        href={teamHref}
+                        className="mt-auto pt-5 text-sm font-semibold text-gold hover:text-foreground"
+                      >
+                        View {team.displayName} →
+                      </Link>
+                    ) : null}
                   </CardContent>
                 </Card>
               );
@@ -225,9 +225,9 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
         ) : null}
 
         {category.slug !== "tactical-identities" &&
-        players.length === 0 &&
-        category.slug !== "lost-glories" &&
-        category.slug !== "rising-underdogs" ? (
+          players.length === 0 &&
+          category.slug !== "lost-glories" &&
+          category.slug !== "rising-underdogs" ? (
           <p className="text-muted">Content coming soon for this category.</p>
         ) : null}
 

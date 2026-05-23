@@ -26,9 +26,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const collection = getDiscoveryCollection(slug);
-  if (!collection) return { title: "Collection — Footy Arena" };
+  if (!collection) return { title: "Collection - Footy Arena" };
   return {
-    title: `${collection.title} — Footy Arena`,
+    title: `${collection.title} - Footy Arena`,
     description: collection.description,
   };
 }

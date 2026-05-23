@@ -25,7 +25,7 @@ export default function Error({
         </h1>
         <p className="mt-4 text-muted">
           We couldn&apos;t load fixture data right now. The schedule may be
-          temporarily offline — please try again in a moment.
+          temporarily offline - please try again in a moment.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <button

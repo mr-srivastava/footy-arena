@@ -35,12 +35,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const normalized = letter.toUpperCase();
 
   if (!GROUP_LETTERS.includes(normalized as GroupLetter)) {
-    return { title: "Group — Footy Arena" };
+    return { title: "Group - Footy Arena" };
   }
 
   return {
-    title: `Group ${normalized} — Footy Arena`,
-    description: `FIFA World Cup 2026 Group ${normalized} — teams, squads, and fixtures.`,
+    title: `Group ${normalized} - Footy Arena`,
+    description: `FIFA World Cup 2026 Group ${normalized} - teams, squads, and fixtures.`,
   };
 }
 

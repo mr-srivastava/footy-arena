@@ -13,7 +13,7 @@ import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 
 function buildTickerItems(stats: { ticker: string }[]): string[] {
   const items = stats.flatMap((s) => [s.ticker, "·"]);
-  items.push("JUN 11 — JUL 19", "·");
+  items.push("JUN 11 - JUL 19", "·");
   return items;
 }
 
@@ -55,31 +55,31 @@ export async function HomeHero() {
     icon: LucideIcon;
     ticker: string;
   }[] = [
-    {
-      value: TOURNAMENT_NATIONS,
-      label: "Nations",
-      icon: Users,
-      ticker: `${TOURNAMENT_NATIONS} NATIONS`,
-    },
-    {
-      value: matchCount,
-      label: "Matches",
-      icon: Calendar,
-      ticker: `${matchCount} MATCHES`,
-    },
-    {
-      value: HOST_CITIES,
-      label: "Host Cities",
-      icon: MapPin,
-      ticker: `${HOST_CITIES} CITIES`,
-    },
-    {
-      value: HOST_COUNTRIES,
-      label: "Countries",
-      icon: Globe2,
-      ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
-    },
-  ];
+      {
+        value: TOURNAMENT_NATIONS,
+        label: "Nations",
+        icon: Users,
+        ticker: `${TOURNAMENT_NATIONS} NATIONS`,
+      },
+      {
+        value: matchCount,
+        label: "Matches",
+        icon: Calendar,
+        ticker: `${matchCount} MATCHES`,
+      },
+      {
+        value: HOST_CITIES,
+        label: "Host Cities",
+        icon: MapPin,
+        ticker: `${HOST_CITIES} CITIES`,
+      },
+      {
+        value: HOST_COUNTRIES,
+        label: "Countries",
+        icon: Globe2,
+        ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
+      },
+    ];
 
   const tickerItems = buildTickerItems(stats);
 
@@ -139,7 +139,7 @@ export async function HomeHero() {
                     Tournament Dates
                   </p>
                   <p className="font-display text-3xl tracking-wide text-gold">
-                    JUN 11 — JUL 19
+                    JUN 11 - JUL 19
                   </p>
                 </CardContent>
               </Card>

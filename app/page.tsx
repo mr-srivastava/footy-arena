@@ -37,8 +37,17 @@ const History = dynamic(() => import("@/components/history"), {
   loading: () => (
     <section
       aria-hidden
-      className="relative z-10 border-y border-white/8 py-16 md:py-20"
-    />
+      className="relative z-10 border-y border-white/8"
+    >
+      <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <div className="mx-auto h-24 max-w-xl animate-pulse rounded-2xl bg-white/5" />
+      </div>
+      <div className="mx-auto max-w-6xl px-6 pb-16 md:pb-20">
+        <div className="card-border rounded-3xl p-px">
+          <div className="min-h-[min(85vh,780px)] rounded-3xl bg-navy lg:min-h-[640px]" />
+        </div>
+      </div>
+    </section>
   ),
 });
 
@@ -173,7 +182,7 @@ export default function Home() {
             icon={Landmark}
           >
             <p className="max-w-sm text-sm leading-relaxed text-muted">
-              From the Azteca&apos;s roar to SoFi&apos;s spectacle — world-class
+              From the Azteca&apos;s roar to SoFi&apos;s spectacle - world-class
               stadiums across the continent.
             </p>
           </SectionHeading>

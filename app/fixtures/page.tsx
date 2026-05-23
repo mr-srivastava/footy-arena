@@ -15,12 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const { fixtures } = await getWorldCupFixtures();
     return {
-      title: "Fixtures — Footy Arena",
-      description: `Full FIFA World Cup 2026 match schedule — all ${fixtures.length} fixtures across group stage and knockout rounds.`,
+      title: "Fixtures - Footy Arena",
+      description: `Full FIFA World Cup 2026 match schedule - all ${fixtures.length} fixtures across group stage and knockout rounds.`,
     };
   } catch {
     return {
-      title: "Fixtures — Footy Arena",
+      title: "Fixtures - Footy Arena",
       description:
         "Full FIFA World Cup 2026 match schedule across group stage and knockout rounds.",
     };

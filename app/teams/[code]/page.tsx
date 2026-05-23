@@ -36,12 +36,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const team = byCode.get(code.toUpperCase());
 
   if (!team) {
-    return { title: "Team — Footy Arena" };
+    return { title: "Team - Footy Arena" };
   }
 
   return {
-    title: `${team.displayName} — Footy Arena`,
-    description: `${team.displayName} at FIFA World Cup 2026 — ${team.groupLabel}, squad, manager, and fixtures.`,
+    title: `${team.displayName} - Footy Arena`,
+    description: `${team.displayName} at FIFA World Cup 2026 - ${team.groupLabel}, squad, manager, and fixtures.`,
   };
 }
 

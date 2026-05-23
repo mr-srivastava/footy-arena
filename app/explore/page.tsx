@@ -14,7 +14,9 @@ import { SiteHeader } from "@/components/site-header";
 import { StoryTemplateCard } from "@/components/story-template-card";
 import {
   DISCOVERY_COLLECTIONS,
+  EXPLORE_HERO_IMAGE,
   getFeaturedPlayers,
+  getHomepageCardImage,
   HOMEPAGE_MODULES,
   MATCH_STORY_TEMPLATES,
   METRIC_TRANSLATIONS,
@@ -46,29 +48,39 @@ export default function ExplorePage() {
           icon={Compass}
           titleClassName="md:text-7xl"
           subtitle="Curated stories, players, and narratives to help you discover the tournament - no live data required."
+          bannerImage={EXPLORE_HERO_IMAGE}
+          bannerAlt="World Cup atmosphere"
         />
 
-        <PageSection variant="stack">
+        <PageSection variant="editorial">
           <SectionHeading
             eyebrow="Get started"
             title={startJourney.title.toUpperCase()}
             icon={Sparkles}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {startJourney.cards.map((card) => (
-              <DiscoveryCard key={card.href} {...card} />
+              <DiscoveryCard
+                key={card.href}
+                {...card}
+                image={getHomepageCardImage(card.href)}
+              />
             ))}
           </div>
         </PageSection>
 
-        <PageSection variant="stack">
+        <PageSection variant="dense">
           <SectionHeading
             eyebrow="New to football?"
             title={catchMeUp.title.toUpperCase()}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {catchMeUp.cards.map((card) => (
-              <DiscoveryCard key={card.href} {...card} />
+              <DiscoveryCard
+                key={card.href}
+                {...card}
+                image={getHomepageCardImage(card.href)}
+              />
             ))}
           </div>
         </PageSection>
@@ -104,9 +116,13 @@ export default function ExplorePage() {
             eyebrow="Can't miss"
             title={nationsToWatch.title.toUpperCase()}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {nationsToWatch.cards.map((card) => (
-              <DiscoveryCard key={card.href} {...card} />
+              <DiscoveryCard
+                key={card.href}
+                {...card}
+                image={getHomepageCardImage(card.href)}
+              />
             ))}
           </div>
         </PageSection>

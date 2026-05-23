@@ -85,7 +85,7 @@ export const getWorldCupTeams = cache(async (): Promise<{
   return { teams, groups, byCode, byName };
 });
 
-export function resolveTeamByName(
+function resolveTeamByName(
   name: string,
   byName: Map<string, Team>,
 ): Team | undefined {
@@ -112,16 +112,6 @@ export function resolveTeamByFifaCode(
 
 export function formatGroupConfederations(teams: Team[]): string {
   return [...new Set(teams.map((team) => team.confed))].join(", ");
-}
-
-export function parseGroupLetter(groupLabel?: string): GroupLetter | null {
-  if (!groupLabel) return null;
-  const match = groupLabel.match(/^Group\s+([A-L])$/i);
-  if (!match) return null;
-  const letter = match[1].toUpperCase();
-  return GROUP_LETTERS.includes(letter as GroupLetter)
-    ? (letter as GroupLetter)
-    : null;
 }
 
 export function getGroupFixtures(

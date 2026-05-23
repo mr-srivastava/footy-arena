@@ -15,7 +15,7 @@ export function HomeOpeningFixturesSkeleton() {
       </div>
       <div className="grid gap-3 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-36 rounded-xl" />
+          <Skeleton key={i} className="h-36 rounded-sm" />
         ))}
       </div>
     </PageSection>

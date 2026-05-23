@@ -28,7 +28,7 @@ export function MobileNav() {
       >
         <Menu aria-hidden />
       </SheetTrigger>
-      <SheetContent side="right" className="w-72 border-border bg-card">
+      <SheetContent side="right" className="w-72 border-white/10 bg-artifact">
         <SheetHeader>
           <SheetTitle className="font-display text-xl tracking-[0.15em]">
             FOOTY ARENA

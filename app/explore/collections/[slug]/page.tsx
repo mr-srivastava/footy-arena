@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
   DISCOVERY_COLLECTIONS,
+  getCollectionImage,
   getDiscoveryCollection,
   getPlayersBySlugs,
 } from "@/lib/discovery";
@@ -45,7 +46,13 @@ export default async function CollectionPage({ params }: PageProps) {
       <SiteHeader />
 
       <ContentContainer>
-        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
+        <PageHero
+          variant="detail"
+          backHref="/explore"
+          backLabel="Explore"
+          bannerImage={getCollectionImage(collection.slug)}
+          bannerAlt={`${collection.title} atmosphere`}
+        >
           <SectionHeading
             as="h1"
             className="mb-0"

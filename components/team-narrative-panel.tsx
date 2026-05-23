@@ -1,9 +1,11 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { SubsectionTitle } from "@/components/subsection-title";
+import { getTeamNarrativeImage } from "@/lib/discovery";
 import type { PlayerProfile, TeamNarrative } from "@/lib/discovery/types";
+import { artifactSurface } from "@/lib/utils";
 
 export function TeamNarrativePanel({
   narrative,
@@ -13,8 +15,18 @@ export function TeamNarrativePanel({
   keyPlayers: PlayerProfile[];
 }) {
   return (
-    <Card accent="pitch" padding="none">
-      <CardContent className="p-6 md:p-8">
+    <section className={artifactSurface("relative overflow-hidden")}>
+      <MediaImage
+        src={getTeamNarrativeImage(narrative.fifaCode)}
+        alt={`${narrative.fifaCode} football culture`}
+        className="h-32"
+        sizes="(max-width: 1024px) 100vw, 50vw"
+      />
+      <div className="relative p-6 md:p-8">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-pitch-bright/12 to-transparent"
+          aria-hidden
+        />
         <SubsectionTitle level="panel" icon={Sparkles}>
           THE STORY
         </SubsectionTitle>
@@ -25,7 +37,7 @@ export function TeamNarrativePanel({
 
         <p className="mt-2 text-sm italic text-gold">{narrative.vibe}</p>
 
-        <div className="mt-6">
+        <div className="mt-6 border-l border-pitch-bright/45 pl-4">
           <SubsectionTitle level="label">Why watch</SubsectionTitle>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {narrative.whyCasualFansShouldCare}
@@ -34,18 +46,22 @@ export function TeamNarrativePanel({
 
         <div className="mt-6 flex flex-wrap gap-2">
           {narrative.identityTags.map((tag) => (
-            <Badge key={tag} variant="group" className="h-auto rounded-full px-3 py-1">
+            <Badge key={tag} variant="group" className="h-auto rounded-sm px-3 py-1">
               {tag}
             </Badge>
           ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 border-y border-white/8 py-4">
           <SubsectionTitle level="label">Current themes</SubsectionTitle>
-          <ul className="mt-2 flex flex-col gap-1.5">
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {narrative.currentThemes.map((theme) => (
-              <li key={theme} className="text-sm text-muted-foreground">
-                · {theme}
+              <li
+                key={theme}
+                className="grid grid-cols-[auto_1fr] gap-2 text-sm text-muted-foreground"
+              >
+                <span className="mt-2 h-px w-4 bg-pitch-bright/55" aria-hidden />
+                <span>{theme}</span>
               </li>
             ))}
           </ul>
@@ -59,7 +75,7 @@ export function TeamNarrativePanel({
                 <Link
                   key={player.slug}
                   href={`/players/${player.slug}`}
-                  className="rounded-full border border-border bg-surface-elevated/60 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-gold/40 hover:text-gold"
+                  className="rounded-sm border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-gold/40 hover:text-gold"
                 >
                   {player.name}
                 </Link>
@@ -67,7 +83,7 @@ export function TeamNarrativePanel({
             </div>
           </div>
         ) : null}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

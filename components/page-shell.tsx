@@ -7,7 +7,7 @@ export function PageShell({
 }) {
   return (
     <div
-      className={`relative min-h-screen overflow-x-hidden pitch-grid ${className}`}
+      className={`relative min-h-screen overflow-x-hidden ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 hero-glow" />
       <div

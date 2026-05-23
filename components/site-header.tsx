@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 export function SiteHeader({ className = "" }: { className?: string }) {
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-border bg-background shadow-sm ${className}`}
+      className={`sticky top-0 z-50 border-b border-white/8 bg-background/92 backdrop-blur-xl ${className}`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <Link
           href="/"
           className="group flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <div className="flex size-10 items-center justify-center rounded-full bg-pitch/15 ring-1 ring-pitch/50 transition-shadow group-hover:shadow-[0_0_20px_rgba(61,220,132,0.25)]">
+          <div className="flex size-10 items-center justify-center rounded-sm border border-pitch/40 bg-pitch/12 transition-colors group-hover:border-gold/45">
             <Trophy className="h-5 w-5 text-gold" aria-hidden />
           </div>
           <span className="font-display text-2xl tracking-[0.15em] text-foreground">

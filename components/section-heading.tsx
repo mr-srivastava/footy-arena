@@ -29,12 +29,12 @@ export function SectionHeading({
 }) {
   const Heading = as;
   const baseTitleClass =
-    "mt-3 font-display text-5xl tracking-wide text-foreground md:text-6xl";
+    "mt-3 font-display text-4xl tracking-wide text-foreground md:text-6xl";
   const centered = align === "center";
 
   return (
     <div
-      className={`mb-12 flex flex-col gap-4 ${
+      className={`mb-10 flex flex-col gap-4 md:mb-12 ${
         centered
           ? "items-center text-center"
           : "md:flex-row md:items-end md:justify-between"

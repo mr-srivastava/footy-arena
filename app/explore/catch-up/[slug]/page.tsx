@@ -6,8 +6,8 @@ import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Card, CardContent } from "@/components/ui/card";
-import { CATCH_UP_TOPICS, getCatchUpTopic } from "@/lib/discovery";
+import { CATCH_UP_TOPICS, getCatchUpImage, getCatchUpTopic } from "@/lib/discovery";
+import { artifactSurface } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -37,7 +37,13 @@ export default async function CatchUpPage({ params }: PageProps) {
       <SiteHeader />
 
       <ContentContainer width="narrow">
-        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
+        <PageHero
+          variant="detail"
+          backHref="/explore"
+          backLabel="Explore"
+          bannerImage={getCatchUpImage(topic.slug)}
+          bannerAlt={`${topic.title} atmosphere`}
+        >
           <SectionHeading
             as="h1"
             className="mb-0"
@@ -47,21 +53,22 @@ export default async function CatchUpPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <Card accent="pitch" padding="none">
-          <CardContent className="p-6 md:p-8">
-            <ul className="flex flex-col gap-5">
-              {topic.bullets.map((bullet) => (
-                <li
-                  key={bullet}
-                  className="flex gap-3 text-base leading-relaxed text-muted-foreground"
-                >
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-pitch-bright" />
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <article className={artifactSurface("p-6 md:p-8")}>
+          <ul className="divide-y divide-white/8 border-y border-white/8">
+            {topic.bullets.map((bullet) => (
+              <li
+                key={bullet}
+                className="grid grid-cols-[auto_1fr] gap-4 py-5 text-base leading-relaxed text-muted-foreground"
+              >
+                <span
+                  className="mt-3 h-px w-7 shrink-0 bg-pitch-bright/60"
+                  aria-hidden
+                />
+                {bullet}
+              </li>
+            ))}
+          </ul>
+        </article>
       </ContentContainer>
 
       <SiteFooter />

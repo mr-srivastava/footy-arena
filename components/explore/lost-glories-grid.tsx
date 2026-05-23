@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { LOST_GLORIES } from "@/lib/discovery";
+import { MediaImage } from "@/components/media-image";
+import { getNationImage, LOST_GLORIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
+import { artifactSurface } from "@/lib/utils";
 
 type LostGloriesGridProps = {
   byCode: Map<string, Team>;
@@ -10,18 +11,30 @@ type LostGloriesGridProps = {
 
 export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {LOST_GLORIES.map((entry) => {
         const { team, href } = resolveTeamByFifaCode(entry.fifaCode, byCode);
 
         return (
-          <Card key={entry.nation} padding="none" className="h-full">
-            <CardContent className="flex h-full flex-col p-6">
-              <CardTitle className="font-display text-3xl tracking-wide text-foreground">
+          <article
+            key={entry.nation}
+            className={artifactSurface("flex h-full flex-col overflow-hidden")}
+          >
+            <MediaImage
+              src={getNationImage(entry.nation)}
+              alt={`${entry.nation} football atmosphere`}
+              className="h-28 shrink-0"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+            <div className="flex flex-1 flex-col p-5">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-gold">
+                Lost glory
+              </p>
+              <h2 className="mt-2 font-display text-4xl leading-none tracking-wide text-foreground">
                 {entry.nation.toUpperCase()}
-              </CardTitle>
-              <dl className="mt-5 flex flex-col gap-4 text-sm">
-                <div>
+              </h2>
+              <dl className="mt-5 flex flex-col divide-y divide-white/8 border-y border-white/8 text-sm">
+                <div className="py-3">
                   <dt className="text-xs font-semibold uppercase tracking-widest text-gold">
                     Then
                   </dt>
@@ -29,7 +42,7 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                     {entry.then}
                   </dd>
                 </div>
-                <div>
+                <div className="py-3">
                   <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
                     What changed
                   </dt>
@@ -37,7 +50,7 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                     {entry.whatChanged}
                   </dd>
                 </div>
-                <div>
+                <div className="py-3">
                   <dt className="text-xs font-semibold uppercase tracking-widest text-muted">
                     Now
                   </dt>
@@ -45,7 +58,7 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                     {entry.currentStatus}
                   </dd>
                 </div>
-                <div>
+                <div className="py-3">
                   <dt className="text-xs font-semibold uppercase tracking-widest text-pitch-bright">
                     Hope ahead
                   </dt>
@@ -62,8 +75,8 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                   View {team.displayName} →
                 </Link>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </article>
         );
       })}
     </div>

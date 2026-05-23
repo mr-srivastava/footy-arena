@@ -1,9 +1,8 @@
 import { ClipboardList, UserRound } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
 import type { TeamSquad } from "@/lib/tournament/types";
+import { artifactSurface } from "@/lib/utils";
 
 export function SquadPanel({ squad }: { squad: TeamSquad }) {
   const playersByPosition = groupPlayersByPosition(squad);
@@ -12,11 +11,10 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
   return (
     <section className="flex flex-col gap-6">
       {squad.manager ? (
-        <Card padding="none">
-          <CardContent className="p-5">
+        <article className={artifactSurface("bg-artifact-muted p-5")}>
             <SubsectionTitle level="label">Head coach</SubsectionTitle>
             <div className="mt-3 flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-full bg-gold/12 ring-1 ring-gold/25">
+              <div className="flex size-12 items-center justify-center rounded-sm border border-gold/25 bg-gold/10">
                 <UserRound className="h-6 w-6 text-gold" aria-hidden />
               </div>
               <div>
@@ -30,29 +28,26 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                 ) : null}
               </div>
             </div>
-          </CardContent>
-        </Card>
+        </article>
       ) : null}
 
-      <Card padding="none">
-        <CardContent className="p-5">
+      <article className={artifactSurface("bg-artifact-muted p-5")}>
           <SubsectionTitle level="panel" icon={ClipboardList}>
             SQUAD
           </SubsectionTitle>
 
           {hasPlayers ? (
-            <div className="mt-6 flex flex-col gap-6">
+            <div className="mt-6 flex flex-col gap-7">
               {playersByPosition.map(({ position, label, players }) =>
                 players.length > 0 ? (
                   <div key={position}>
                     <SubsectionTitle level="label" tone="gold">
                       {label}
                     </SubsectionTitle>
-                    <ul className="mt-3">
-                      {players.map((player, index) => (
+                    <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
+                      {players.map((player) => (
                         <li key={`${player.name}-${player.number ?? ""}`}>
-                          {index > 0 ? <Separator className="my-2.5" /> : null}
-                          <div className="flex items-center justify-between gap-3 py-2.5">
+                          <div className="flex items-center justify-between gap-3 py-3">
                             <div className="min-w-0">
                               <p className="font-medium text-foreground">
                                 {player.name}
@@ -64,7 +59,7 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                               ) : null}
                             </div>
                             {player.number ? (
-                              <span className="font-mono text-sm text-muted-foreground">
+                              <span className="rounded-sm bg-white/5 px-2 py-1 font-mono text-xs text-muted-foreground">
                                 {player.number}
                               </span>
                             ) : null}
@@ -83,8 +78,7 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                 : "Squad and coaching staff to be confirmed closer to the tournament."}
             </p>
           )}
-        </CardContent>
-      </Card>
+      </article>
     </section>
   );
 }

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { RISING_UNDERDOG_ENTRIES } from "@/lib/discovery";
+import { MediaImage } from "@/components/media-image";
+import { getNationImage, RISING_UNDERDOG_ENTRIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
+import { artifactSurface } from "@/lib/utils";
 
 type RisingUnderdogsGridProps = {
   byCode: Map<string, Team>;
@@ -10,21 +11,39 @@ type RisingUnderdogsGridProps = {
 
 export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {RISING_UNDERDOG_ENTRIES.map((entry) => {
         const { breakoutPlayers } = entry;
         const { team, href } = resolveTeamByFifaCode(entry.fifaCode, byCode);
 
         return (
-          <Card key={entry.nation} padding="none" className="h-full">
-            <CardContent className="flex h-full flex-col p-6">
-              <CardTitle className="font-display text-3xl tracking-wide text-foreground">
+          <article
+            key={entry.nation}
+            className={artifactSurface(
+              "relative flex h-full flex-col overflow-hidden",
+            )}
+          >
+            <MediaImage
+              src={getNationImage(entry.nation)}
+              alt={`${entry.nation} football atmosphere`}
+              className="h-28 shrink-0"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+            <div className="relative flex flex-1 flex-col p-5">
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pitch-bright/14 to-transparent"
+                aria-hidden
+              />
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-pitch-bright">
+                Rising profile
+              </p>
+              <h2 className="mt-2 font-display text-4xl leading-none tracking-wide text-foreground">
                 {entry.nation.toUpperCase()}
-              </CardTitle>
+              </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {entry.whyTheyMatter}
               </p>
-              <p className="mt-3 rounded-xl bg-pitch/10 px-4 py-3 text-sm text-pitch-bright">
+              <p className="mt-4 border-l border-pitch-bright/50 pl-4 text-sm font-medium leading-relaxed text-pitch-bright">
                 {entry.keyIdentity}
               </p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -36,7 +55,7 @@ export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
                     <Link
                       key={player.slug}
                       href={`/players/${player.slug}`}
-                      className="rounded-full border border-white/10 px-3 py-1 text-sm hover:text-gold"
+                      className="rounded-sm border border-white/10 px-3 py-1 text-sm hover:border-gold/35 hover:text-gold"
                     >
                       {player.name}
                     </Link>
@@ -51,8 +70,8 @@ export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
                   View {team.displayName} →
                 </Link>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </article>
         );
       })}
     </div>

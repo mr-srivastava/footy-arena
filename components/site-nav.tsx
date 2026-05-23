@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  CalendarDays,
-  Compass,
-  Globe2,
-  LayoutGrid,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { CalendarDays, Compass, LayoutGrid, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,26 +10,22 @@ const navLinks: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/teams", label: "Teams", icon: Users },
   { href: "/groups", label: "Groups", icon: LayoutGrid },
   { href: "/fixtures", label: "Fixtures", icon: CalendarDays },
-  { href: "/#hosts", label: "Host Nations", icon: Globe2 },
-  { href: "/#cities", label: "Cities", icon: MapPin },
 ];
 
 function isNavActive(pathname: string, href: string): boolean {
-  if (href.startsWith("/#")) return false;
   if (href === "/") return pathname === "/";
-  const base = href.split("#")[0] ?? href;
-  return pathname === base || pathname.startsWith(`${base}/`);
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function navLinkClass(active: boolean, mobile: boolean) {
   if (mobile) {
     return active
-      ? "flex items-center gap-2 rounded-xl bg-white/5 px-4 py-3 text-sm text-gold"
-      : "flex items-center gap-2 rounded-xl px-4 py-3 text-sm text-muted transition-colors hover:bg-white/5 hover:text-foreground";
+      ? "flex items-center gap-2 rounded-sm border border-gold/25 bg-gold/8 px-4 py-3 text-sm text-gold"
+      : "flex items-center gap-2 rounded-sm border border-transparent px-4 py-3 text-sm text-muted transition-colors hover:border-white/10 hover:bg-white/5 hover:text-foreground";
   }
   return active
-    ? "flex items-center gap-1.5 text-gold"
-    : "flex items-center gap-1.5 transition-colors hover:text-gold";
+    ? "flex items-center gap-1.5 border-b border-gold/60 pb-1 text-gold"
+    : "flex items-center gap-1.5 border-b border-transparent pb-1 transition-colors hover:border-white/20 hover:text-gold";
 }
 
 export function SiteNav({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {

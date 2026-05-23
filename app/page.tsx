@@ -26,7 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { artifactSurface } from "@/lib/utils";
 import { HOST_CITIES } from "@/lib/openfootball/constants";
 import { HOST_CITY_VENUES, HOST_NATIONS } from "@/lib/openfootball/host-venues";
-import { HOMEPAGE_MODULES } from "@/lib/discovery";
+import { MediaImage } from "@/components/media-image";
+import { getHomepageCardImage, HOMEPAGE_MODULES } from "@/lib/discovery";
 
 export default function Home() {
   const startJourney = HOMEPAGE_MODULES.find(
@@ -71,9 +72,13 @@ export default function Home() {
                     "group relative min-h-80 overflow-hidden p-6 md:p-8",
                   )}
                 >
-                  <div
-                    className="home-discovery-feature-bg absolute inset-0"
-                    aria-hidden
+                  <MediaImage
+                    src={getHomepageCardImage(featuredJourneyCard.href)}
+                    alt={`${featuredJourneyCard.title} atmosphere`}
+                    overlay="hero"
+                    className="absolute inset-0"
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    priority
                   />
                   <div
                     className="home-discovery-field-lines absolute bottom-0 left-0 right-0 h-24 opacity-50"

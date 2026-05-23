@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { RISING_UNDERDOG_ENTRIES } from "@/lib/discovery";
+import { MediaImage } from "@/components/media-image";
+import { getNationImage, RISING_UNDERDOG_ENTRIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
 import { artifactSurface } from "@/lib/utils";
@@ -19,14 +20,20 @@ export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
           <article
             key={entry.nation}
             className={artifactSurface(
-              "relative flex h-full flex-col overflow-hidden p-5",
+              "relative flex h-full flex-col overflow-hidden",
             )}
           >
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pitch-bright/14 to-transparent"
-              aria-hidden
+            <MediaImage
+              src={getNationImage(entry.nation)}
+              alt={`${entry.nation} football atmosphere`}
+              className="h-28 shrink-0"
+              sizes="(max-width: 768px) 100vw, 33vw"
             />
-            <div className="relative">
+            <div className="relative flex flex-1 flex-col p-5">
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pitch-bright/14 to-transparent"
+                aria-hidden
+              />
               <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-pitch-bright">
                 Rising profile
               </p>

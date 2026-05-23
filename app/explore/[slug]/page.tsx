@@ -9,6 +9,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
+  getCategoryImage,
   getCategoryPlayerSlugs,
   getDiscoveryCategory,
   getDiscoveryCategorySlugs,
@@ -47,7 +48,13 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
       <SiteHeader />
 
       <ContentContainer>
-        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
+        <PageHero
+          variant="detail"
+          backHref="/explore"
+          backLabel="Explore"
+          bannerImage={getCategoryImage(category.slug)}
+          bannerAlt={`${category.title} atmosphere`}
+        >
           <SectionHeading
             as="h1"
             className="mb-0"

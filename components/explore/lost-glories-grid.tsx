@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LOST_GLORIES } from "@/lib/discovery";
+import { MediaImage } from "@/components/media-image";
+import { getNationImage, LOST_GLORIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
 import { artifactSurface } from "@/lib/utils";
@@ -17,8 +18,15 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
         return (
           <article
             key={entry.nation}
-            className={artifactSurface("flex h-full flex-col p-5")}
+            className={artifactSurface("flex h-full flex-col overflow-hidden")}
           >
+            <MediaImage
+              src={getNationImage(entry.nation)}
+              alt={`${entry.nation} football atmosphere`}
+              className="h-28 shrink-0"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+            <div className="flex flex-1 flex-col p-5">
               <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-gold">
                 Lost glory
               </p>
@@ -67,6 +75,7 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                   View {team.displayName} →
                 </Link>
               ) : null}
+            </div>
           </article>
         );
       })}

@@ -1,7 +1,9 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
 import { SubsectionTitle } from "@/components/subsection-title";
+import { getTeamNarrativeImage } from "@/lib/discovery";
 import type { PlayerProfile, TeamNarrative } from "@/lib/discovery/types";
 import { artifactSurface } from "@/lib/utils";
 
@@ -13,12 +15,18 @@ export function TeamNarrativePanel({
   keyPlayers: PlayerProfile[];
 }) {
   return (
-    <section className={artifactSurface("relative overflow-hidden p-6 md:p-8")}>
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-pitch-bright/12 to-transparent"
-        aria-hidden
+    <section className={artifactSurface("relative overflow-hidden")}>
+      <MediaImage
+        src={getTeamNarrativeImage(narrative.fifaCode)}
+        alt={`${narrative.fifaCode} football culture`}
+        className="h-32"
+        sizes="(max-width: 1024px) 100vw, 50vw"
       />
-      <div className="relative">
+      <div className="relative p-6 md:p-8">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-pitch-bright/12 to-transparent"
+          aria-hidden
+        />
         <SubsectionTitle level="panel" icon={Sparkles}>
           THE STORY
         </SubsectionTitle>

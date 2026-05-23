@@ -6,7 +6,7 @@ import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { CATCH_UP_TOPICS, getCatchUpTopic } from "@/lib/discovery";
+import { CATCH_UP_TOPICS, getCatchUpImage, getCatchUpTopic } from "@/lib/discovery";
 import { artifactSurface } from "@/lib/utils";
 
 type PageProps = {
@@ -37,7 +37,13 @@ export default async function CatchUpPage({ params }: PageProps) {
       <SiteHeader />
 
       <ContentContainer width="narrow">
-        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
+        <PageHero
+          variant="detail"
+          backHref="/explore"
+          backLabel="Explore"
+          bannerImage={getCatchUpImage(topic.slug)}
+          bannerAlt={`${topic.title} atmosphere`}
+        >
           <SectionHeading
             as="h1"
             className="mb-0"

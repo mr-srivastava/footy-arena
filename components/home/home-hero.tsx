@@ -1,7 +1,9 @@
 import { Calendar, Globe2, MapPin, Trophy, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ContentContainer } from "@/components/content-container";
+import { MediaImage } from "@/components/media-image";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HOME_HERO_IMAGE } from "@/lib/discovery";
 import { artifactSurface } from "@/lib/utils";
 import {
   HOST_CITIES,
@@ -134,6 +136,13 @@ export async function HomeHero() {
           </div>
 
           <div className="animate-fade-up animate-delay-5 relative">
+            <MediaImage
+              src={HOME_HERO_IMAGE}
+              alt="World Cup 2026 host stadium atmosphere"
+              overlay="hero"
+              className="absolute -inset-4 -z-10 hidden rounded-sm opacity-35 lg:block"
+              sizes="40vw"
+            />
             <div
               className="absolute -inset-x-8 top-1/2 hidden h-px bg-gradient-to-r from-transparent via-pitch-bright/30 to-transparent lg:block"
               aria-hidden

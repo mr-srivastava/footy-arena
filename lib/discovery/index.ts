@@ -112,3 +112,15 @@ export function getCategoryPlayerSlugs(
 export function getCatchUpTopic(slug: string) {
   return CATCH_UP_TOPICS.find((topic) => topic.slug === slug);
 }
+
+export {
+  EXPLORE_HERO_IMAGE,
+  HOME_HERO_IMAGE,
+  getCatchUpImage,
+  getCategoryImage,
+  getCollectionImage,
+  getHomepageCardImage,
+  getNationImage,
+  getTeamNarrativeImage,
+} from "./images";
+export { getFotmobPlayerImageUrl, getPlayerImage } from "./player-images";

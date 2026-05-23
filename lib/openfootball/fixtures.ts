@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type {
   Fixture,
   FixtureStage,
@@ -94,11 +95,11 @@ export function formatPlaceholderTeam(code: string): string {
   return code;
 }
 
-export async function getWorldCupFixtures(): Promise<{
+export const getWorldCupFixtures = cache(async (): Promise<{
   tournament: string;
   fixtures: Fixture[];
   byDate: FixturesByDate[];
-}> {
+}> => {
   const response = await fetch(WC2026_URL, {
     next: { revalidate: 86_400 },
   });
@@ -118,11 +119,11 @@ export async function getWorldCupFixtures(): Promise<{
   }
 
   const byDate: FixturesByDate[] = [...dateMap.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([date, matches]) => ({
       date,
       dateLabel: formatDateLabel(date),
-      matches: matches.sort((a, b) => a.time.localeCompare(b.time)),
+      matches: matches.toSorted((a, b) => a.time.localeCompare(b.time)),
     }));
 
   return {
@@ -130,7 +131,7 @@ export async function getWorldCupFixtures(): Promise<{
     fixtures,
     byDate,
   };
-}
+});
 
 export function getOpeningDayFixtures(
   fixtures: Fixture[],
@@ -138,7 +139,7 @@ export function getOpeningDayFixtures(
 ): Fixture[] {
   return fixtures
     .filter((f) => f.date === date)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .toSorted((a, b) => a.time.localeCompare(b.time));
 }
 
 export { formatKickoff };

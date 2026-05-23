@@ -34,3 +34,25 @@ export type FixturesByDate = {
   dateLabel: string;
   matches: Fixture[];
 };
+
+export type OpenFootballTeam = {
+  name: string;
+  name_normalised?: string;
+  continent: string;
+  flag_icon: string;
+  fifa_code: string;
+  group: string;
+  confed: string;
+};
+
+export type Team = OpenFootballTeam & {
+  displayName: string;
+  slug: string;
+  groupLabel: string;
+};
+
+export type TournamentGroup = {
+  letter: string;
+  label: string;
+  teams: Team[];
+};

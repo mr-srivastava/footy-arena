@@ -1,96 +1,108 @@
 import { Clock, MapPin } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   formatKickoff,
   formatPlaceholderTeam,
   isPlaceholderTeam,
 } from "@/lib/openfootball/fixtures";
 import type { Fixture } from "@/lib/openfootball/types";
+import type { CardAccent } from "@/components/ui/card";
 
-function TeamName({ name }: { name: string }) {
+function TeamName({ name, href }: { name: string; href?: string }) {
   const placeholder = isPlaceholderTeam(name);
+  const label = placeholder ? formatPlaceholderTeam(name) : name;
+  const className = placeholder
+    ? "text-sm font-medium text-muted-foreground italic"
+    : "text-sm font-semibold leading-tight text-foreground";
 
-  return (
-    <span
-      className={
-        placeholder
-          ? "text-sm font-medium text-muted italic"
-          : "text-sm font-semibold leading-tight text-foreground"
-      }
-    >
-      {placeholder ? formatPlaceholderTeam(name) : name}
-    </span>
-  );
+  if (href && !placeholder) {
+    return (
+      <Link href={href} className={`${className} hover:text-gold`}>
+        {label}
+      </Link>
+    );
+  }
+
+  return <span className={className}>{label}</span>;
 }
 
-const stageAccent: Record<string, string> = {
-  group: "from-pitch-bright/80",
-  final: "from-gold",
-  "third-place": "from-gold/70",
-  "semi-final": "from-gold/60",
-  "quarter-final": "from-gold/50",
-  "round-of-16": "from-teal/80",
-  "round-of-32": "from-teal/60",
+const stageAccent: Record<string, CardAccent> = {
+  group: "pitch",
+  final: "gold",
+  "third-place": "gold",
+  "semi-final": "gold",
+  "quarter-final": "gold",
+  "round-of-16": "teal",
+  "round-of-32": "teal",
 };
 
-export function FixtureCard({ fixture }: { fixture: Fixture }) {
+export function FixtureCard({
+  fixture,
+  team1Href,
+  team2Href,
+}: {
+  fixture: Fixture;
+  team1Href?: string;
+  team2Href?: string;
+}) {
   const knockout = fixture.stage !== "group";
-  const accent = stageAccent[fixture.stage] ?? "from-pitch-bright/80";
+  const accent = stageAccent[fixture.stage] ?? "pitch";
 
   return (
-    <article className="glass-panel glass-panel-interactive group relative overflow-hidden rounded-xl p-4">
-      <div
-        className={`absolute inset-y-0 left-0 w-0.5 bg-gradient-to-b ${accent} to-transparent opacity-80`}
-        aria-hidden
-      />
-
-      <div className="flex flex-wrap items-center justify-between gap-2 pl-2">
-        <span
-          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide ${
-            knockout
-              ? "bg-gold/12 text-gold ring-1 ring-gold/20"
-              : "bg-pitch/12 text-pitch-bright ring-1 ring-pitch/25"
-          }`}
-        >
+    <Card accent={accent} interactive padding="none" className="group">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-0 pl-6">
+        <Badge variant={knockout ? "knockout" : "group"}>
           {fixture.stageLabel}
-        </span>
-        <div className="flex items-center gap-2 text-xs text-muted">
+        </Badge>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {fixture.num ? (
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted/80">
-              #{fixture.num}
-            </span>
+            <Badge variant="country">#{fixture.num}</Badge>
           ) : null}
           <span className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <Clock aria-hidden />
             {formatKickoff(fixture.time)}
           </span>
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="relative mt-4 pl-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0 flex-1 text-left">
-            <TeamName name={fixture.team1} />
+      <CardContent className="pl-6">
+        <div className="relative">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1 text-left">
+              <TeamName name={fixture.team1} href={team1Href} />
+            </div>
+            <div
+              className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-sunken/80 font-display text-sm text-muted-foreground transition-colors group-hover:border-pitch/30 group-hover:text-pitch-bright"
+              aria-hidden
+            >
+              VS
+            </div>
+            <div className="min-w-0 flex-1 text-right">
+              <TeamName name={fixture.team2} href={team2Href} />
+            </div>
           </div>
           <div
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-background/80 font-display text-sm text-muted transition-colors group-hover:border-pitch/30 group-hover:text-pitch-bright"
+            className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-border to-transparent"
             aria-hidden
-          >
-            VS
-          </div>
-          <div className="min-w-0 flex-1 text-right">
-            <TeamName name={fixture.team2} />
-          </div>
+          />
         </div>
-        <div
-          className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-white/8 to-transparent"
-          aria-hidden
-        />
-      </div>
+      </CardContent>
 
-      <p className="mt-4 flex items-start gap-1.5 border-t border-white/6 pt-3 pl-2 text-xs text-muted">
-        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
-        <span>{fixture.ground}</span>
-      </p>
-    </article>
+      <CardFooter className="mt-0 flex-col items-stretch gap-3 border-0 bg-transparent p-0 px-4 pb-4 pl-6 pt-0">
+        <Separator />
+        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+          <MapPin className="mt-0.5 shrink-0 text-pitch-bright/70" aria-hidden />
+          <span>{fixture.ground}</span>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }

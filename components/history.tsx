@@ -1,7 +1,9 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { SectionHeading } from "@/components/section-heading";
 
 type Player = {
   name: string;
@@ -212,39 +214,49 @@ const ERAS: Era[] = [
   },
 ];
 
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", onStoreChange);
+  return () => mq.removeEventListener("change", onStoreChange);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
 function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  return reduced;
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
 }
 
 function PlayerCard({ player }: { player: Player }) {
   return (
-    <article className="glass-panel flex flex-col rounded-xl p-4">
-      <div className="flex items-start gap-3">
-        <span className="text-2xl leading-none" aria-hidden>
-          {player.flag}
-        </span>
-        <div className="min-w-0">
-          <h4 className="font-semibold leading-tight text-foreground">
-            {player.name}
-          </h4>
-          <p className="mt-0.5 text-xs text-gold">{player.role}</p>
-          <p className="text-xs text-muted">{player.country}</p>
+    <Card padding="none">
+      <CardContent className="flex flex-col p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl leading-none" aria-hidden>
+            {player.flag}
+          </span>
+          <div className="min-w-0">
+            <h4 className="font-semibold leading-tight text-foreground">
+              {player.name}
+            </h4>
+            <p className="mt-0.5 text-xs text-gold">{player.role}</p>
+            <p className="text-xs text-muted-foreground">{player.country}</p>
+          </div>
         </div>
-      </div>
-      <p className="mt-3 flex-1 text-xs leading-relaxed text-muted">
-        {player.achievement}
-      </p>
-    </article>
+        <p className="mt-3 flex-1 text-xs leading-relaxed text-muted-foreground">
+          {player.achievement}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -310,6 +322,8 @@ function EraSlide({ era, index }: { era: Era; index: number }) {
 
 export default function History() {
   const [index, setIndex] = useState(0);
+  const indexRef = useRef(index);
+  indexRef.current = index;
   const reducedMotion = usePrefersReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -330,8 +344,14 @@ export default function History() {
     [reducedMotion],
   );
 
-  const goNext = useCallback(() => scrollToIndex(index + 1), [index, scrollToIndex]);
-  const goPrev = useCallback(() => scrollToIndex(index - 1), [index, scrollToIndex]);
+  const goNext = useCallback(
+    () => scrollToIndex(indexRef.current + 1),
+    [scrollToIndex],
+  );
+  const goPrev = useCallback(
+    () => scrollToIndex(indexRef.current - 1),
+    [scrollToIndex],
+  );
 
   useEffect(() => {
     const track = trackRef.current;
@@ -376,18 +396,15 @@ export default function History() {
       aria-label="Why the World Cup matters"
       className="relative z-10 border-y border-white/8"
     >
-      <div className="relative mx-auto max-w-6xl px-6 py-16 text-center md:py-20">
-        <p className="section-eyebrow justify-center">
-          <Clock className="h-4 w-4" aria-hidden />
-          Act II — Mythology
-        </p>
-        <h2 className="mt-3 font-display text-5xl tracking-wide text-foreground md:text-6xl">
-          WHY IT MATTERS
-        </h2>
-        <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted md:text-base">
-          Five eras. Scroll sideways — or use the arrows — through the story of
-          the tournament.
-        </p>
+      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <SectionHeading
+          align="center"
+          className="mb-0"
+          eyebrow="Act II — Mythology"
+          title="WHY IT MATTERS"
+          icon={Clock}
+          subtitle="Five eras. Scroll sideways — or use the arrows — through the story of the tournament."
+        />
       </div>
 
       <div className="mx-auto max-w-6xl px-6 pb-16 md:pb-20">

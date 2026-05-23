@@ -38,7 +38,12 @@ export function MobileNav() {
           <SiteNav variant="mobile" />
         </nav>
         <SheetFooter>
-          <Button render={<Link href="/fixtures" />} size="pill" className="w-full">
+          <Button
+            render={<Link href="/fixtures" />}
+            nativeButton={false}
+            size="pill"
+            className="w-full"
+          >
             <CalendarDays data-icon="inline-start" aria-hidden />
             View Fixtures
           </Button>

@@ -30,7 +30,12 @@ export function SiteHeader({ className = "" }: { className?: string }) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button render={<Link href="/fixtures" />} size="pill" className="hidden sm:inline-flex">
+          <Button
+            render={<Link href="/fixtures" />}
+            nativeButton={false}
+            size="pill"
+            className="hidden sm:inline-flex"
+          >
             <CalendarDays data-icon="inline-start" aria-hidden />
             View Fixtures
           </Button>

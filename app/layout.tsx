@@ -36,6 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={cn("h-full", bebas.variable, archivo.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full font-[family-name:var(--font-archivo)] antialiased">

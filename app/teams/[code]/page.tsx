@@ -97,6 +97,7 @@ export default async function TeamPage({ params }: PageProps) {
           actions={
             <Button
               render={<Link href={`/groups/${team.group.toLowerCase()}`} />}
+              nativeButton={false}
               variant="outline"
               size="pill"
               className="text-gold"

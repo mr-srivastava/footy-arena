@@ -9,7 +9,7 @@ import {
   HOST_COUNTRIES,
   TOURNAMENT_NATIONS,
 } from "@/lib/openfootball/constants";
-import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
+import { getHomeHeroData } from "@/lib/page-data/home";
 
 function buildTickerItems(stats: { ticker: string }[]): string[] {
   const items = stats.flatMap((s) => [s.ticker, "·"]);
@@ -46,8 +46,7 @@ export function HomeHeroSkeleton() {
 }
 
 export async function HomeHero() {
-  const { fixtures } = await getWorldCupFixtures();
-  const matchCount = fixtures.length;
+  const { matchCount } = await getHomeHeroData();
 
   const stats: {
     value: number;

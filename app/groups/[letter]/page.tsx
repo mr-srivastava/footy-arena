@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
-import { FixtureCard } from "@/components/fixture-card";
+import { FixtureList } from "@/components/fixture-list";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { PageShell } from "@/components/page-shell";
@@ -13,11 +13,11 @@ import { SubsectionTitle } from "@/components/subsection-title";
 import { TeamCard } from "@/components/team-card";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
+  formatGroupConfederations,
   GROUP_LETTERS,
   type GroupLetter,
   getGroupFixtures,
   getWorldCupTeams,
-  teamPageHref,
 } from "@/lib/openfootball/teams";
 
 type PageProps = {
@@ -62,10 +62,7 @@ export default async function GroupPage({ params }: PageProps) {
   if (!group) notFound();
 
   const groupFixtures = getGroupFixtures(fixtures, groupLetter);
-  const confeds = group.teams
-    .map((t) => t.confed)
-    .filter((v, i, a) => a.indexOf(v) === i)
-    .join(", ");
+  const confeds = formatGroupConfederations(group.teams);
 
   return (
     <PageShell>
@@ -115,16 +112,11 @@ export default async function GroupPage({ params }: PageProps) {
           </div>
 
           {groupFixtures.length > 0 ? (
-            <div className="reveal-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {groupFixtures.map((fixture) => (
-                <FixtureCard
-                  key={fixture.id}
-                  fixture={fixture}
-                  team1Href={teamPageHref(fixture.team1, byName)}
-                  team2Href={teamPageHref(fixture.team2, byName)}
-                />
-              ))}
-            </div>
+            <FixtureList
+              fixtures={groupFixtures}
+              byName={byName}
+              className="sm:grid-cols-2 lg:grid-cols-3"
+            />
           ) : (
             <p className="text-sm text-muted">
               Group fixtures are not available yet.{" "}

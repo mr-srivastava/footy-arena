@@ -19,6 +19,7 @@ import { MATCH_STORY_TEMPLATES } from "./seed/match-templates";
 import { METRIC_TRANSLATIONS } from "./seed/metrics";
 import { PLAYERS } from "./seed/players";
 import { TEAM_NARRATIVES } from "./seed/teams";
+import { WORLD_CUP_HISTORY_ERAS } from "./seed/history";
 
 const playersBySlug = new Map(PLAYERS.map((player) => [player.slug, player]));
 const narrativesByCode = new Map(
@@ -56,6 +57,7 @@ export {
   PLAYERS,
   RISING_UNDERDOGS,
   TEAM_NARRATIVES,
+  WORLD_CUP_HISTORY_ERAS,
 };
 
 export function getAllPlayers(): PlayerProfile[] {
@@ -90,6 +92,10 @@ export function getDiscoveryCategory(
   slug: string,
 ): DiscoveryCategory | undefined {
   return categoriesBySlug.get(slug as DiscoveryCategorySlug);
+}
+
+export function getDiscoveryCategorySlugs(): DiscoveryCategorySlug[] {
+  return DISCOVERY_CATEGORIES.map((category) => category.slug);
 }
 
 export function getDiscoveryCollection(

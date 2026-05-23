@@ -142,4 +142,14 @@ export function getOpeningDayFixtures(
     .toSorted((a, b) => a.time.localeCompare(b.time));
 }
 
+export function getFixtureStageCounts(fixtures: Fixture[]) {
+  const groupMatches = fixtures.filter((fixture) => fixture.stage === "group").length;
+
+  return {
+    total: fixtures.length,
+    groupMatches,
+    knockoutMatches: fixtures.length - groupMatches,
+  };
+}
+
 export { formatKickoff };

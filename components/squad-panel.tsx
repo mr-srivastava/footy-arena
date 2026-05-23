@@ -2,24 +2,11 @@ import { ClipboardList, UserRound } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SubsectionTitle } from "@/components/subsection-title";
+import { groupPlayersByPosition } from "@/lib/tournament/squads";
 import type { TeamSquad } from "@/lib/tournament/types";
 
-const positionLabels: Record<string, string> = {
-  GK: "Goalkeepers",
-  DF: "Defenders",
-  MF: "Midfielders",
-  FW: "Forwards",
-};
-
-const positionOrder = ["GK", "DF", "MF", "FW"] as const;
-
 export function SquadPanel({ squad }: { squad: TeamSquad }) {
-  const playersByPosition = positionOrder.map((position) => ({
-    position,
-    label: positionLabels[position],
-    players: squad.players.filter((player) => player.position === position),
-  }));
-
+  const playersByPosition = groupPlayersByPosition(squad);
   const hasPlayers = squad.players.length > 0;
 
   return (

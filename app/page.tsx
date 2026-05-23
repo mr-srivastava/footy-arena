@@ -31,6 +31,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { HOST_CITIES } from "@/lib/openfootball/constants";
+import { HOST_CITY_VENUES, HOST_NATIONS } from "@/lib/openfootball/host-venues";
 import { HOMEPAGE_MODULES } from "@/lib/discovery";
 
 const History = dynamic(() => import("@/components/history"), {
@@ -50,49 +51,6 @@ const History = dynamic(() => import("@/components/history"), {
     </section>
   ),
 });
-
-const hostNations = [
-  {
-    country: "United States",
-    flag: "🇺🇸",
-    cities: 11,
-    accent: "from-red via-red/40",
-    detail: "MetLife Stadium hosts the Final on July 19",
-  },
-  {
-    country: "Mexico",
-    flag: "🇲🇽",
-    cities: 3,
-    accent: "from-teal via-teal/40",
-    detail: "Estadio Azteca opens the tournament on June 11",
-  },
-  {
-    country: "Canada",
-    flag: "🇨🇦",
-    cities: 2,
-    accent: "from-pitch-bright via-pitch/40",
-    detail: "Toronto & Vancouver welcome the world",
-  },
-];
-
-const hostCities = [
-  { city: "New York / New Jersey", country: "USA", venue: "MetLife Stadium" },
-  { city: "Los Angeles", country: "USA", venue: "SoFi Stadium" },
-  { city: "Dallas", country: "USA", venue: "AT&T Stadium" },
-  { city: "Miami", country: "USA", venue: "Hard Rock Stadium" },
-  { city: "Atlanta", country: "USA", venue: "Mercedes-Benz Stadium" },
-  { city: "Houston", country: "USA", venue: "NRG Stadium" },
-  { city: "Philadelphia", country: "USA", venue: "Lincoln Financial Field" },
-  { city: "Seattle", country: "USA", venue: "Lumen Field" },
-  { city: "San Francisco", country: "USA", venue: "Levi's Stadium" },
-  { city: "Boston", country: "USA", venue: "Gillette Stadium" },
-  { city: "Kansas City", country: "USA", venue: "Arrowhead Stadium" },
-  { city: "Mexico City", country: "MEX", venue: "Estadio Azteca" },
-  { city: "Guadalajara", country: "MEX", venue: "Estadio Akron" },
-  { city: "Monterrey", country: "MEX", venue: "Estadio BBVA" },
-  { city: "Toronto", country: "CAN", venue: "BMO Field" },
-  { city: "Vancouver", country: "CAN", venue: "BC Place" },
-];
 
 export default function Home() {
   const startJourney = HOMEPAGE_MODULES.find(
@@ -141,7 +99,7 @@ export default function Home() {
             icon={Globe2}
           />
           <div className="grid gap-6 md:grid-cols-3">
-            {hostNations.map((nation) => (
+            {HOST_NATIONS.map((nation) => (
               <Card
                 key={nation.country}
                 interactive
@@ -187,7 +145,7 @@ export default function Home() {
             </p>
           </SectionHeading>
           <div className="lazy-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {hostCities.map((city) => (
+            {HOST_CITY_VENUES.map((city) => (
               <Card key={city.city} interactive padding="none">
                 <CardContent className="px-4 py-3">
                   <div className="flex items-center justify-between gap-2">

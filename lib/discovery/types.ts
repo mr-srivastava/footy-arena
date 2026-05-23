@@ -94,3 +94,22 @@ export type CatchUpTopic = {
   summary: string;
   bullets: string[];
 };
+
+export type HistoryLegend = {
+  name: string;
+  country: string;
+  flag: string;
+  role: string;
+  achievement: string;
+};
+
+export type HistoryEra = {
+  year: string;
+  title: string;
+  headline: string;
+  narrative: string;
+  image: string;
+  overlay: string;
+  accent: string;
+  players: HistoryLegend[];
+};

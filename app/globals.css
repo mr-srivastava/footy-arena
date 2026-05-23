@@ -292,3 +292,25 @@ body {
     animation: none;
   }
 }
+
+/* —— History carousel (horizontal scroll) —— */
+.history-carousel-track {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.history-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.history-carousel-slide-item {
+  scroll-snap-stop: always;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .history-carousel-track {
+    scroll-behavior: auto;
+  }
+}

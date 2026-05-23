@@ -31,6 +31,20 @@ const collectionsBySlug = new Map(
   DISCOVERY_COLLECTIONS.map((collection) => [collection.slug, collection]),
 );
 
+export const RISING_UNDERDOG_ENTRIES = RISING_UNDERDOGS.map((entry) => ({
+  ...entry,
+  breakoutPlayers: entry.breakoutPlayerSlugs
+    .map((slug) => playersBySlug.get(slug))
+    .filter((player): player is PlayerProfile => player !== undefined),
+}));
+
+export const TEAM_NARRATIVE_ENTRIES = TEAM_NARRATIVES.map((narrative) => ({
+  narrative,
+  keyPlayers: narrative.keyPlayerSlugs
+    .map((slug) => playersBySlug.get(slug))
+    .filter((player): player is PlayerProfile => player !== undefined),
+}));
+
 export {
   CATCH_UP_TOPICS,
   DISCOVERY_CATEGORIES,

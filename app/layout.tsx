@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Archivo, Bebas_Neue } from "next/font/google";
+import { Archivo, Bebas_Neue, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -33,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebas.variable} ${archivo.variable} h-full`}
+      className={cn("h-full", bebas.variable, archivo.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full font-[family-name:var(--font-archivo)] antialiased">
         {children}

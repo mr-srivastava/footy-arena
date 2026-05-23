@@ -1,7 +1,7 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContentContainer } from "@/components/content-container";
+import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { PlayerCard } from "@/components/player-card";
 import { SectionHeading } from "@/components/section-heading";
@@ -44,30 +44,23 @@ export default async function CollectionPage({ params }: PageProps) {
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
-        <div className="animate-fade-up py-10 md:py-14">
-          <Link
-            href="/explore"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-gold"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            Explore
-          </Link>
-
+      <ContentContainer>
+        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
           <SectionHeading
             as="h1"
+            className="mb-0"
             eyebrow="Discovery Collection"
             title={collection.title.toUpperCase()}
             subtitle={collection.description}
           />
-        </div>
+        </PageHero>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {players.map((player) => (
             <PlayerCard key={player.slug} player={player} />
           ))}
         </div>
-      </main>
+      </ContentContainer>
 
       <SiteFooter />
     </PageShell>

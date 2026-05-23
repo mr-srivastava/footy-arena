@@ -1,11 +1,12 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContentContainer } from "@/components/content-container";
+import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { Card, CardContent } from "@/components/ui/card";
 import { CATCH_UP_TOPICS, getCatchUpTopic } from "@/lib/discovery";
 
 type PageProps = {
@@ -35,38 +36,33 @@ export default async function CatchUpPage({ params }: PageProps) {
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-3xl px-6 pb-8">
-        <div className="animate-fade-up py-10 md:py-14">
-          <Link
-            href="/explore"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-gold"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            Explore
-          </Link>
-
+      <ContentContainer width="narrow">
+        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
           <SectionHeading
             as="h1"
+            className="mb-0"
             eyebrow="Catch Me Up"
             title={topic.title.toUpperCase()}
             subtitle={topic.summary}
           />
-        </div>
+        </PageHero>
 
-        <article className="glass-panel rounded-2xl p-6 md:p-8">
-          <ul className="space-y-5">
-            {topic.bullets.map((bullet) => (
-              <li
-                key={bullet}
-                className="flex gap-3 text-base leading-relaxed text-muted"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-pitch-bright" />
-                {bullet}
-              </li>
-            ))}
-          </ul>
-        </article>
-      </main>
+        <Card accent="pitch" padding="none">
+          <CardContent className="p-6 md:p-8">
+            <ul className="flex flex-col gap-5">
+              {topic.bullets.map((bullet) => (
+                <li
+                  key={bullet}
+                  className="flex gap-3 text-base leading-relaxed text-muted-foreground"
+                >
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-pitch-bright" />
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </ContentContainer>
 
       <SiteFooter />
     </PageShell>

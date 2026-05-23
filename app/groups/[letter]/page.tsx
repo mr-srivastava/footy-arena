@@ -1,11 +1,15 @@
-import { ArrowLeft, CalendarDays } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContentContainer } from "@/components/content-container";
 import { FixtureCard } from "@/components/fixture-card";
+import { PageHero } from "@/components/page-hero";
+import { PageSection } from "@/components/page-section";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SubsectionTitle } from "@/components/subsection-title";
 import { TeamCard } from "@/components/team-card";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
@@ -58,48 +62,52 @@ export default async function GroupPage({ params }: PageProps) {
   if (!group) notFound();
 
   const groupFixtures = getGroupFixtures(fixtures, groupLetter);
+  const confeds = group.teams
+    .map((t) => t.confed)
+    .filter((v, i, a) => a.indexOf(v) === i)
+    .join(", ");
 
   return (
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
-        <div className="animate-fade-up py-10 md:py-14">
-          <Link
-            href="/groups"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-gold"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            All groups
-          </Link>
+      <ContentContainer>
+        <PageHero
+          variant="detail"
+          backHref="/groups"
+          backLabel="All groups"
+          eyebrow="Group stage"
+          title={
+            <>
+              GROUP{" "}
+              <span className="text-pitch-bright">{group.letter}</span>
+            </>
+          }
+          titleClassName="md:text-7xl"
+          meta={
+            <p className="max-w-2xl text-muted">
+              Four nations from {confeds}. Explore each team&apos;s squad and
+              full fixture list.
+            </p>
+          }
+        />
 
-          <p className="section-eyebrow">Group stage</p>
-          <h1 className="font-display text-5xl tracking-wide text-gold md:text-7xl">
-            {group.label.toUpperCase()}
-          </h1>
-          <p className="mt-4 max-w-2xl text-muted">
-            Four nations from {group.teams.map((t) => t.confed).filter((v, i, a) => a.indexOf(v) === i).join(", ")}.
-            Explore each team&apos;s squad and full fixture list.
-          </p>
-        </div>
-
-        <section className="mb-14">
-          <h2 className="mb-6 font-display text-2xl tracking-wide text-foreground">
+        <PageSection variant="compact">
+          <SubsectionTitle level="panel" className="mb-6">
             TEAMS
-          </h2>
-          <div className="fixture-grid grid gap-3 sm:grid-cols-2">
+          </SubsectionTitle>
+          <div className="reveal-grid grid gap-3 sm:grid-cols-2">
             {group.teams.map((team) => (
               <TeamCard key={team.fifa_code} team={team} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
         <section>
           <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="flex items-center gap-2 font-display text-2xl tracking-wide text-foreground">
-              <CalendarDays className="h-6 w-6 text-pitch-bright" aria-hidden />
+            <SubsectionTitle level="panel" icon={CalendarDays}>
               GROUP FIXTURES
-            </h2>
+            </SubsectionTitle>
             <span className="text-sm text-muted">
               {groupFixtures.length}{" "}
               {groupFixtures.length === 1 ? "match" : "matches"}
@@ -107,7 +115,7 @@ export default async function GroupPage({ params }: PageProps) {
           </div>
 
           {groupFixtures.length > 0 ? (
-            <div className="fixture-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="reveal-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {groupFixtures.map((fixture) => (
                 <FixtureCard
                   key={fixture.id}
@@ -127,7 +135,7 @@ export default async function GroupPage({ params }: PageProps) {
             </p>
           )}
         </section>
-      </main>
+      </ContentContainer>
 
       <SiteFooter />
     </PageShell>

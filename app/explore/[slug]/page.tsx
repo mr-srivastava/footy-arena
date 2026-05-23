@@ -1,23 +1,24 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContentContainer } from "@/components/content-container";
 import { DiscoveryCard } from "@/components/discovery-card";
+import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { PlayerCard } from "@/components/player-card";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {
   getCategoryPlayerSlugs,
   getDiscoveryCategory,
   getPlayersBySlugs,
-  getTeamNarrative,
-  LOST_GLORIES,
-  RISING_UNDERDOGS,
-  TEAM_NARRATIVES,
+  RISING_UNDERDOG_ENTRIES,
+  TEAM_NARRATIVE_ENTRIES,
 } from "@/lib/discovery";
+import { LOST_GLORIES } from "@/lib/discovery/seed/categories";
 import type { DiscoveryCategorySlug } from "@/lib/discovery/types";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
@@ -49,36 +50,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ExploreCategoryPage({ params }: PageProps) {
-  const { slug } = await params;
+  const [{ slug }, { byCode }] = await Promise.all([params, getWorldCupTeams()]);
   const category = getDiscoveryCategory(slug);
   if (!category) notFound();
 
   const playerSlugs = getCategoryPlayerSlugs(category.slug);
   const players = getPlayersBySlugs(playerSlugs);
 
-  const { byCode } = await getWorldCupTeams();
-
   return (
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
-        <div className="animate-fade-up py-10 md:py-14">
-          <Link
-            href="/explore"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-gold"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            Explore
-          </Link>
-
+      <ContentContainer>
+        <PageHero variant="detail" backHref="/explore" backLabel="Explore">
           <SectionHeading
             as="h1"
+            className="mb-0"
             eyebrow={category.tagline}
             title={category.title.toUpperCase()}
             subtitle={category.description}
           />
-        </div>
+        </PageHero>
 
         {category.slug === "lost-glories" ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -91,14 +83,12 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                 : undefined;
 
               return (
-                <article
-                  key={entry.nation}
-                  className="glass-panel flex h-full flex-col rounded-2xl p-6"
-                >
-                  <h2 className="font-display text-3xl tracking-wide text-foreground">
-                    {entry.nation.toUpperCase()}
-                  </h2>
-                  <dl className="mt-5 space-y-4 text-sm">
+                <Card key={entry.nation} padding="none" className="h-full">
+                  <CardContent className="flex h-full flex-col p-6">
+                    <CardTitle className="font-display text-3xl tracking-wide text-foreground">
+                      {entry.nation.toUpperCase()}
+                    </CardTitle>
+                    <dl className="mt-5 flex flex-col gap-4 text-sm">
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-widest text-gold">
                         Then
@@ -140,7 +130,8 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                       View {team.displayName} →
                     </Link>
                   ) : null}
-                </article>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
@@ -148,8 +139,8 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
 
         {category.slug === "rising-underdogs" ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {RISING_UNDERDOGS.map((entry) => {
-              const breakoutPlayers = getPlayersBySlugs(entry.breakoutPlayerSlugs);
+            {RISING_UNDERDOG_ENTRIES.map((entry) => {
+              const { breakoutPlayers } = entry;
               const teamHref = entry.fifaCode
                 ? `/teams/${entry.fifaCode.toLowerCase()}`
                 : undefined;
@@ -158,22 +149,20 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                 : undefined;
 
               return (
-                <article
-                  key={entry.nation}
-                  className="glass-panel flex h-full flex-col rounded-2xl p-6"
-                >
-                  <h2 className="font-display text-3xl tracking-wide text-foreground">
-                    {entry.nation.toUpperCase()}
-                  </h2>
-                  <p className="mt-4 text-sm leading-relaxed text-muted">
-                    {entry.whyTheyMatter}
-                  </p>
-                  <p className="mt-3 rounded-xl bg-pitch/10 px-4 py-3 text-sm text-pitch-bright">
-                    {entry.keyIdentity}
-                  </p>
-                  <p className="mt-4 text-sm leading-relaxed text-muted">
-                    {entry.whyCasualFansShouldWatch}
-                  </p>
+                <Card key={entry.nation} padding="none" className="h-full">
+                  <CardContent className="flex h-full flex-col p-6">
+                    <CardTitle className="font-display text-3xl tracking-wide text-foreground">
+                      {entry.nation.toUpperCase()}
+                    </CardTitle>
+                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                      {entry.whyTheyMatter}
+                    </p>
+                    <p className="mt-3 rounded-xl bg-pitch/10 px-4 py-3 text-sm text-pitch-bright">
+                      {entry.keyIdentity}
+                    </p>
+                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                      {entry.whyCasualFansShouldWatch}
+                    </p>
                   {breakoutPlayers.length > 0 ? (
                     <div className="mt-4 flex flex-wrap gap-2">
                       {breakoutPlayers.map((player) => (
@@ -195,7 +184,8 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
                       View {team.displayName} →
                     </Link>
                   ) : null}
-                </article>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
@@ -203,8 +193,7 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
 
         {category.slug === "tactical-identities" ? (
           <div className="grid gap-8 lg:grid-cols-2">
-            {TEAM_NARRATIVES.map((narrative) => {
-              const keyPlayers = getPlayersBySlugs(narrative.keyPlayerSlugs);
+            {TEAM_NARRATIVE_ENTRIES.map(({ narrative, keyPlayers }) => {
               const team = byCode.get(narrative.fifaCode);
 
               return (
@@ -228,7 +217,7 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
         ) : null}
 
         {players.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="lazy-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {players.map((player) => (
               <PlayerCard key={player.slug} player={player} />
             ))}
@@ -257,7 +246,7 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
             />
           </div>
         </div>
-      </main>
+      </ContentContainer>
 
       <SiteFooter />
     </PageShell>

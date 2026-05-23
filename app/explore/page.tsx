@@ -1,13 +1,17 @@
 import { Compass, Layers, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { CollectionCard } from "@/components/collection-card";
+import { ContentContainer } from "@/components/content-container";
 import { DiscoveryCard } from "@/components/discovery-card";
 import { MetricTranslationCard } from "@/components/metric-translation-card";
+import { PageHero } from "@/components/page-hero";
+import { PageSection } from "@/components/page-section";
 import { PageShell } from "@/components/page-shell";
 import { PlayerCard } from "@/components/player-card";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { StoryTemplateCard } from "@/components/story-template-card";
 import {
   DISCOVERY_COLLECTIONS,
   getFeaturedPlayers,
@@ -30,23 +34,21 @@ export default function ExplorePage() {
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
-        <div className="animate-fade-up py-12 md:py-16">
-          <SectionHeading
-            as="h1"
-            eyebrow="World Cup Discovery"
-            title={
-              <>
-                EXPLORE <span className="text-pitch-bright">2026</span>
-              </>
-            }
-            icon={Compass}
-            titleClassName="md:text-7xl"
-            subtitle="Curated stories, players, and narratives to help you discover the tournament — no live data required."
-          />
-        </div>
+      <ContentContainer>
+        <PageHero
+          variant="list"
+          eyebrow="World Cup Discovery"
+          title={
+            <>
+              EXPLORE <span className="text-pitch-bright">2026</span>
+            </>
+          }
+          icon={Compass}
+          titleClassName="md:text-7xl"
+          subtitle="Curated stories, players, and narratives to help you discover the tournament — no live data required."
+        />
 
-        <section className="mb-20">
+        <PageSection variant="stack">
           <SectionHeading
             eyebrow="Get started"
             title={startJourney.title.toUpperCase()}
@@ -57,9 +59,9 @@ export default function ExplorePage() {
               <DiscoveryCard key={card.href} {...card} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section className="mb-20">
+        <PageSection variant="stack">
           <SectionHeading
             eyebrow="New to football?"
             title={catchMeUp.title.toUpperCase()}
@@ -69,21 +71,18 @@ export default function ExplorePage() {
               <DiscoveryCard key={card.href} {...card} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section className="mb-20">
-          <SectionHeading
-            eyebrow="Editorial picks"
-            title="FEATURED PLAYERS"
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <PageSection variant="stack">
+          <SectionHeading eyebrow="Editorial picks" title="FEATURED PLAYERS" />
+          <div className="lazy-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {featuredPlayers.map((player) => (
               <PlayerCard key={player.slug} player={player} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section id="collections" className="mb-20 scroll-mt-24">
+        <PageSection variant="stack" id="collections" className="scroll-mt-24">
           <SectionHeading
             eyebrow="Curated lists"
             title="DISCOVERY COLLECTIONS"
@@ -98,18 +97,21 @@ export default function ExplorePage() {
               />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section className="mb-20">
-          <SectionHeading eyebrow="Can't miss" title={nationsToWatch.title.toUpperCase()} />
+        <PageSection variant="stack">
+          <SectionHeading
+            eyebrow="Can't miss"
+            title={nationsToWatch.title.toUpperCase()}
+          />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {nationsToWatch.cards.map((card) => (
               <DiscoveryCard key={card.href} {...card} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section className="mb-20">
+        <PageSection variant="stack">
           <SectionHeading
             eyebrow="Understand the numbers"
             title="STATS, TRANSLATED"
@@ -119,9 +121,9 @@ export default function ExplorePage() {
               <MetricTranslationCard key={metric.slug} metric={metric} />
             ))}
           </div>
-        </section>
+        </PageSection>
 
-        <section>
+        <PageSection variant="stack">
           <SectionHeading
             eyebrow="Match day"
             title="STORY TEMPLATES"
@@ -129,28 +131,11 @@ export default function ExplorePage() {
           />
           <div className="grid gap-4 md:grid-cols-3">
             {MATCH_STORY_TEMPLATES.map((template) => (
-              <article
-                key={template.slug}
-                className="glass-panel rounded-2xl p-5"
-              >
-                <h3 className="font-display text-xl tracking-wide text-foreground">
-                  {template.title.toUpperCase()}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">
-                  {template.narrative}
-                </p>
-                <ul className="mt-4 space-y-1.5">
-                  {template.watchFor.map((item) => (
-                    <li key={item} className="text-xs text-pitch-bright">
-                      · {item}
-                    </li>
-                  ))}
-                </ul>
-              </article>
+              <StoryTemplateCard key={template.slug} template={template} />
             ))}
           </div>
-        </section>
-      </main>
+        </PageSection>
+      </ContentContainer>
 
       <SiteFooter />
     </PageShell>

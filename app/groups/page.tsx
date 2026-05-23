@@ -1,9 +1,10 @@
 import { LayoutGrid, Users } from "lucide-react";
 import type { Metadata } from "next";
+import { ContentContainer } from "@/components/content-container";
 import { GroupCard } from "@/components/group-card";
 import { OpenFootballLink } from "@/components/openfootball-link";
+import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
-import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
@@ -22,44 +23,43 @@ export default async function GroupsPage() {
     <PageShell>
       <SiteHeader />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 pb-8">
-        <div className="animate-fade-up py-12 md:py-16">
-          <SectionHeading
-            as="h1"
-            eyebrow="FIFA World Cup 2026"
-            title={
-              <>
-                GROUP <span className="text-gold">STAGE</span>
-              </>
-            }
-            icon={LayoutGrid}
-            titleClassName="md:text-7xl"
-            subtitle={
-              <>
-                Twelve groups of four in the expanded 48-team format. Data from{" "}
-                <OpenFootballLink />.
-              </>
-            }
-          />
+      <ContentContainer>
+        <PageHero
+          variant="list"
+          eyebrow="FIFA World Cup 2026"
+          title={
+            <>
+              GROUP <span className="text-pitch-bright">STAGE</span>
+            </>
+          }
+          icon={LayoutGrid}
+          titleClassName="md:text-7xl"
+          subtitle={
+            <>
+              Twelve groups of four in the expanded 48-team format. Data from{" "}
+              <OpenFootballLink />.
+            </>
+          }
+          stats={
+            <>
+              <StatCard
+                value={GROUP_LETTERS.length}
+                label="Groups"
+                icon={LayoutGrid}
+                accent="text-gold"
+              />
+              <StatCard value={teams.length} label="Nations" icon={Users} />
+              <StatCard value={4} label="Teams per group" icon={Users} />
+            </>
+          }
+        />
 
-          <div className="animate-fade-up animate-delay-2 mt-8 flex flex-wrap gap-4">
-            <StatCard
-              value={GROUP_LETTERS.length}
-              label="Groups"
-              icon={LayoutGrid}
-              accent="text-gold"
-            />
-            <StatCard value={teams.length} label="Nations" icon={Users} />
-            <StatCard value={4} label="Teams per group" icon={Users} />
-          </div>
-        </div>
-
-        <div className="fixture-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="reveal-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {groups.map((group) => (
             <GroupCard key={group.letter} group={group} />
           ))}
         </div>
-      </main>
+      </ContentContainer>
 
       <SiteFooter
         center={

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Fixture } from "./types";
 import type { OpenFootballTeam, Team, TournamentGroup } from "./types";
 
@@ -39,12 +40,12 @@ function parseTeams(data: unknown): OpenFootballTeam[] {
   return data as OpenFootballTeam[];
 }
 
-export async function getWorldCupTeams(): Promise<{
+export const getWorldCupTeams = cache(async (): Promise<{
   teams: Team[];
   groups: TournamentGroup[];
   byCode: Map<string, Team>;
   byName: Map<string, Team>;
-}> {
+}> => {
   const response = await fetch(WC2026_TEAMS_URL, {
     next: { revalidate: 86_400 },
   });
@@ -53,9 +54,9 @@ export async function getWorldCupTeams(): Promise<{
     throw new Error(`Failed to load teams (${response.status})`);
   }
 
-  const teams = parseTeams(await response.json()).map(toTeam).sort((a, b) =>
-    a.displayName.localeCompare(b.displayName),
-  );
+  const teams = parseTeams(await response.json())
+    .map(toTeam)
+    .toSorted((a, b) => a.displayName.localeCompare(b.displayName));
 
   const byCode = new Map(teams.map((team) => [team.fifa_code, team]));
   const byName = new Map<string, Team>();
@@ -78,11 +79,11 @@ export async function getWorldCupTeams(): Promise<{
     label: `Group ${letter}`,
     teams: teams
       .filter((team) => team.group === letter)
-      .sort((a, b) => a.displayName.localeCompare(b.displayName)),
+      .toSorted((a, b) => a.displayName.localeCompare(b.displayName)),
   }));
 
   return { teams, groups, byCode, byName };
-}
+});
 
 export function resolveTeamByName(
   name: string,
@@ -116,7 +117,7 @@ export function getGroupFixtures(
   const label = `Group ${letter}`;
   return fixtures
     .filter((fixture) => fixture.group?.toLowerCase() === label.toLowerCase())
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const dateCompare = a.date.localeCompare(b.date);
       if (dateCompare !== 0) return dateCompare;
       return a.time.localeCompare(b.time);
@@ -139,7 +140,7 @@ export function getTeamFixtures(
         names.has(fixture.team1.toLowerCase()) ||
         names.has(fixture.team2.toLowerCase()),
     )
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const dateCompare = a.date.localeCompare(b.date);
       if (dateCompare !== 0) return dateCompare;
       return a.time.localeCompare(b.time);

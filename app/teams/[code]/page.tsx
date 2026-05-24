@@ -13,6 +13,7 @@ import { SubsectionTitle } from "@/components/subsection-title";
 import { TeamFlag } from "@/components/team-flag";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
 import { Button } from "@/components/ui/button";
+import { fetchQuery } from "convex/nextjs";
 import { getPlayersBySlugs, getTeamNarrative } from "@/lib/discovery";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
@@ -20,6 +21,7 @@ import {
   getWorldCupTeams,
 } from "@/lib/openfootball/teams";
 import { getTeamSquad } from "@/lib/tournament/squads";
+import { api } from "@/convex/_generated/api";
 
 type PageProps = {
   params: Promise<{ code: string }>;
@@ -54,7 +56,32 @@ export default async function TeamPage({ params }: PageProps) {
   const team = byCode.get(code.toUpperCase());
   if (!team) notFound();
 
-  const squad = getTeamSquad(team.fifa_code);
+  const staticSquad = getTeamSquad(team.fifa_code);
+  const convexPlayers = await fetchQuery(api.players.getByFifaCode, {
+    fifaCode: team.fifa_code,
+  });
+
+  const POSITION_MAP: Record<string, "GK" | "DF" | "MF" | "FW"> = {
+    Goalkeeper: "GK",
+    Defender: "DF",
+    Midfielder: "MF",
+    Attacker: "FW",
+  };
+
+  const squad = {
+    ...staticSquad,
+    players: convexPlayers.map((p) => ({
+      name: p.name,
+      position: POSITION_MAP[p.position] ?? "MF",
+      club: p.club,
+      number: p.jerseyNumber ?? undefined,
+      age: p.age,
+      detailedPosition: p.detailedPosition,
+      isCaptain: p.isCaptain,
+      league: p.league,
+    })),
+  };
+
   const narrative = getTeamNarrative(team.fifa_code);
   const keyPlayers = narrative
     ? getPlayersBySlugs(narrative.keyPlayerSlugs)

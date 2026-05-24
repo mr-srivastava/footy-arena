@@ -5,6 +5,10 @@ export type SquadPlayer = {
   position: PlayerPosition;
   club?: string;
   number?: number;
+  age?: number;
+  detailedPosition?: string;
+  isCaptain?: boolean;
+  league?: string;
 };
 
 export type SquadManager = {

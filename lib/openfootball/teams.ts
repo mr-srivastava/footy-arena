@@ -1,9 +1,9 @@
+import { fetchQuery } from "convex/nextjs";
 import { cache } from "react";
+import { api } from "@/convex/_generated/api";
+import { buildByNameMap, toTeam } from "@/lib/teams/map";
 import type { Fixture } from "./types";
-import type { OpenFootballTeam, Team, TournamentGroup } from "./types";
-
-const WC2026_TEAMS_URL =
-  "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.teams.json";
+import type { Team, TournamentGroup } from "./types";
 
 export const GROUP_LETTERS = [
   "A",
@@ -22,57 +22,23 @@ export const GROUP_LETTERS = [
 
 export type GroupLetter = (typeof GROUP_LETTERS)[number];
 
-function toTeam(raw: OpenFootballTeam): Team {
-  const displayName = raw.name_normalised ?? raw.name;
-  return {
-    ...raw,
-    displayName,
-    slug: raw.fifa_code.toLowerCase(),
-    groupLabel: `Group ${raw.group}`,
-  };
-}
-
-function parseTeams(data: unknown): OpenFootballTeam[] {
-  if (!Array.isArray(data)) {
-    throw new Error("Invalid teams data: expected an array");
-  }
-
-  return data as OpenFootballTeam[];
-}
-
 export const getWorldCupTeams = cache(async (): Promise<{
   teams: Team[];
   groups: TournamentGroup[];
   byCode: Map<string, Team>;
   byName: Map<string, Team>;
 }> => {
-  const response = await fetch(WC2026_TEAMS_URL, {
-    next: { revalidate: 86_400 },
-  });
+  const countries = await fetchQuery(api.countries.list, {});
 
-  if (!response.ok) {
-    throw new Error(`Failed to load teams (${response.status})`);
+  if (countries.length === 0) {
+    throw new Error(
+      "No countries in Convex. Run `npm run seed` after starting `npx convex dev`.",
+    );
   }
 
-  const teams = parseTeams(await response.json())
-    .map(toTeam)
-    .toSorted((a, b) => a.displayName.localeCompare(b.displayName));
-
+  const teams = countries.map(toTeam);
   const byCode = new Map(teams.map((team) => [team.fifa_code, team]));
-  const byName = new Map<string, Team>();
-
-  for (const team of teams) {
-    const keys = new Set([
-      team.name,
-      team.displayName,
-      team.fifa_code,
-      team.name_normalised,
-    ]);
-
-    for (const key of keys) {
-      if (key) byName.set(key.toLowerCase(), team);
-    }
-  }
+  const byName = buildByNameMap(teams);
 
   const groups: TournamentGroup[] = GROUP_LETTERS.map((letter) => ({
     letter,

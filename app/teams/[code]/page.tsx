@@ -14,14 +14,14 @@ import { TeamFlag } from "@/components/team-flag";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
 import { Button } from "@/components/ui/button";
 import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import { getPlayersBySlugs, getTeamNarrative } from "@/lib/discovery";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
   getTeamFixtures,
   getWorldCupTeams,
 } from "@/lib/openfootball/teams";
-import { getTeamSquad } from "@/lib/tournament/squads";
-import { api } from "@/convex/_generated/api";
+import { mapConvexSquad } from "@/lib/tournament/map-squad";
 
 type PageProps = {
   params: Promise<{ code: string }>;
@@ -34,7 +34,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const [{ code }, { byCode }] = await Promise.all([params, getWorldCupTeams()]);
-  const team = byCode.get(code.toUpperCase());
+  const team = [...byCode.values()].find((t) => t.slug === code.toLowerCase());
 
   if (!team) {
     return { title: "Team - Footy Arena" };
@@ -53,34 +53,17 @@ export default async function TeamPage({ params }: PageProps) {
     getWorldCupFixtures(),
   ]);
 
-  const team = byCode.get(code.toUpperCase());
+  const team = [...byCode.values()].find((t) => t.slug === code.toLowerCase());
   if (!team) notFound();
 
-  const staticSquad = getTeamSquad(team.fifa_code);
-  const convexPlayers = await fetchQuery(api.players.getByFifaCode, {
-    fifaCode: team.fifa_code,
+  const teamPageData = await fetchQuery(api.teams.getTeamPageData, {
+    slug: code.toLowerCase(),
   });
 
-  const POSITION_MAP: Record<string, "GK" | "DF" | "MF" | "FW"> = {
-    Goalkeeper: "GK",
-    Defender: "DF",
-    Midfielder: "MF",
-    Attacker: "FW",
-  };
-
-  const squad = {
-    ...staticSquad,
-    players: convexPlayers.map((p) => ({
-      name: p.name,
-      position: POSITION_MAP[p.position] ?? "MF",
-      club: p.club,
-      number: p.jerseyNumber ?? undefined,
-      age: p.age,
-      detailedPosition: p.detailedPosition,
-      isCaptain: p.isCaptain,
-      league: p.league,
-    })),
-  };
+  const squad = mapConvexSquad(
+    teamPageData?.squad ?? null,
+    teamPageData?.players ?? [],
+  );
 
   const narrative = getTeamNarrative(team.fifa_code);
   const keyPlayers = narrative

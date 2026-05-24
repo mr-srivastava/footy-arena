@@ -8,7 +8,14 @@
  * @module
  */
 
+import type * as countries from "../countries.js";
+import type * as migrations from "../migrations.js";
 import type * as players from "../players.js";
+import type * as positions from "../positions.js";
+import type * as squadSeedData from "../squadSeedData.js";
+import type * as squads from "../squads.js";
+import type * as teams from "../teams.js";
+import type * as validators from "../validators.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +24,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  countries: typeof countries;
+  migrations: typeof migrations;
   players: typeof players;
+  positions: typeof positions;
+  squadSeedData: typeof squadSeedData;
+  squads: typeof squads;
+  teams: typeof teams;
+  validators: typeof validators;
 }>;
 
 /**

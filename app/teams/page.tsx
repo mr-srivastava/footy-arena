@@ -1,3 +1,4 @@
+import { fetchQuery } from "convex/nextjs";
 import { Globe2, LayoutGrid, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { ContentContainer } from "@/components/content-container";
@@ -8,8 +9,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
 import { TeamCard } from "@/components/team-card";
+import { api } from "@/convex/_generated/api";
 import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
-import { countAnnouncedSquads } from "@/lib/tournament/squads";
 
 export const metadata: Metadata = {
   title: "Teams - Footy Arena",
@@ -18,9 +19,11 @@ export const metadata: Metadata = {
 };
 
 export default async function TeamsPage() {
-  const { teams } = await getWorldCupTeams();
+  const [{ teams }, announcedManagers] = await Promise.all([
+    getWorldCupTeams(),
+    fetchQuery(api.squads.countAnnounced, {}),
+  ]);
   const confederations = new Set(teams.map((team) => team.confed)).size;
-  const announcedManagers = countAnnouncedSquads();
 
   return (
     <PageShell>

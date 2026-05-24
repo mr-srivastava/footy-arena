@@ -1,36 +1,34 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { playerFields, positionGroup } from "./validators";
 
+/** @deprecated Prefer api.teams.getTeamPageData — kept for callers not yet updated. */
 export const getByFifaCode = query({
   args: { fifaCode: v.string() },
   handler: async (ctx, { fifaCode }) => {
+    const country = await ctx.db
+      .query("countries")
+      .withIndex("by_fifa_code", (q) => q.eq("fifaCode", fifaCode.toUpperCase()))
+      .unique();
+
+    if (!country) return [];
+
     return ctx.db
       .query("players")
-      .withIndex("by_fifa_code", (q) => q.eq("fifaCode", fifaCode))
+      .withIndex("by_country", (q) => q.eq("countryId", country._id))
       .collect();
   },
 });
 
+const playerSeedInput = v.object({
+  countryId: v.id("countries"),
+  positionGroup,
+  ...playerFields,
+});
+
 export const seed = mutation({
   args: {
-    players: v.array(
-      v.object({
-        fifaCode: v.string(),
-        country: v.string(),
-        name: v.string(),
-        jerseyNumber: v.union(v.number(), v.null()),
-        age: v.number(),
-        position: v.string(),
-        detailedPosition: v.string(),
-        preferredFoot: v.string(),
-        club: v.string(),
-        league: v.string(),
-        clubCountry: v.string(),
-        isCaptain: v.boolean(),
-        previousWorldCupsCount: v.number(),
-        previousWorldCupsList: v.array(v.string()),
-      })
-    ),
+    players: v.array(playerSeedInput),
   },
   handler: async (ctx, { players }) => {
     for (const player of players) {

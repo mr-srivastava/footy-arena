@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import { CollectionCard } from "@/components/collection-card";
 import { ContentContainer } from "@/components/content-container";
 import { DiscoveryCard } from "@/components/discovery-card";
+import { ExplorePlayersGrid } from "@/components/explore/explore-players-grid";
 import { MetricTranslationCard } from "@/components/metric-translation-card";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { PageShell } from "@/components/page-shell";
-import { PlayerCard } from "@/components/player-card";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -15,7 +15,7 @@ import { StoryTemplateCard } from "@/components/story-template-card";
 import {
   DISCOVERY_COLLECTIONS,
   EXPLORE_HERO_IMAGE,
-  getFeaturedPlayers,
+  getFeaturedPlayerSlugs,
   getHomepageCardImage,
   HOMEPAGE_MODULES,
   MATCH_STORY_TEMPLATES,
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 export default function ExplorePage() {
-  const featuredPlayers = getFeaturedPlayers();
+  const featuredPlayerSlugs = getFeaturedPlayerSlugs();
   const [startJourney, catchMeUp, nationsToWatch] = HOMEPAGE_MODULES;
 
   return (
@@ -47,7 +47,7 @@ export default function ExplorePage() {
           }
           icon={Compass}
           titleClassName="md:text-7xl"
-          subtitle="Curated stories, players, and narratives to help you discover the tournament - no live data required."
+          subtitle="Curated stories and live squad intelligence to help you discover the tournament."
           bannerImage={EXPLORE_HERO_IMAGE}
           bannerAlt="World Cup atmosphere"
         />
@@ -87,11 +87,10 @@ export default function ExplorePage() {
 
         <PageSection variant="stack">
           <SectionHeading eyebrow="Editorial picks" title="FEATURED PLAYERS" />
-          <div className="lazy-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredPlayers.map((player) => (
-              <PlayerCard key={player.slug} player={player} />
-            ))}
-          </div>
+          <ExplorePlayersGrid
+            slugs={featuredPlayerSlugs}
+            emptyMessage="Featured players will appear here once World Cup squads are loaded in Convex."
+          />
         </PageSection>
 
         <PageSection variant="stack" id="collections" className="scroll-mt-24">

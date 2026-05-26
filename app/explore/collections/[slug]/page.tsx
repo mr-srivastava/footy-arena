@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
+import { ExplorePlayersGrid } from "@/components/explore/explore-players-grid";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
-import { PlayerCard } from "@/components/player-card";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -11,7 +11,6 @@ import {
   DISCOVERY_COLLECTIONS,
   getCollectionImage,
   getDiscoveryCollection,
-  getPlayersBySlugs,
 } from "@/lib/discovery";
 
 type PageProps = {
@@ -39,8 +38,6 @@ export default async function CollectionPage({ params }: PageProps) {
   const collection = getDiscoveryCollection(slug);
   if (!collection) notFound();
 
-  const players = getPlayersBySlugs(collection.playerSlugs);
-
   return (
     <PageShell>
       <SiteHeader />
@@ -62,11 +59,11 @@ export default async function CollectionPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {players.map((player) => (
-            <PlayerCard key={player.slug} player={player} />
-          ))}
-        </div>
+        <ExplorePlayersGrid
+          slugs={collection.playerSlugs}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          emptyMessage="Collection players will appear here once matching squad records are available in Convex."
+        />
       </ContentContainer>
 
       <SiteFooter />

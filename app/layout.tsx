@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Bebas_Neue, Geist } from "next/font/google";
+import { QueryProvider } from "@/components/providers/query-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +41,7 @@ export default function RootLayout({
       className={cn("h-full", bebas.variable, archivo.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full font-[family-name:var(--font-archivo)] antialiased">
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

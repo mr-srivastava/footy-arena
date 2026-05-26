@@ -13,7 +13,6 @@ import {
   getCategoryPlayerSlugs,
   getDiscoveryCategory,
   getDiscoveryCategorySlugs,
-  getPlayersBySlugs,
 } from "@/lib/discovery";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
@@ -41,7 +40,6 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
   if (!category) notFound();
 
   const playerSlugs = getCategoryPlayerSlugs(category.slug);
-  const players = getPlayersBySlugs(playerSlugs);
 
   return (
     <PageShell>
@@ -64,7 +62,7 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <CategoryContent slug={category.slug} players={players} byCode={byCode} />
+        <CategoryContent slug={category.slug} playerSlugs={playerSlugs} byCode={byCode} />
 
         <div className="mt-16 border-t border-white/8 pt-10">
           <p className="text-sm text-muted">More to discover</p>

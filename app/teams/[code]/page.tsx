@@ -6,7 +6,7 @@ import { ContentContainer } from "@/components/content-container";
 import { FixtureList } from "@/components/fixture-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
-import { SquadPanel } from "@/components/squad-panel";
+import { SquadPanelWithQuery } from "@/components/squad-panel-with-query";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SubsectionTitle } from "@/components/subsection-title";
@@ -60,7 +60,7 @@ export default async function TeamPage({ params }: PageProps) {
     slug: code.toLowerCase(),
   });
 
-  const squad = mapConvexSquad(
+  const initialSquad = mapConvexSquad(
     teamPageData?.squad ?? null,
     teamPageData?.players ?? [],
   );
@@ -124,7 +124,7 @@ export default async function TeamPage({ params }: PageProps) {
         ) : null}
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
-          <SquadPanel squad={squad} />
+          <SquadPanelWithQuery slug={code.toLowerCase()} initialSquad={initialSquad} />
 
           <section>
             <div className="mb-6 flex items-center justify-between gap-4">

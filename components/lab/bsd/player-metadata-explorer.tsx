@@ -2,7 +2,8 @@
 
 import { ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { PlayerComparisonTable } from "@/components/lab/bsd/player-comparison-table";
 import { BsdSetupBanner } from "@/components/lab/bsd/setup-banner";
 import {
@@ -15,22 +16,16 @@ import type {
   ConvexCountrySnapshot,
   TeamEnrichmentPayload,
 } from "@/lib/bsd/enrichment-types";
+import {
+  fetchLabEnrichment,
+  labEnrichmentQueryOptions,
+  labTeamQueryOptions,
+} from "@/lib/query/lab";
+import { queryKeys } from "@/lib/query/keys";
 import { GROUP_LETTERS } from "@/lib/openfootball/teams";
 import { artifactSurface, cn } from "@/lib/utils";
 
 type Slug = string;
-
-function addToSet<T>(set: Set<T>, value: T) {
-  const next = new Set(set);
-  next.add(value);
-  return next;
-}
-
-function removeFromSet<T>(set: Set<T>, value: T) {
-  const next = new Set(set);
-  next.delete(value);
-  return next;
-}
 
 export function PlayerMetadataExplorer({
   countries,
@@ -39,15 +34,10 @@ export function PlayerMetadataExplorer({
   countries: ConvexCountrySnapshot[];
   hasToken: boolean;
 }) {
+  const queryClient = useQueryClient();
   const [activeGroup, setActiveGroup] = useState<string>("ALL");
   const [selectedSlug, setSelectedSlug] = useState<Slug | null>(countries[0]?.slug ?? null);
-
-  const [teamCache, setTeamCache] = useState<Record<Slug, LabTeamSnapshot>>({});
-  const [enrichmentCache, setEnrichmentCache] = useState<Record<Slug, TeamEnrichmentPayload>>({});
-  const [loadingTeams, setLoadingTeams] = useState<Set<Slug>>(() => new Set());
-  const [loadingEnrichments, setLoadingEnrichments] = useState<Set<Slug>>(() => new Set());
-  const [teamErrors, setTeamErrors] = useState<Record<Slug, string>>({});
-  const [enrichmentErrors, setEnrichmentErrors] = useState<Record<Slug, string>>({});
+  const [isRefreshingEnrichment, setIsRefreshingEnrichment] = useState(false);
 
   const filteredCountries = useMemo(() => {
     if (activeGroup === "ALL") return countries;
@@ -55,155 +45,37 @@ export function PlayerMetadataExplorer({
   }, [activeGroup, countries]);
 
   const selectedCountry = countries.find((country) => country.slug === selectedSlug) ?? null;
-  const selectedTeam = selectedSlug ? (teamCache[selectedSlug] ?? null) : null;
-  const selectedEnrichment = selectedSlug ? (enrichmentCache[selectedSlug] ?? null) : null;
 
-  const isLoadingTeam =
-    selectedSlug != null && loadingTeams.has(selectedSlug) && selectedTeam == null;
+  const teamQuery = useQuery(labTeamQueryOptions(selectedSlug));
+  const selectedTeam = teamQuery.data ?? null;
+
+  const enrichmentQuery = useQuery(
+    labEnrichmentQueryOptions(selectedSlug, selectedTeam ?? undefined, hasToken),
+  );
+  const selectedEnrichment = enrichmentQuery.data ?? null;
+
+  const isLoadingTeam = teamQuery.isPending;
   const isLoadingEnrichment =
-    selectedSlug != null &&
-    loadingEnrichments.has(selectedSlug) &&
-    selectedEnrichment == null &&
-    selectedTeam != null;
-  const isRefreshingEnrichment =
-    selectedSlug != null &&
-    loadingEnrichments.has(selectedSlug) &&
-    selectedEnrichment != null;
+    hasToken && selectedTeam != null && enrichmentQuery.isPending && !selectedEnrichment;
 
-  const teamError = selectedSlug ? (teamErrors[selectedSlug] ?? null) : null;
-  const enrichmentError = selectedSlug ? (enrichmentErrors[selectedSlug] ?? null) : null;
+  const teamError = teamQuery.error instanceof Error ? teamQuery.error.message : null;
+  const enrichmentError =
+    enrichmentQuery.error instanceof Error ? enrichmentQuery.error.message : null;
 
-  useEffect(() => {
-    if (!selectedSlug || teamCache[selectedSlug]) return;
-
-    let cancelled = false;
-
-    void (async () => {
-      setLoadingTeams((current) => addToSet(current, selectedSlug));
-      setTeamErrors((current) => {
-        const next = { ...current };
-        delete next[selectedSlug];
-        return next;
-      });
-
-      try {
-        const response = await fetch(
-          `/api/lab/convex/team?slug=${encodeURIComponent(selectedSlug)}`,
-        );
-        const data = (await response.json()) as LabTeamSnapshot & { detail?: string };
-        if (!response.ok) throw new Error(data.detail ?? "Failed to load team");
-        if (cancelled) return;
-
-        setTeamCache((current) => ({ ...current, [selectedSlug]: data }));
-      } catch (err) {
-        if (!cancelled) {
-          setTeamErrors((current) => ({
-            ...current,
-            [selectedSlug]:
-              err instanceof Error ? err.message : "Failed to load team",
-          }));
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingTeams((current) => removeFromSet(current, selectedSlug));
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedSlug, teamCache]);
-
-  useEffect(() => {
-    if (!hasToken || !selectedSlug || !selectedTeam || enrichmentCache[selectedSlug]) return;
-
-    let cancelled = false;
-
-    void (async () => {
-      setLoadingEnrichments((current) => addToSet(current, selectedSlug));
-      setEnrichmentErrors((current) => {
-        const next = { ...current };
-        delete next[selectedSlug];
-        return next;
-      });
-
-      try {
-        const response = await fetch("/api/lab/bsd/players", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            country: selectedTeam.country,
-            players: selectedTeam.players,
-            includeStats: true,
-          }),
-        });
-
-        const data = (await response.json()) as TeamEnrichmentPayload & { detail?: string };
-        if (!response.ok) throw new Error(data.detail ?? "Failed to enrich players");
-        if (cancelled) return;
-
-        setEnrichmentCache((current) => ({ ...current, [selectedSlug]: data }));
-      } catch (err) {
-        if (!cancelled) {
-          setEnrichmentErrors((current) => ({
-            ...current,
-            [selectedSlug]:
-              err instanceof Error ? err.message : "Failed to enrich players",
-          }));
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingEnrichments((current) => removeFromSet(current, selectedSlug));
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [hasToken, selectedSlug, selectedTeam, enrichmentCache]);
-
-  const reloadEnrichment = useCallback(async () => {
+  const reloadEnrichment = async () => {
     if (!selectedSlug || !selectedTeam) return;
 
-    setEnrichmentCache((current) => {
-      const next = { ...current };
-      delete next[selectedSlug];
-      return next;
-    });
-    setLoadingEnrichments((current) => addToSet(current, selectedSlug));
-    setEnrichmentErrors((current) => {
-      const next = { ...current };
-      delete next[selectedSlug];
-      return next;
-    });
+    setIsRefreshingEnrichment(true);
 
     try {
-      const response = await fetch("/api/lab/bsd/players", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          country: selectedTeam.country,
-          players: selectedTeam.players,
-          includeStats: true,
-        }),
+      await queryClient.fetchQuery({
+        queryKey: queryKeys.labEnrichment(selectedSlug),
+        queryFn: () => fetchLabEnrichment(selectedTeam),
       });
-
-      const data = (await response.json()) as TeamEnrichmentPayload & { detail?: string };
-      if (!response.ok) throw new Error(data.detail ?? "Failed to enrich players");
-
-      setEnrichmentCache((current) => ({ ...current, [selectedSlug]: data }));
-    } catch (err) {
-      setEnrichmentErrors((current) => ({
-        ...current,
-        [selectedSlug]:
-          err instanceof Error ? err.message : "Failed to enrich players",
-      }));
     } finally {
-      setLoadingEnrichments((current) => removeFromSet(current, selectedSlug));
+      setIsRefreshingEnrichment(false);
     }
-  }, [selectedSlug, selectedTeam]);
+  };
 
   return (
     <div className="space-y-6">
@@ -233,10 +105,15 @@ export function PlayerMetadataExplorer({
           </div>
 
           <div className="max-h-[min(70vh,40rem)] space-y-1.5 overflow-y-auto pr-1">
+            {countries.length === 0 ? (
+              <p className="rounded-sm border border-white/8 bg-artifact/70 px-3 py-2.5 text-xs text-muted-foreground">
+                No Convex squads with players yet. Seed players in Convex to review them here.
+              </p>
+            ) : null}
             {filteredCountries.map((country) => {
-              const cached = teamCache[country.slug];
               const isSelected = selectedSlug === country.slug;
-              const isPending = loadingTeams.has(country.slug) && !cached;
+              const isPending =
+                isSelected && teamQuery.isFetching && teamQuery.fetchStatus !== "idle";
 
               return (
                 <button
@@ -258,7 +135,7 @@ export function PlayerMetadataExplorer({
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Group {country.groupLetter} · {country.fifaCode}
-                    {cached ? ` · ${cached.players.length} players` : ""}
+                    {isSelected && selectedTeam ? ` · ${selectedTeam.players.length} players` : ""}
                   </p>
                 </button>
               );

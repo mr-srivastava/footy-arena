@@ -27,7 +27,7 @@ export default async function LabPage() {
     notFound();
   }
 
-  const countries = await fetchQuery(api.countries.list, {});
+  const countries = await fetchQuery(api.countries.listWithPlayers, {});
   const countrySummaries = countries
     .map(toConvexCountrySnapshot)
     .toSorted(

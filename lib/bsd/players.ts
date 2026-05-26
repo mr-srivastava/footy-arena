@@ -1,113 +1,19 @@
-import { bsdFetch } from "@/lib/bsd/client";
-import {
-  BSD_TEAM_NAME_ALIASES,
-  iso2ForFifa,
-} from "@/lib/bsd/fifa-nation";
-import { mapInBatches } from "@/lib/bsd/batch";
+import { bsdFetch } from '@/lib/bsd/client';
+import { mapInBatches } from '@/lib/bsd/batch';
 import type {
   BsdPlayerCareerStatsResponse,
   BsdPlayerEnrichment,
   BsdPlayerListItem,
-  BsdPlayersListResponse,
   ConvexCountrySnapshot,
   ConvexPlayerSnapshot,
   TeamEnrichmentPayload,
-} from "@/lib/bsd/enrichment-types";
+} from '@/lib/bsd/enrichment-types';
 import {
-  pickBestPlayerMatch,
-  playerSearchTerm,
-  scorePlayerMatch,
-} from "@/lib/bsd/match-player";
-import { getWorldCupNationalTeams } from "@/lib/bsd/national-teams";
+  resolveBsdPlayers,
+  resolveNationalTeam,
+} from '@/lib/bsd/resolve-player';
 
-function normalizeTeamName(value: string) {
-  return value.trim().toLowerCase();
-}
-
-export async function resolveNationalTeam(country: ConvexCountrySnapshot) {
-  const teams = await getWorldCupNationalTeams();
-  const names = new Set(
-    [
-      country.displayName,
-      country.fifaCode,
-      ...(BSD_TEAM_NAME_ALIASES[country.fifaCode] ?? []),
-    ]
-      .filter(Boolean)
-      .map(normalizeTeamName),
-  );
-
-  const match = teams.find((team) => {
-    const teamNames = [team.name, team.short_name, team.country].map(normalizeTeamName);
-    return teamNames.some((name) => names.has(name));
-  });
-
-  return match ?? null;
-}
-
-async function searchBsdPlayers(params: {
-  name: string;
-  nationalTeamId?: number | null;
-  nationalityCode?: string | null;
-  limit?: number;
-}) {
-  const query = new URLSearchParams();
-  query.set("name", playerSearchTerm(params.name));
-  query.set("limit", String(params.limit ?? 10));
-  if (params.nationalTeamId) {
-    query.set("national_team_id", String(params.nationalTeamId));
-  }
-  if (params.nationalityCode) {
-    query.set("nationality_code", params.nationalityCode);
-  }
-
-  const data = await bsdFetch<BsdPlayersListResponse>(`players?${query.toString()}`);
-  return data.results;
-}
-
-export async function matchConvexPlayer(
-  player: ConvexPlayerSnapshot,
-  country: ConvexCountrySnapshot,
-  nationalTeamId: number | null,
-) {
-  const nationalityCode = iso2ForFifa(country.fifaCode);
-  const searchParams = {
-    name: player.name,
-    nationalTeamId,
-    nationalityCode,
-    limit: 15,
-  };
-
-  let candidates = await searchBsdPlayers(searchParams);
-
-  if (candidates.length === 0 && nationalTeamId) {
-    candidates = await searchBsdPlayers({
-      name: player.name,
-      nationalityCode,
-      limit: 15,
-    });
-  }
-
-  if (candidates.length === 0) {
-    candidates = await searchBsdPlayers({
-      name: player.name,
-      limit: 15,
-    });
-  }
-
-  if (player.jerseyNumber != null) {
-    const byNumber = candidates.find(
-      (candidate) => candidate.jersey_number === player.jerseyNumber,
-    );
-    if (byNumber) {
-      const score = scorePlayerMatch(player.name, byNumber);
-      if (score >= 55) {
-        return { player: byNumber, score: Math.max(score, 90) };
-      }
-    }
-  }
-
-  return pickBestPlayerMatch(player.name, candidates);
-}
+export { resolveNationalTeam } from '@/lib/bsd/resolve-player';
 
 export async function fetchPlayerDetail(playerId: number) {
   return bsdFetch<BsdPlayerListItem>(`players/${playerId}`);
@@ -124,7 +30,7 @@ export async function fetchPlayerCareerStats(playerId: number, limit = 12) {
   }
 }
 
-function summarizeStats(stats: BsdPlayerCareerStatsResponse["player_stats"]) {
+function summarizeStats(stats: BsdPlayerCareerStatsResponse['player_stats']) {
   if (stats.length === 0) {
     return { appearances: 0, goals: 0, assists: 0, avgRating: null };
   }
@@ -150,28 +56,33 @@ async function enrichOnePlayer(
   country: ConvexCountrySnapshot,
   nationalTeamId: number | null,
   includeStats: boolean,
+  resolution: Awaited<ReturnType<typeof resolveBsdPlayers>>[number],
 ): Promise<BsdPlayerEnrichment> {
-  const match = await matchConvexPlayer(player, country, nationalTeamId);
-
-  if (!match) {
+  if (!resolution.bsdPlayer) {
     return {
       convexPlayerId: player.id,
       convex: player,
       bsd: null,
       matchScore: null,
+      matchConfidence: null,
+      matchStrategy: null,
       stats: [],
       statsSummary: summarizeStats([]),
     };
   }
 
-  const detail = await fetchPlayerDetail(match.player.id);
-  const stats = includeStats ? await fetchPlayerCareerStats(match.player.id) : [];
+  const detail = await fetchPlayerDetail(resolution.bsdPlayer.id);
+  const stats = includeStats
+    ? await fetchPlayerCareerStats(resolution.bsdPlayer.id)
+    : [];
 
   return {
     convexPlayerId: player.id,
     convex: player,
     bsd: detail,
-    matchScore: match.score,
+    matchScore: resolution.match.score,
+    matchConfidence: resolution.match.confidence,
+    matchStrategy: resolution.match.strategy,
     stats,
     statsSummary: summarizeStats(stats),
   };
@@ -184,14 +95,25 @@ export async function enrichTeamPlayers(input: {
 }): Promise<TeamEnrichmentPayload> {
   const nationalTeam = await resolveNationalTeam(input.country);
   const nationalTeamId = nationalTeam?.id ?? null;
+  const resolutions = await resolveBsdPlayers({
+    players: input.players,
+    country: input.country,
+    nationalTeamId,
+  });
 
-  const enriched = await mapInBatches(input.players, (player) =>
-    enrichOnePlayer(
+  const enriched = await mapInBatches(
+    input.players.map((player, index) => ({
       player,
-      input.country,
-      nationalTeamId,
-      input.includeStats ?? true,
-    ),
+      resolution: resolutions[index]!,
+    })),
+    ({ player, resolution }) =>
+      enrichOnePlayer(
+        player,
+        input.country,
+        nationalTeamId,
+        input.includeStats ?? true,
+        resolution,
+      ),
   );
 
   const matched = enriched.filter((row) => row.bsd != null).length;

@@ -1,9 +1,66 @@
 import type { Doc } from "@/convex/_generated/dataModel";
-import type { PlayerPosition, TeamSquad } from "./types";
+import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
+import type { PlayerPosition, SquadManager, SquadPlayer, TeamSquad } from "./types";
 import { toPositionGroup } from "./positions";
 
 type SquadDoc = Doc<"squads"> | null;
 type PlayerDoc = Doc<"players">;
+
+export function squadManagerFromDoc(squadDoc: SquadDoc): SquadManager | undefined {
+  if (!squadDoc?.managerName) {
+    return undefined;
+  }
+
+  return {
+    name: squadDoc.managerName,
+    nationality: squadDoc.managerNationality,
+  };
+}
+
+function toSquadPlayerPosition(
+  positionGroup: string | undefined,
+  position: string,
+): PlayerPosition {
+  if (
+    positionGroup === "GK" ||
+    positionGroup === "DF" ||
+    positionGroup === "MF" ||
+    positionGroup === "FW"
+  ) {
+    return positionGroup;
+  }
+
+  return toPositionGroup(position);
+}
+
+export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
+  return {
+    name: player.name,
+    shortName: player.shortName ?? undefined,
+    position: toSquadPlayerPosition(player.positionGroup, player.position),
+    club: player.club.name,
+    number: player.jerseyNumber ?? undefined,
+    age: player.age,
+    detailedPosition: player.detailedPosition,
+    preferredFoot: player.preferredFoot || undefined,
+    heightCm: player.bzzoiro?.heightCm ?? null,
+    marketValueEur: player.bzzoiro?.marketValueEur ?? null,
+    isCaptain: player.isCaptain,
+    league: player.club.league,
+    bsdPlayerId: player.bzzoiro?.playerId,
+  };
+}
+
+export function mapNormalizedSquad(
+  squadDoc: SquadDoc,
+  players: NormalizedPlayer[],
+): TeamSquad {
+  return {
+    status: squadDoc?.status ?? "pending",
+    manager: squadManagerFromDoc(squadDoc),
+    players: players.map(normalizedPlayerToSquadPlayer),
+  };
+}
 
 export function mapConvexSquad(
   squadDoc: SquadDoc,
@@ -11,21 +68,29 @@ export function mapConvexSquad(
 ): TeamSquad {
   return {
     status: squadDoc?.status ?? "pending",
-    manager: squadDoc?.managerName
-      ? {
-          name: squadDoc.managerName,
-          nationality: squadDoc.managerNationality,
-        }
-      : undefined,
+    manager: squadManagerFromDoc(squadDoc),
     players: players.map((p) => ({
       name: p.name,
-      position: (p.positionGroup ?? toPositionGroup(p.position)) as PlayerPosition,
+      position: toSquadPlayerPosition(p.positionGroup, p.position),
       club: p.club,
       number: p.jerseyNumber ?? undefined,
       age: p.age,
       detailedPosition: p.detailedPosition,
+      preferredFoot: p.preferredFoot || undefined,
       isCaptain: p.isCaptain,
       league: p.league,
     })),
+  };
+}
+
+export function squadFromEnrichedPlayers(
+  status: TeamSquad["status"],
+  manager: SquadManager | undefined,
+  players: NormalizedPlayer[],
+): TeamSquad {
+  return {
+    status,
+    manager,
+    players: players.map(normalizedPlayerToSquadPlayer),
   };
 }

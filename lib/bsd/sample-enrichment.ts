@@ -110,6 +110,8 @@ function buildSampleEnrichment(
       convex: player,
       bsd: detail,
       matchScore: detail ? 95 : null,
+      matchConfidence: detail ? 'high' : null,
+      matchStrategy: detail ? 'consensus' : null,
       stats,
       statsSummary: {
         appearances: stats.length,

@@ -1,3 +1,12 @@
+export type BsdPlayerAttributes = {
+  position: string;
+  tactical: number;
+  attacking: number;
+  defending: number;
+  technical: number;
+  creativity: number;
+};
+
 export type BsdPlayerListItem = {
   id: number;
   name: string;
@@ -15,6 +24,22 @@ export type BsdPlayerListItem = {
   market_value_eur: number | null;
   contract_until: string | null;
   availability: string;
+  attributes?: BsdPlayerAttributes;
+  strengths?: string[];
+  weaknesses?: string[];
+};
+
+export type BsdLeagueListItem = {
+  id: number;
+  name: string;
+  country: string;
+};
+
+export type BsdLeaguesListResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: BsdLeagueListItem[];
 };
 
 export type BsdPlayerStatRow = {
@@ -58,11 +83,50 @@ export type BsdTeamListItem = {
   name: string;
   short_name: string;
   country: string;
+  venue_id?: number;
 };
 
 export type BsdTeamsListResponse = {
   count: number;
+  next: string | null;
+  previous: string | null;
   results: BsdTeamListItem[];
+};
+
+export type NormalizedPlayer = {
+  id: string;
+  name: string;
+  shortName: string | null;
+  jerseyNumber: number | null;
+  age: number;
+  position: string;
+  positionGroup: string;
+  detailedPosition: string;
+  preferredFoot: string;
+  club: {
+    name: string;
+    country: string;
+    league: string;
+    bzzoiroTeamId: number | null;
+    venueId: number | null;
+  };
+  countryId: string;
+  isCaptain: boolean;
+  previousWorldCupsCount: number;
+  previousWorldCupsList: string[];
+  bzzoiro: {
+    playerId: number;
+    dateOfBirth: string;
+    heightCm: number | null;
+    weightKg: number | null;
+    nationality: string;
+    marketValueEur: number | null;
+    contractUntil: string | null;
+    availability: string;
+    attributes: BsdPlayerAttributes | null;
+    strengths: string[];
+    weaknesses: string[];
+  } | null;
 };
 
 export type ConvexPlayerSnapshot = {
@@ -87,11 +151,29 @@ export type ConvexCountrySnapshot = {
   groupLetter: string;
 };
 
+export type BsdMatchStrategy = 'club' | 'national' | 'consensus';
+export type BsdMatchConfidence = 'high' | 'medium' | 'low';
+
+export type BsdPlayerMatchMeta = {
+  bsdPlayerId: number | null;
+  score: number | null;
+  confidence: BsdMatchConfidence | null;
+  strategy: BsdMatchStrategy | null;
+};
+
+export type BsdPlayerResolution = {
+  team: BsdTeamListItem | null;
+  bsdPlayer: BsdPlayerListItem | null;
+  match: BsdPlayerMatchMeta;
+};
+
 export type BsdPlayerEnrichment = {
   convexPlayerId: string;
   convex: ConvexPlayerSnapshot;
   bsd: BsdPlayerListItem | null;
   matchScore: number | null;
+  matchConfidence: BsdMatchConfidence | null;
+  matchStrategy: BsdMatchStrategy | null;
   stats: BsdPlayerStatRow[];
   statsSummary: {
     appearances: number;

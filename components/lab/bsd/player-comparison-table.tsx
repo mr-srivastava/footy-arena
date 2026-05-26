@@ -64,7 +64,12 @@ function PlayerComparisonRow({ row }: { row: BsdPlayerEnrichment }) {
 
         <span className="text-sm text-muted-foreground">{row.convex.detailedPosition}</span>
 
-        <MatchBadge matched={matched} score={row.matchScore} />
+        <MatchBadge
+          matched={matched}
+          score={row.matchScore}
+          strategy={row.matchStrategy}
+          confidence={row.matchConfidence}
+        />
 
         <span className="truncate text-sm text-foreground">
           {row.bsd?.short_name ?? "—"}
@@ -115,18 +120,29 @@ function PlayerComparisonRow({ row }: { row: BsdPlayerEnrichment }) {
 function MatchBadge({
   matched,
   score,
+  strategy,
+  confidence,
 }: {
   matched: boolean;
   score: number | null;
+  strategy: BsdPlayerEnrichment["matchStrategy"];
+  confidence: BsdPlayerEnrichment["matchConfidence"];
 }) {
+  const label = matched ? (score != null ? `${score}%` : "Match") : "None";
+
   return (
     <span
       className={cn(
         "inline-flex w-fit rounded-sm px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em]",
         matched ? "bg-pitch/15 text-pitch-bright" : "bg-red/10 text-red",
       )}
+      title={
+        matched
+          ? `Matched via ${strategy ?? "unknown"} (${confidence ?? "unknown"} confidence)`
+          : undefined
+      }
     >
-      {matched ? `${score}%` : "None"}
+      {label}
     </span>
   );
 }

@@ -62,6 +62,10 @@ export function getFeaturedPlayers(): PlayerProfile[] {
   return PLAYERS.filter((player) => player.featured);
 }
 
+export function getFeaturedPlayerSlugs(): string[] {
+  return getFeaturedPlayers().map((player) => player.slug);
+}
+
 export function getPlayerBySlug(slug: string): PlayerProfile | undefined {
   return playersBySlug.get(slug);
 }

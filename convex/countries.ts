@@ -23,6 +23,19 @@ export const list = query({
   },
 });
 
+export const listWithPlayers = query({
+  args: {},
+  handler: async (ctx) => {
+    const players = await ctx.db.query("players").collect();
+    const countryIds = new Set(players.map((player) => player.countryId));
+
+    const countries = await ctx.db.query("countries").collect();
+    return countries
+      .filter((country) => countryIds.has(country._id))
+      .toSorted((a, b) => a.displayName.localeCompare(b.displayName));
+  },
+});
+
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, { slug }) => {
@@ -30,6 +43,13 @@ export const getBySlug = query({
       .query("countries")
       .withIndex("by_slug", (q) => q.eq("slug", slug.toLowerCase()))
       .unique();
+  },
+});
+
+export const getById = query({
+  args: { countryId: v.id("countries") },
+  handler: async (ctx, { countryId }) => {
+    return await ctx.db.get(countryId);
   },
 });
 

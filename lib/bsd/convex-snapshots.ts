@@ -4,13 +4,6 @@ import type {
   ConvexPlayerSnapshot,
 } from "@/lib/bsd/enrichment-types";
 
-export type LabTeamSnapshot = {
-  country: ConvexCountrySnapshot;
-  managerName?: string;
-  squadStatus: "announced" | "pending";
-  players: ConvexPlayerSnapshot[];
-};
-
 export function toConvexCountrySnapshot(
   country: Doc<"countries">,
 ): ConvexCountrySnapshot {
@@ -38,18 +31,5 @@ export function toConvexPlayerSnapshot(
     clubCountry: player.clubCountry,
     positionGroup: player.positionGroup,
     isCaptain: player.isCaptain,
-  };
-}
-
-export function toLabTeamSnapshot(data: {
-  country: Doc<"countries">;
-  squad: Doc<"squads"> | null;
-  players: Doc<"players">[];
-}): LabTeamSnapshot {
-  return {
-    country: toConvexCountrySnapshot(data.country),
-    managerName: data.squad?.managerName,
-    squadStatus: data.squad?.status ?? "pending",
-    players: data.players.map(toConvexPlayerSnapshot),
   };
 }

@@ -1,3 +1,4 @@
+import { DetailList, DetailListItem } from "@/components/detail-list";
 import type { MatchStoryTemplate } from "@/lib/discovery/types";
 import { artifactSurface } from "@/lib/utils";
 
@@ -22,17 +23,17 @@ export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           {template.narrative}
         </p>
-        <ul className="mt-5 divide-y divide-white/8 border-y border-white/8">
+        <DetailList className="mt-5">
           {template.watchFor.map((item) => (
-            <li
+            <DetailListItem
               key={item}
-              className="grid grid-cols-[auto_1fr] gap-3 py-3 text-xs leading-relaxed text-pitch-bright"
+              className="grid grid-cols-[auto_1fr] gap-3 text-xs leading-relaxed text-pitch-bright"
             >
               <span className="mt-1 h-px w-5 bg-pitch-bright/50" aria-hidden />
               <span>{item}</span>
-            </li>
+            </DetailListItem>
           ))}
-        </ul>
+        </DetailList>
       </div>
     </article>
   );

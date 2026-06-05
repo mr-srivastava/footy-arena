@@ -14,29 +14,53 @@ import { getHomeHeroData } from "@/lib/page-data/home";
 
 export function HomeHeroSkeleton() {
   return (
-    <>
-      <div
-        className="relative z-10 overflow-hidden border-b border-white/6 bg-navy/80 py-2"
-        aria-hidden
-      >
-        <Skeleton className="mx-6 h-4 w-64" />
-      </div>
-      <ContentContainer as="div" className="pb-16 pt-10 md:pb-24 md:pt-16">
-        <div className="grid items-end gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div className="text-center lg:text-left">
-            <Skeleton className="mx-auto h-4 w-32 lg:mx-0" />
-            <Skeleton className="mx-auto mt-6 h-28 w-64 lg:mx-0" />
-            <Skeleton className="mx-auto mt-6 h-20 w-full max-w-lg lg:mx-0" />
-            <Skeleton className="mx-auto mt-10 h-24 w-72 lg:mx-0" />
+    <ContentContainer as="div" className="pb-24 pt-10 md:pt-16">
+      <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="text-center lg:text-left">
+          <Skeleton className="mx-auto h-4 w-36 rounded-sm lg:mx-0" />
+          <div className="relative mt-2">
+            <Skeleton className="mx-auto h-28 w-56 rounded-sm md:h-36 md:w-72 lg:mx-0" />
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 rounded-sm" />
-            ))}
+          <div className="mx-auto mt-6 flex max-w-lg flex-col gap-2 lg:mx-0">
+            <Skeleton className="h-5 w-full rounded-sm" />
+            <Skeleton className="h-5 w-5/6 rounded-sm" />
+          </div>
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+            <div className="rounded-sm border border-gold/20 bg-gold/8 px-5 py-3">
+              <Skeleton className="h-3 w-36 rounded-sm" />
+              <Skeleton className="mt-2 h-8 w-44 rounded-sm" />
+            </div>
+            <div className="flex gap-2">
+              {Array.from({ length: 3 }, (_, index) => (
+                <Skeleton key={index} className="size-12 rounded-sm md:size-14" />
+              ))}
+            </div>
           </div>
         </div>
-      </ContentContainer>
-    </>
+
+        <div className="relative">
+          <div className={artifactSurface("relative overflow-hidden shadow-board")}>
+            <div className="flex items-center justify-between border-b border-white/8 px-4 py-3">
+              <Skeleton className="h-3 w-40 rounded-sm" />
+              <Skeleton className="h-3 w-24 rounded-sm" />
+            </div>
+            <div className="grid grid-cols-4 divide-x divide-white/8">
+              {Array.from({ length: 4 }, (_, index) => (
+                <div key={index} className="p-3 md:p-5">
+                  <Skeleton className="mb-3 size-4 rounded-sm md:mb-8" />
+                  <Skeleton className="h-9 w-12 rounded-sm md:h-12 md:w-16" />
+                  <Skeleton className="mt-3 h-3 w-16 rounded-sm" />
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/8 px-4 py-3">
+              <Skeleton className="h-3 w-40 rounded-sm" />
+              <Skeleton className="h-6 w-12 rounded-sm" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </ContentContainer>
   );
 }
 

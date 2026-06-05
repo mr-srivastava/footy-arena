@@ -2,17 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { EnrichedPlayerCard } from "@/components/explore/enriched-player-card";
+import { PlayerSpotlightCardSkeleton } from "@/components/player-spotlight-card";
 import { explorePlayersQueryOptions } from "@/lib/query/explore-players";
-import { artifactSurface } from "@/lib/utils";
 
 function ExplorePlayersSkeleton({ count }: { count: number }) {
   return (
     <>
       {Array.from({ length: count }, (_, index) => (
-        <div
-          key={index}
-          className={artifactSurface("min-h-64 animate-pulse bg-artifact-muted/80")}
-        />
+        <PlayerSpotlightCardSkeleton key={index} />
       ))}
     </>
   );

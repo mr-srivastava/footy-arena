@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { HighlightBlock } from "@/components/highlight-block";
 import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
 import { SubsectionTitle } from "@/components/subsection-title";
@@ -37,12 +38,12 @@ export function TeamNarrativePanel({
 
         <p className="mt-2 text-sm italic text-gold">{narrative.vibe}</p>
 
-        <div className="mt-6 border-l border-pitch-bright/45 pl-4">
+        <HighlightBlock className="mt-6">
           <SubsectionTitle level="label">Why watch</SubsectionTitle>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {narrative.whyCasualFansShouldCare}
           </p>
-        </div>
+        </HighlightBlock>
 
         <div className="mt-6 flex flex-wrap gap-2">
           {narrative.identityTags.map((tag) => (

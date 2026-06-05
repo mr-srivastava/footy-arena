@@ -1,3 +1,4 @@
+import { HighlightBlock } from "@/components/highlight-block";
 import type { MetricTranslation } from "@/lib/discovery/types";
 import { artifactSurface } from "@/lib/utils";
 
@@ -24,9 +25,11 @@ export function MetricTranslationCard({
         <p className="text-sm leading-relaxed text-muted-foreground">
           {metric.explanation}
         </p>
-        <p className="mt-4 border-l border-pitch-bright/50 pl-4 text-sm font-medium leading-relaxed text-foreground">
-          {metric.casualTranslation}
-        </p>
+        <HighlightBlock className="mt-4">
+          <p className="text-sm font-medium leading-relaxed text-foreground">
+            {metric.casualTranslation}
+          </p>
+        </HighlightBlock>
       </div>
     </article>
   );

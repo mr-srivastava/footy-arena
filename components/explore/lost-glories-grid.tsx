@@ -1,8 +1,8 @@
 import {
-  NationStoryCard,
-  NationStoryGrid,
-  NationStoryTimeline,
-} from "@/components/explore/nation-story-card";
+  CountryCard,
+  CountryCardGrid,
+  CountryTimeline,
+} from "@/components/explore/country-card";
 import { LOST_GLORIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
@@ -13,12 +13,12 @@ type LostGloriesGridProps = {
 
 export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
   return (
-    <NationStoryGrid>
+    <CountryCardGrid>
       {LOST_GLORIES.map((entry) => {
         const { team, href } = resolveTeamByFifaCode(entry.fifaCode, byCode);
 
         return (
-          <NationStoryCard
+          <CountryCard
             key={entry.nation}
             nation={entry.nation}
             eyebrow="Lost glory"
@@ -26,7 +26,7 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
             team={team}
             href={href}
           >
-            <NationStoryTimeline
+            <CountryTimeline
               items={[
                 { label: "Then", value: entry.then, tone: "accent" },
                 { label: "What changed", value: entry.whatChanged },
@@ -38,9 +38,9 @@ export function LostGloriesGrid({ byCode }: LostGloriesGridProps) {
                 },
               ]}
             />
-          </NationStoryCard>
+          </CountryCard>
         );
       })}
-    </NationStoryGrid>
+    </CountryCardGrid>
   );
 }

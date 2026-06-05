@@ -1,6 +1,7 @@
 import { ClipboardList, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { DetailList, DetailListItem } from "@/components/detail-list";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
@@ -89,9 +90,12 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                     <SubsectionTitle level="label" tone="gold">
                       {label}
                     </SubsectionTitle>
-                    <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
+                    <DetailList className="mt-3">
                       {players.map((player) => (
-                        <li key={`${player.name}-${player.number ?? ""}`}>
+                        <DetailListItem
+                          key={`${player.name}-${player.number ?? ""}`}
+                          className="py-0"
+                        >
                           <Link
                             href={`/players/${player.profileSlug}`}
                             className="group flex items-center justify-between gap-3 py-3 transition-colors hover:text-gold"
@@ -120,9 +124,9 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                               </span>
                             ) : null}
                           </Link>
-                        </li>
+                        </DetailListItem>
                       ))}
-                    </ul>
+                    </DetailList>
                   </div>
                 ) : null,
               )}

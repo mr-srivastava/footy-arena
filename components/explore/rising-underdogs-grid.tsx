@@ -1,8 +1,9 @@
 import {
-  NationStoryCard,
-  NationStoryGrid,
-  NationStoryPlayerBadges,
-} from "@/components/explore/nation-story-card";
+  CountryCard,
+  CountryCardGrid,
+  CountryPlayerLinks,
+} from "@/components/explore/country-card";
+import { HighlightBlock } from "@/components/highlight-block";
 import { RISING_UNDERDOG_ENTRIES } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { resolveTeamByFifaCode } from "@/lib/openfootball/teams";
@@ -13,13 +14,13 @@ type RisingUnderdogsGridProps = {
 
 export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
   return (
-    <NationStoryGrid>
+    <CountryCardGrid>
       {RISING_UNDERDOG_ENTRIES.map((entry) => {
         const { breakoutPlayers } = entry;
         const { team, href } = resolveTeamByFifaCode(entry.fifaCode, byCode);
 
         return (
-          <NationStoryCard
+          <CountryCard
             key={entry.nation}
             nation={entry.nation}
             eyebrow="Rising profile"
@@ -30,16 +31,18 @@ export function RisingUnderdogsGrid({ byCode }: RisingUnderdogsGridProps) {
             <p className="text-sm leading-relaxed text-muted-foreground">
               {entry.whyTheyMatter}
             </p>
-            <p className="mt-4 border-l border-pitch-bright/50 pl-4 text-sm font-medium leading-relaxed text-pitch-bright">
-              {entry.keyIdentity}
-            </p>
+            <HighlightBlock className="mt-4">
+              <p className="text-sm font-medium leading-relaxed text-pitch-bright">
+                {entry.keyIdentity}
+              </p>
+            </HighlightBlock>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {entry.whyCasualFansShouldWatch}
             </p>
-            <NationStoryPlayerBadges players={breakoutPlayers} />
-          </NationStoryCard>
+            <CountryPlayerLinks players={breakoutPlayers} />
+          </CountryCard>
         );
       })}
-    </NationStoryGrid>
+    </CountryCardGrid>
   );
 }

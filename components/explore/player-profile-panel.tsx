@@ -10,6 +10,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { DetailList, DetailListRow } from "@/components/detail-list";
+import { HighlightBlock } from "@/components/highlight-block";
 import { StatCard } from "@/components/stat-card";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
@@ -17,21 +19,6 @@ import { formatMarketValueEur } from "@/lib/bsd/format";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
 import { artifactSurface } from "@/lib/utils";
-
-function ProfileDetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <li className="flex items-baseline justify-between gap-4 py-3 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-medium text-foreground">{value}</span>
-    </li>
-  );
-}
 
 function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   const marketValue = formatMarketValueEur(player.marketValueEur);
@@ -80,7 +67,7 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
 
 function ClubContext({ player }: { player: ExplorePlayerCard }) {
   return (
-    <section className="border-l border-pitch-bright/45 pl-4">
+    <HighlightBlock>
       <SubsectionTitle level="label">At the club</SubsectionTitle>
       <p className="mt-2 font-display text-2xl tracking-wide text-foreground">
         {player.club.toUpperCase()}
@@ -93,7 +80,7 @@ function ClubContext({ player }: { player: ExplorePlayerCard }) {
         {player.detailedPosition || player.position}
         {player.preferredFoot ? ` · ${player.preferredFoot} foot` : ""}
       </p>
-    </section>
+    </HighlightBlock>
   );
 }
 
@@ -120,11 +107,11 @@ function SecondaryDetails({ player }: { player: ExplorePlayerCard }) {
       <SubsectionTitle level="label" tone="gold">
         More detail
       </SubsectionTitle>
-      <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
+      <DetailList className="mt-3">
         {rows.map(([label, value]) => (
-          <ProfileDetailRow key={label} label={label} value={value} />
+          <DetailListRow key={label} label={label} value={value} />
         ))}
-      </ul>
+      </DetailList>
     </section>
   );
 }
@@ -166,14 +153,14 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
         ) : null}
 
         {player.editorial?.watchFor ? (
-          <section className="border-l border-gold/35 pl-4">
+          <HighlightBlock tone="gold">
             <SubsectionTitle level="label" tone="accent">
               Watch for
             </SubsectionTitle>
             <p className="mt-2 text-base leading-relaxed text-foreground/90">
               {player.editorial.watchFor}
             </p>
-          </section>
+          </HighlightBlock>
         ) : null}
 
         {player.editorial?.similarEnergy ? (

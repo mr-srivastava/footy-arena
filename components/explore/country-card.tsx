@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
+import { DetailList, DetailListItem } from "@/components/detail-list";
 import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,11 +15,11 @@ import { getNationImage } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { cn } from "@/lib/utils";
 
-type NationStoryGridProps = {
+type CountryCardGridProps = {
   children: React.ReactNode;
 };
 
-type NationStoryCardProps = {
+type CountryCardProps = {
   nation: string;
   eyebrow: string;
   accent: Extract<CardAccent, "pitch" | "gold">;
@@ -28,17 +29,17 @@ type NationStoryCardProps = {
   children: React.ReactNode;
 };
 
-type NationStoryTimelineItem = {
+type CountryTimelineItem = {
   label: string;
   value: string;
   tone?: "accent" | "muted" | "bright";
 };
 
-export function NationStoryGrid({ children }: NationStoryGridProps) {
+export function CountryCardGrid({ children }: CountryCardGridProps) {
   return <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>;
 }
 
-export function NationStoryCard({
+export function CountryCard({
   nation,
   eyebrow,
   accent,
@@ -46,7 +47,7 @@ export function NationStoryCard({
   href,
   imageAlt = `${nation} football atmosphere`,
   children,
-}: NationStoryCardProps) {
+}: CountryCardProps) {
   const accentClass = accent === "pitch" ? "text-pitch-bright" : "text-gold";
   const imageGlowClass =
     accent === "pitch" ? "from-pitch-bright/14" : "from-gold/12";
@@ -103,7 +104,7 @@ export function NationStoryCard({
   );
 }
 
-export function NationStoryPlayerBadges({
+export function CountryPlayerLinks({
   players,
 }: {
   players: { name: string; slug: string }[];
@@ -126,15 +127,15 @@ export function NationStoryPlayerBadges({
   );
 }
 
-export function NationStoryTimeline({
+export function CountryTimeline({
   items,
 }: {
-  items: NationStoryTimelineItem[];
+  items: CountryTimelineItem[];
 }) {
   return (
-    <dl className="mt-1 flex flex-col divide-y divide-white/8 border-y border-white/8 text-sm">
+    <DetailList className="mt-1 text-sm" as="dl">
       {items.map((item) => (
-        <div key={item.label} className="py-3">
+        <DetailListItem key={item.label} as="div">
           <dt
             className={cn(
               "text-xs font-semibold uppercase tracking-widest",
@@ -153,8 +154,8 @@ export function NationStoryTimeline({
           >
             {item.value}
           </dd>
-        </div>
+        </DetailListItem>
       ))}
-    </dl>
+    </DetailList>
   );
 }

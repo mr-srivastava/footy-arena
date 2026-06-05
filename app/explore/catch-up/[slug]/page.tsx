@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
+import { DetailList, DetailListItem } from "@/components/detail-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
@@ -54,9 +55,9 @@ export default async function CatchUpPage({ params }: PageProps) {
         </PageHero>
 
         <article className={artifactSurface("p-6 md:p-8")}>
-          <ul className="divide-y divide-white/8 border-y border-white/8">
+          <DetailList>
             {topic.bullets.map((bullet) => (
-              <li
+              <DetailListItem
                 key={bullet}
                 className="grid grid-cols-[auto_1fr] gap-4 py-5 text-base leading-relaxed text-muted-foreground"
               >
@@ -65,9 +66,9 @@ export default async function CatchUpPage({ params }: PageProps) {
                   aria-hidden
                 />
                 {bullet}
-              </li>
+              </DetailListItem>
             ))}
-          </ul>
+          </DetailList>
         </article>
       </ContentContainer>
 

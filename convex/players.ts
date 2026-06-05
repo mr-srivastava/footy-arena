@@ -1,6 +1,5 @@
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 import { v } from "convex/values";
-import { playerFields, positionGroup } from "./validators";
 
 export const listAll = query({
   args: {},
@@ -33,34 +32,5 @@ export const getByFifaCode = query({
       .query("players")
       .withIndex("by_country", (q) => q.eq("countryId", country._id))
       .collect();
-  },
-});
-
-const playerSeedInput = v.object({
-  countryId: v.id("countries"),
-  positionGroup,
-  ...playerFields,
-});
-
-export const seed = mutation({
-  args: {
-    players: v.array(playerSeedInput),
-  },
-  handler: async (ctx, { players }) => {
-    for (const player of players) {
-      await ctx.db.insert("players", player);
-    }
-    return { inserted: players.length };
-  },
-});
-
-export const clear = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const all = await ctx.db.query("players").collect();
-    for (const p of all) {
-      await ctx.db.delete(p._id);
-    }
-    return { deleted: all.length };
   },
 });

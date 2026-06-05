@@ -9,6 +9,7 @@ export type PlayerPosition = 'GK' | 'DF' | 'MF' | 'FW';
 export type SquadPlayer = {
   name: string;
   shortName?: string;
+  profileSlug: string;
   position: PlayerPosition;
   club?: string;
   number?: number;

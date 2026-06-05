@@ -12,13 +12,13 @@ import {
   NEXT_GENERATION_SLUGS,
   PLAYERS_TO_WATCH_SLUGS,
   RISING_UNDERDOGS,
-} from "./seed/categories";
-import { DISCOVERY_COLLECTIONS } from "./seed/collections";
-import { CATCH_UP_TOPICS, HOMEPAGE_MODULES } from "./seed/homepage";
-import { MATCH_STORY_TEMPLATES } from "./seed/match-templates";
-import { METRIC_TRANSLATIONS } from "./seed/metrics";
-import { PLAYERS } from "./seed/players";
-import { TEAM_NARRATIVES } from "./seed/teams";
+} from "./content/categories";
+import { DISCOVERY_COLLECTIONS } from "./content/collections";
+import { CATCH_UP_TOPICS, HOMEPAGE_MODULES } from "./content/homepage";
+import { MATCH_STORY_TEMPLATES } from "./content/match-templates";
+import { METRIC_TRANSLATIONS } from "./content/metrics";
+import { PLAYERS } from "./content/players";
+import { TEAM_NARRATIVES } from "./content/teams";
 
 const playersBySlug = new Map(PLAYERS.map((player) => [player.slug, player]));
 const narrativesByCode = new Map(

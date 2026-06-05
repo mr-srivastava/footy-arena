@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { SectionHeading } from "@/components/section-heading";
-import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/seed/history";
+import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/content/history";
 import type { HistoryEra, HistoryLegend } from "@/lib/discovery/types";
 import { artifactSurface } from "@/lib/utils";
 

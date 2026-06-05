@@ -1,17 +1,5 @@
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 import { v } from "convex/values";
-
-const countryInput = v.object({
-  fifaCode: v.string(),
-  slug: v.string(),
-  name: v.string(),
-  nameNormalised: v.optional(v.string()),
-  displayName: v.string(),
-  continent: v.string(),
-  confederation: v.string(),
-  flagIcon: v.string(),
-  groupLetter: v.string(),
-});
 
 export const list = query({
   args: {},
@@ -75,48 +63,5 @@ export const listByGroup = query({
     return countries.toSorted((a, b) =>
       a.displayName.localeCompare(b.displayName),
     );
-  },
-});
-
-export const upsertBatch = mutation({
-  args: { countries: v.array(countryInput) },
-  handler: async (ctx, { countries }) => {
-    let inserted = 0;
-    let updated = 0;
-
-    for (const country of countries) {
-      const existing = await ctx.db
-        .query("countries")
-        .withIndex("by_fifa_code", (q) =>
-          q.eq("fifaCode", country.fifaCode.toUpperCase()),
-        )
-        .unique();
-
-      if (existing) {
-        await ctx.db.patch(existing._id, country);
-        updated++;
-      } else {
-        await ctx.db.insert("countries", {
-          ...country,
-          fifaCode: country.fifaCode.toUpperCase(),
-          slug: country.slug.toLowerCase(),
-          groupLetter: country.groupLetter.toUpperCase(),
-        });
-        inserted++;
-      }
-    }
-
-    return { inserted, updated };
-  },
-});
-
-export const clear = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const all = await ctx.db.query("countries").collect();
-    for (const doc of all) {
-      await ctx.db.delete(doc._id);
-    }
-    return { deleted: all.length };
   },
 });

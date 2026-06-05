@@ -6,7 +6,7 @@ import { toConvexCountrySnapshot } from "@/lib/bsd/convex-snapshots";
 import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
 import { enrichPlayers, normalizePlayer } from "@/lib/bsd/normalize-player";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
-import { PLAYERS } from "@/lib/discovery/seed/players";
+import { PLAYERS } from "@/lib/discovery/content/players";
 import type { PlayerProfile } from "@/lib/discovery/types";
 import { playerSlugFromName } from "@/lib/explore/player-slug";
 import type { ExplorePlayerCard } from "@/lib/explore/types";

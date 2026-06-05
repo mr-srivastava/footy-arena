@@ -1,5 +1,6 @@
 import { ClipboardList, UserRound } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
@@ -91,12 +92,15 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                     <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
                       {players.map((player) => (
                         <li key={`${player.name}-${player.number ?? ""}`}>
-                          <div className="flex items-center justify-between gap-3 py-3">
+                          <Link
+                            href={`/players/${player.profileSlug}`}
+                            className="group flex items-center justify-between gap-3 py-3 transition-colors hover:text-gold"
+                          >
                             <div className="flex min-w-0 items-center gap-3">
                               <SquadPlayerAvatar player={player} />
                               <div className="min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <p className="font-medium text-foreground">
+                                  <p className="font-medium text-foreground transition-colors group-hover:text-gold">
                                     {player.shortName ?? player.name}
                                   </p>
                                   {player.isCaptain ? (
@@ -115,7 +119,7 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                                 {player.number}
                               </span>
                             ) : null}
-                          </div>
+                          </Link>
                         </li>
                       ))}
                     </ul>

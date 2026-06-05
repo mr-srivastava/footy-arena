@@ -32,7 +32,7 @@ export const getWorldCupTeams = cache(async (): Promise<{
 
   if (countries.length === 0) {
     throw new Error(
-      "No countries in Convex. Run `npm run seed` after starting `npx convex dev`.",
+      "No countries found in Convex. Restore a data backup or import countries before building team pages.",
     );
   }
 

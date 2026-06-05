@@ -1,5 +1,6 @@
 import type { Doc } from "@/convex/_generated/dataModel";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
+import { playerSlugFromName } from "@/lib/explore/player-slug";
 import type { PlayerPosition, SquadManager, SquadPlayer, TeamSquad } from "./types";
 import { toPositionGroup } from "./positions";
 
@@ -37,6 +38,7 @@ export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPl
   return {
     name: player.name,
     shortName: player.shortName ?? undefined,
+    profileSlug: playerSlugFromName(player.name),
     position: toSquadPlayerPosition(player.positionGroup, player.position),
     club: player.club.name,
     number: player.jerseyNumber ?? undefined,
@@ -71,6 +73,7 @@ export function mapConvexSquad(
     manager: squadManagerFromDoc(squadDoc),
     players: players.map((p) => ({
       name: p.name,
+      profileSlug: p.profileSlug ?? playerSlugFromName(p.name),
       position: toSquadPlayerPosition(p.positionGroup, p.position),
       club: p.club,
       number: p.jerseyNumber ?? undefined,

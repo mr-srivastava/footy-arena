@@ -1,8 +1,8 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { DetailList, DetailListItem } from "@/components/detail-list";
 import { MediaImage } from "@/components/media-image";
+import { SurfaceLink } from "@/components/surface-link";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -54,10 +54,11 @@ export function CountryCard({
 
   return (
     <Card
+      variant="artifact"
       padding="none"
       interactive
       accent={accent}
-      className="h-full bg-artifact"
+      className="h-full"
     >
       <MediaImage
         src={getNationImage(nation)}
@@ -87,17 +88,10 @@ export function CountryCard({
       </CardHeader>
       <CardContent className="flex flex-1 flex-col px-5 pb-1">{children}</CardContent>
       {href && team ? (
-        <CardFooter className="mt-auto border-white/8 bg-artifact-muted/40 px-5 py-4">
-          <Link
-            href={href}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold transition-colors hover:text-foreground"
-          >
+        <CardFooter className="mt-auto border-line-soft bg-artifact-muted/40 px-5 py-4">
+          <SurfaceLink href={href}>
             View {team.displayName}
-            <ArrowRight
-              className="size-4 transition-transform group-hover/card:translate-x-1"
-              aria-hidden
-            />
-          </Link>
+          </SurfaceLink>
         </CardFooter>
       ) : null}
     </Card>

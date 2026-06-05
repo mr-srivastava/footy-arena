@@ -7,8 +7,8 @@ import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { Card, CardContent } from "@/components/ui/card";
 import { CATCH_UP_TOPICS, getCatchUpImage, getCatchUpTopic } from "@/lib/discovery";
-import { artifactSurface } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -54,8 +54,9 @@ export default async function CatchUpPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <article className={artifactSurface("p-6 md:p-8")}>
-          <DetailList>
+        <Card variant="artifact" shape="artifact">
+          <CardContent className="p-6 md:p-8">
+            <DetailList>
             {topic.bullets.map((bullet) => (
               <DetailListItem
                 key={bullet}
@@ -68,8 +69,9 @@ export default async function CatchUpPage({ params }: PageProps) {
                 {bullet}
               </DetailListItem>
             ))}
-          </DetailList>
-        </article>
+            </DetailList>
+          </CardContent>
+        </Card>
       </ContentContainer>
 
       <SiteFooter />

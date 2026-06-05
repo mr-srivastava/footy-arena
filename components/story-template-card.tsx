@@ -1,19 +1,20 @@
 import { DetailList, DetailListItem } from "@/components/detail-list";
+import { Card, CardContent } from "@/components/ui/card";
 import type { MatchStoryTemplate } from "@/lib/discovery/types";
-import { artifactSurface } from "@/lib/utils";
 
 export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }) {
   return (
-    <article
-      className={artifactSurface(
-        "relative h-full overflow-hidden p-5 transition-colors hover:border-gold/35",
-      )}
+    <Card
+      variant="artifact"
+      shape="artifact"
+      interactive
+      className="relative h-full hover:border-gold/35"
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-gold/12 to-transparent"
         aria-hidden
       />
-      <div className="relative">
+      <CardContent className="relative p-5">
         <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-gold">
           Match lens
         </p>
@@ -34,7 +35,7 @@ export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }
             </DetailListItem>
           ))}
         </DetailList>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }

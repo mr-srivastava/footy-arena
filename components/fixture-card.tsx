@@ -77,6 +77,7 @@ export function FixtureCard({
 
   return (
     <Card
+      variant="artifact"
       accent={accent}
       interactive
       padding="none"
@@ -91,7 +92,7 @@ export function FixtureCard({
           aria-hidden
         />
 
-        <div className="relative flex items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
+        <div className="relative flex items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
           <div className="min-w-0">
             <Badge variant={knockout ? "knockout" : "group"}>
               {fixture.stageLabel}
@@ -118,7 +119,7 @@ export function FixtureCard({
             <TeamName name={fixture.team1} href={team1Href} />
           </div>
           <div
-            className="relative flex size-11 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-background/80 font-display text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
+            className="relative flex size-11 shrink-0 items-center justify-center rounded-sm border border-line-strong bg-background/80 font-display text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
             aria-hidden
           >
             VS
@@ -132,7 +133,7 @@ export function FixtureCard({
           />
         </div>
 
-        <div className="relative flex items-start gap-2 border-t border-white/8 bg-background/25 px-5 py-3 text-xs text-muted-foreground">
+        <div className="relative flex items-start gap-2 border-t border-line-soft bg-background/25 px-5 py-3 text-xs text-muted-foreground">
           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
           <span className="leading-relaxed">{fixture.ground}</span>
         </div>

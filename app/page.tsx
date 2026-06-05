@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { EntityRow } from "@/components/entity-row";
 import History from "@/components/home/home-history";
 import {
   HomeHero,
@@ -23,7 +24,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
-import { artifactSurface } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 import { HOST_CITIES } from "@/lib/openfootball/constants";
 import { HOST_CITY_VENUES, HOST_NATIONS } from "@/lib/openfootball/host-venues";
 import { MediaImage } from "@/components/media-image";
@@ -68,67 +69,65 @@ export default function Home() {
               <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
                 <Link
                   href={featuredJourneyCard.href}
-                  className={artifactSurface(
-                    "group relative min-h-80 overflow-hidden p-6 md:p-8",
-                  )}
+                  className="group block min-h-80"
                 >
-                  <MediaImage
-                    src={getHomepageCardImage(featuredJourneyCard.href)}
-                    alt={`${featuredJourneyCard.title} atmosphere`}
-                    overlay="hero"
-                    className="absolute inset-0"
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                    priority
-                  />
-                  <div
-                    className="home-discovery-field-lines absolute bottom-0 left-0 right-0 h-24 opacity-50"
-                    aria-hidden
-                  />
-                  <div className="relative flex h-full flex-col justify-between">
-                    <div className="flex items-center justify-between gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                      <span>Featured route</span>
-                      <span className="text-gold">01</span>
-                    </div>
-                    <div>
-                      <h3 className="max-w-xl font-display text-5xl leading-none tracking-wide text-foreground transition-colors group-hover:text-gold md:text-7xl">
-                        {featuredJourneyCard.title.toUpperCase()}
-                      </h3>
-                      <p className="mt-4 max-w-md text-base leading-relaxed text-muted">
-                        {featuredJourneyCard.description}
-                      </p>
-                      <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-gold">
-                        Start here
-                        <ArrowRight
-                          className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                          aria-hidden
-                        />
-                      </span>
-                    </div>
-                  </div>
+                  <Card
+                    variant="artifact"
+                    shape="artifact"
+                    padding="none"
+                    interactive
+                    className="relative min-h-80 p-6 group-hover:border-gold/35 md:p-8"
+                  >
+                    <MediaImage
+                      src={getHomepageCardImage(featuredJourneyCard.href)}
+                      alt={`${featuredJourneyCard.title} atmosphere`}
+                      overlay="hero"
+                      className="absolute inset-0"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                      priority
+                    />
+                    <div
+                      className="home-discovery-field-lines absolute bottom-0 left-0 right-0 h-24 opacity-50"
+                      aria-hidden
+                    />
+                    <CardContent className="relative flex min-h-68 flex-col justify-between p-0">
+                      <div className="flex items-center justify-between gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        <span>Featured route</span>
+                        <span className="text-gold">01</span>
+                      </div>
+                      <div>
+                        <h3 className="max-w-xl font-display text-5xl leading-none tracking-wide text-foreground transition-colors group-hover:text-gold md:text-7xl">
+                          {featuredJourneyCard.title.toUpperCase()}
+                        </h3>
+                        <p className="mt-4 max-w-md text-base leading-relaxed text-muted">
+                          {featuredJourneyCard.description}
+                        </p>
+                        <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-gold">
+                          Start here
+                          <ArrowRight
+                            className="size-4 transition-transform group-hover:translate-x-1"
+                            aria-hidden
+                          />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </Link>
                 <div className="grid gap-3">
                   {secondaryJourneyCards.slice(0, 4).map((card, index) => (
-                    <Link
+                    <EntityRow
                       key={card.href}
                       href={card.href}
-                      className="group grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-white/8 py-4 transition-colors hover:border-gold/40"
-                    >
-                      <span className="font-display text-3xl text-pitch-bright/70">
+                      leading={
+                        <span className="font-display text-3xl text-pitch-bright/70">
                         0{index + 2}
-                      </span>
-                      <span>
-                        <span className="block font-display text-2xl tracking-wide text-foreground transition-colors group-hover:text-gold">
-                          {card.title.toUpperCase()}
                         </span>
-                        <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-                          {card.description}
-                        </span>
-                      </span>
-                      <ArrowRight
-                        className="h-4 w-4 text-gold transition-transform group-hover:translate-x-1"
-                        aria-hidden
-                      />
-                    </Link>
+                      }
+                      title={card.title.toUpperCase()}
+                      meta={card.description}
+                      titleClassName="text-2xl"
+                      metaClassName="normal-case tracking-normal leading-relaxed"
+                    />
                   ))}
                 </div>
               </div>
@@ -146,11 +145,11 @@ export default function Home() {
             title="THREE NATIONS, ONE DREAM"
             icon={Globe2}
           />
-          <div className="overflow-hidden rounded-sm border-y border-white/10">
+          <div className="overflow-hidden rounded-sm border-y border-line-strong">
             {HOST_NATIONS.map((nation) => (
               <div
                 key={nation.country}
-                className="group relative grid gap-4 border-b border-white/8 px-2 py-7 last:border-b-0 md:grid-cols-[0.55fr_0.3fr_1fr] md:items-center md:px-0"
+                className="group relative grid gap-4 border-b border-line-soft px-2 py-7 last:border-b-0 md:grid-cols-[0.55fr_0.3fr_1fr] md:items-center md:px-0"
               >
                 <div
                   className={`pointer-events-none absolute inset-x-0 h-px bg-gradient-to-r ${nation.accent} to-transparent opacity-0 transition-opacity group-hover:opacity-80`}
@@ -207,7 +206,7 @@ export default function Home() {
               <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                 {["USA", "MEX", "CAN"].map((country) => (
                   <div key={country} className={country === "USA" ? "sm:row-span-2" : ""}>
-                    <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+                    <div className="mb-3 flex items-center justify-between border-b border-line-strong pb-2">
                       <Badge variant="country">{country}</Badge>
                       <span className="text-xs text-muted-foreground">
                         {
@@ -217,7 +216,7 @@ export default function Home() {
                         cities
                       </span>
                     </div>
-                    <ul className="space-y-3">
+                    <ul className="flex flex-col gap-3">
                       {HOST_CITY_VENUES.filter((city) => city.country === country).map(
                         (city) => (
                           <li

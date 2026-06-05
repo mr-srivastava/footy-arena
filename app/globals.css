@@ -17,10 +17,15 @@
   --muted: #8891a0;
   --surface-elevated: #1a1f28;
   --surface-sunken: #0c0e12;
+  --surface-glass: rgba(255, 255, 255, 0.05);
+  --surface-glass-strong: rgba(255, 255, 255, 0.08);
   --artifact: #0f1218;
   --artifact-muted: rgba(15, 18, 24, 0.75);
   --artifact-strong: rgba(15, 18, 24, 0.9);
   --artifact-deep: rgba(15, 18, 24, 0.95);
+  --line-soft: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.1);
+  --watermark: rgba(255, 255, 255, 0.025);
   --ring: rgba(107, 158, 135, 0.38);
   --background: #090b0f;
   --foreground: #eceff4;
@@ -72,10 +77,15 @@
   --color-navy-elevated: var(--navy-elevated);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-sunken: var(--surface-sunken);
+  --color-surface-glass: var(--surface-glass);
+  --color-surface-glass-strong: var(--surface-glass-strong);
   --color-artifact: var(--artifact);
   --color-artifact-muted: var(--artifact-muted);
   --color-artifact-strong: var(--artifact-strong);
   --color-artifact-deep: var(--artifact-deep);
+  --color-line-soft: var(--line-soft);
+  --color-line-strong: var(--line-strong);
+  --color-watermark: var(--watermark);
   --color-red: var(--red);
   --shadow-card: var(--shadow-card);
   --shadow-card-hover: var(--shadow-card-hover);
@@ -315,6 +325,31 @@ body {
   .surface-panel-interactive:hover {
     transform: none;
   }
+}
+
+.surface-artifact {
+  border: 1px solid var(--line-strong);
+  background: var(--artifact);
+  box-shadow: var(--shadow-artifact-inset);
+}
+
+.surface-artifact-muted {
+  border: 1px solid var(--line-strong);
+  background: var(--artifact-muted);
+  box-shadow: var(--shadow-artifact-inset);
+}
+
+.surface-glass {
+  border: 1px solid var(--line-strong);
+  background: var(--surface-glass);
+}
+
+.surface-divider {
+  border-color: var(--line-soft);
+}
+
+.surface-watermark {
+  color: var(--watermark);
 }
 
 .shadow-card {

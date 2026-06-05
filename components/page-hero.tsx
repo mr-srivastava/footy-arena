@@ -56,7 +56,7 @@ export function PageHero(props: PageHeroProps) {
 
     return (
       <div className={className.trim()}>
-        <div className="animate-fade-up border-b border-white/8 py-12 md:py-16">
+        <div className="animate-fade-up border-b border-line-soft py-12 md:py-16">
           <SectionHeading
             as="h1"
             eyebrow={eyebrow}
@@ -108,7 +108,7 @@ export function PageHero(props: PageHeroProps) {
       <div className={`animate-fade-up py-10 md:py-14`.trim()}>
         <Link
           href={backHref}
-          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-white/10 bg-white/5 px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
+          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-line-strong bg-surface-glass px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           {backLabel}

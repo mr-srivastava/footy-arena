@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 export function SiteFooter({ center }: { center?: ReactNode }) {
   return (
-    <footer className="relative z-10 border-t border-white/8 bg-background/70 py-10">
+    <footer className="relative z-10 border-t border-line-soft bg-background/70 py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 text-sm text-muted md:flex-row">
         <Link
           href="/"

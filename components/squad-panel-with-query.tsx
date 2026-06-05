@@ -3,15 +3,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { SquadPanel } from "@/components/squad-panel";
 import { DetailList, DetailListItem } from "@/components/detail-list";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { teamSquadQueryOptions } from "@/lib/query/team-squad";
 import type { TeamSquad } from "@/lib/tournament/types";
-import { artifactSurface } from "@/lib/utils";
 
 function SquadPanelSkeleton() {
   return (
     <section className="flex flex-col gap-6">
-      <article className={artifactSurface("bg-artifact-muted p-5")}>
+      <Card variant="elevated" shape="artifact">
+        <CardContent className="p-5">
         <Skeleton className="h-3 w-24 rounded-sm" />
         <div className="mt-3 flex items-center gap-4">
           <Skeleton className="size-12 rounded-sm" />
@@ -20,9 +21,11 @@ function SquadPanelSkeleton() {
             <Skeleton className="mt-2 h-3 w-28 rounded-sm" />
           </div>
         </div>
-      </article>
+        </CardContent>
+      </Card>
 
-      <article className={artifactSurface("bg-artifact-muted p-5")}>
+      <Card variant="elevated" shape="artifact">
+        <CardContent className="p-5">
         <div className="flex items-center gap-2">
           <Skeleton className="size-5 rounded-sm" />
           <Skeleton className="h-6 w-24 rounded-sm" />
@@ -51,7 +54,8 @@ function SquadPanelSkeleton() {
             </div>
           ))}
         </div>
-      </article>
+        </CardContent>
+      </Card>
     </section>
   );
 }

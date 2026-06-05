@@ -1,12 +1,13 @@
 import { ClipboardList, UserRound } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { DetailList, DetailListItem } from "@/components/detail-list";
+import { EntityIconFrame, EntityRow } from "@/components/entity-row";
 import { SubsectionTitle } from "@/components/subsection-title";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
 import type { SquadPlayer, TeamSquad } from "@/lib/tournament/types";
-import { artifactSurface } from "@/lib/utils";
 
 function squadPlayerMeta(player: SquadPlayer) {
   const marketValue = formatMarketValueEur(player.marketValueEur);
@@ -28,7 +29,7 @@ function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
 
   if (player.bsdPlayerId) {
     return (
-      <div className="relative size-10 shrink-0 overflow-hidden rounded-sm border border-white/10 bg-navy-light/60">
+      <div className="relative size-10 shrink-0 overflow-hidden rounded-sm border border-line-strong bg-navy-light/60">
         <Image
           src={playerImageUrl(player.bsdPlayerId)}
           alt={displayName}
@@ -42,7 +43,7 @@ function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
 
   return (
     <div
-      className="flex size-10 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-white/5"
+      className="flex size-10 shrink-0 items-center justify-center rounded-sm border border-line-strong bg-surface-glass"
       aria-hidden
     >
       <UserRound className="h-4 w-4 text-muted-foreground" />
@@ -57,12 +58,13 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
   return (
     <section className="flex flex-col gap-6">
       {squad.manager ? (
-        <article className={artifactSurface("bg-artifact-muted p-5")}>
+        <Card variant="elevated" shape="artifact">
+          <CardContent className="p-5">
             <SubsectionTitle level="label">Head coach</SubsectionTitle>
             <div className="mt-3 flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-sm border border-gold/25 bg-gold/10">
+              <EntityIconFrame className="border-gold/25 bg-gold/10">
                 <UserRound className="h-6 w-6 text-gold" aria-hidden />
-              </div>
+              </EntityIconFrame>
               <div>
                 <p className="font-display text-2xl tracking-wide text-foreground">
                   {squad.manager.name.toUpperCase()}
@@ -74,10 +76,12 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                 ) : null}
               </div>
             </div>
-        </article>
+          </CardContent>
+        </Card>
       ) : null}
 
-      <article className={artifactSurface("bg-artifact-muted p-5")}>
+      <Card variant="elevated" shape="artifact">
+        <CardContent className="p-5">
           <SubsectionTitle level="panel" icon={ClipboardList}>
             SQUAD
           </SubsectionTitle>
@@ -96,34 +100,27 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                           key={`${player.name}-${player.number ?? ""}`}
                           className="py-0"
                         >
-                          <Link
+                          <EntityRow
                             href={`/players/${player.profileSlug}`}
-                            className="group flex items-center justify-between gap-3 py-3 transition-colors hover:text-gold"
-                          >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <SquadPlayerAvatar player={player} />
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-medium text-foreground transition-colors group-hover:text-gold">
-                                    {player.shortName ?? player.name}
-                                  </p>
-                                  {player.isCaptain ? (
-                                    <span className="rounded-sm bg-gold/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-gold">
-                                      C
-                                    </span>
-                                  ) : null}
-                                </div>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
-                                  {squadPlayerMeta(player)}
-                                </p>
+                            leading={<SquadPlayerAvatar player={player} />}
+                            title={player.shortName ?? player.name}
+                            titleClassName="font-body text-sm font-medium normal-case tracking-normal"
+                            meta={squadPlayerMeta(player)}
+                            trailing={
+                              <div className="flex items-center gap-2">
+                                {player.isCaptain ? (
+                                  <Badge variant="code" className="bg-gold/15 text-gold">
+                                    C
+                                  </Badge>
+                                ) : null}
+                                {player.number ? (
+                                  <Badge variant="code">{player.number}</Badge>
+                                ) : null}
                               </div>
-                            </div>
-                            {player.number ? (
-                              <span className="rounded-sm bg-white/5 px-2 py-1 font-mono text-xs text-muted-foreground">
-                                {player.number}
-                              </span>
-                            ) : null}
-                          </Link>
+                            }
+                            showChevron={false}
+                            className="grid-cols-[auto_1fr_auto] gap-3 py-3"
+                          />
                         </DetailListItem>
                       ))}
                     </DetailList>
@@ -138,7 +135,8 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                 : "Squad and coaching staff to be confirmed closer to the tournament."}
             </p>
           )}
-      </article>
+        </CardContent>
+      </Card>
     </section>
   );
 }

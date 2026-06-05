@@ -3,10 +3,10 @@ import Link from "next/link";
 import { HighlightBlock } from "@/components/highlight-block";
 import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { getTeamNarrativeImage } from "@/lib/discovery";
 import type { PlayerProfile, TeamNarrative } from "@/lib/discovery/types";
-import { artifactSurface } from "@/lib/utils";
 
 export function TeamNarrativePanel({
   narrative,
@@ -16,14 +16,14 @@ export function TeamNarrativePanel({
   keyPlayers: PlayerProfile[];
 }) {
   return (
-    <section className={artifactSurface("relative overflow-hidden")}>
+    <Card variant="artifact" shape="artifact" padding="none" className="relative">
       <MediaImage
         src={getTeamNarrativeImage(narrative.fifaCode)}
         alt={`${narrative.fifaCode} football culture`}
         className="h-32"
         sizes="(max-width: 1024px) 100vw, 50vw"
       />
-      <div className="relative p-6 md:p-8">
+      <CardContent className="relative p-6 md:p-8">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-pitch-bright/12 to-transparent"
           aria-hidden
@@ -53,7 +53,7 @@ export function TeamNarrativePanel({
           ))}
         </div>
 
-        <div className="mt-6 border-y border-white/8 py-4">
+        <div className="mt-6 border-y border-line-soft py-4">
           <SubsectionTitle level="label">Current themes</SubsectionTitle>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {narrative.currentThemes.map((theme) => (
@@ -76,7 +76,7 @@ export function TeamNarrativePanel({
                 <Link
                   key={player.slug}
                   href={`/players/${player.slug}`}
-                  className="rounded-sm border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-gold/40 hover:text-gold"
+                  className="rounded-sm border border-line-strong bg-surface-glass px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-gold/40 hover:text-gold"
                 >
                   {player.name}
                 </Link>
@@ -84,7 +84,7 @@ export function TeamNarrativePanel({
             </div>
           </div>
         ) : null}
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }

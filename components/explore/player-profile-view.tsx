@@ -9,11 +9,11 @@ import {
   PlayerProfilePanel,
 } from "@/components/explore/player-profile-panel";
 import { PlayerPortrait } from "@/components/player-portrait";
+import { Card, CardContent } from "@/components/ui/card";
 import { getPlayerImage } from "@/lib/discovery";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
 import { explorePlayersQueryOptions } from "@/lib/query/explore-players";
-import { artifactSurface } from "@/lib/utils";
 
 function PlayerHeroPortrait({
   player,
@@ -27,7 +27,7 @@ function PlayerHeroPortrait({
   if (imageSrc) {
     if (player.bsdPlayerId && player.imageUrl === imageSrc) {
       return (
-        <div className="relative overflow-hidden border-b border-white/8 md:border-b-0 md:border-r">
+        <div className="relative overflow-hidden border-b border-line-soft md:border-b-0 md:border-r">
           <div className="relative mx-auto aspect-square w-full max-w-xs bg-[radial-gradient(ellipse_at_50%_92%,rgba(107,158,135,0.28),transparent_68%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_36%)] sm:max-w-sm md:mx-0 md:max-w-none">
             <Image
               src={imageSrc}
@@ -48,13 +48,13 @@ function PlayerHeroPortrait({
         src={imageSrc}
         variant="hero"
         priority
-        className="border-b border-white/8 md:border-b-0 md:border-r"
+        className="border-b border-line-soft md:border-b-0 md:border-r"
       />
     );
   }
 
   return (
-    <div className="flex aspect-square w-full max-w-xs items-center justify-center border-b border-white/8 bg-linear-to-br from-pitch/15 via-navy to-navy-light/40 md:max-w-none md:border-b-0 md:border-r">
+    <div className="flex aspect-square w-full max-w-xs items-center justify-center border-b border-line-soft bg-linear-to-br from-pitch/15 via-navy to-navy-light/40 md:max-w-none md:border-b-0 md:border-r">
       <UserRound className="h-16 w-16 text-muted-foreground/60" aria-hidden />
     </div>
   );
@@ -77,22 +77,23 @@ export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePla
       <div className="animate-fade-up py-10 md:py-14">
         <Link
           href="/explore"
-          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-white/10 bg-white/5 px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
+          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-line-strong bg-surface-glass px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           Explore
         </Link>
 
-        <div
-          className={artifactSurface(
-            "overflow-hidden md:grid md:grid-cols-[minmax(220px,260px)_1fr] md:items-stretch",
-          )}
+        <Card
+          variant="artifact"
+          shape="artifact"
+          padding="none"
+          className="md:grid md:grid-cols-[minmax(220px,260px)_1fr] md:items-stretch"
         >
           <PlayerHeroPortrait player={player} imageSrc={imageSrc} />
 
-          <div className="relative flex flex-col justify-center p-6 md:p-8">
+          <CardContent className="relative flex flex-col justify-center p-6 md:p-8">
             <div
-              className="pointer-events-none absolute -right-2 top-4 font-display text-7xl leading-none text-white/2.5"
+              className="surface-watermark pointer-events-none absolute -right-2 top-4 font-display text-7xl leading-none"
               aria-hidden
             >
               {player.fifaCode}
@@ -105,8 +106,8 @@ export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePla
             <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
               {headline}
             </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       <PlayerProfilePanel player={player} />

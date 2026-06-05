@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export function SiteHeader({ className = "" }: { className?: string }) {
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-white/8 bg-background/92 backdrop-blur-xl ${className}`}
+      className={`sticky top-0 z-50 border-b border-line-soft bg-background/92 backdrop-blur-xl ${className}`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <Link

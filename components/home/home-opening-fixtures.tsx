@@ -11,7 +11,7 @@ function FixtureCardSkeleton() {
   return (
     <Card padding="none" className="rounded-sm bg-artifact-strong" aria-hidden>
       <CardContent className="relative overflow-hidden p-0">
-        <div className="relative flex items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
+        <div className="relative flex items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
           <div className="min-w-0">
             <Skeleton className="h-5 w-24 rounded-sm" />
             <Skeleton className="mt-2 h-3 w-28 rounded-sm" />
@@ -26,7 +26,7 @@ function FixtureCardSkeleton() {
           <Skeleton className="size-11 rounded-sm" />
           <Skeleton className="h-8 w-full rounded-sm" />
         </div>
-        <div className="relative flex items-start gap-2 border-t border-white/8 bg-background/25 px-5 py-3">
+        <div className="relative flex items-start gap-2 border-t border-line-soft bg-background/25 px-5 py-3">
           <Skeleton className="mt-0.5 size-3.5 shrink-0 rounded-sm" />
           <Skeleton className="h-3 w-4/5 rounded-sm" />
         </div>

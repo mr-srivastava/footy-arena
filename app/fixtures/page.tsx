@@ -78,13 +78,13 @@ export default async function FixturesPage() {
           }
         />
 
-        <div className="space-y-14">
+        <div className="flex flex-col gap-14">
           {byDate.map((day, dayIndex) => (
             <section key={day.date} id={day.date}>
               <div className="sticky top-17 z-20 -mx-6 border-b border-pitch/15 bg-background/92 px-6 py-4 backdrop-blur-xl md:top-18">
                 <div className="flex items-center gap-4">
                   <span
-                    className="hidden font-display text-4xl leading-none text-white/8 sm:block"
+                    className="hidden font-display text-4xl leading-none text-watermark sm:block"
                     aria-hidden
                   >
                     {String(dayIndex + 1).padStart(2, "0")}

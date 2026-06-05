@@ -14,7 +14,7 @@ export function TacticalIdentitiesGrid({ byCode }: TacticalIdentitiesGridProps) 
         const team = byCode.get(narrative.fifaCode);
 
         return (
-          <div key={narrative.fifaCode} className="space-y-4">
+          <div key={narrative.fifaCode} className="flex flex-col gap-4">
             <TeamNarrativePanel
               narrative={narrative}
               keyPlayers={keyPlayers}

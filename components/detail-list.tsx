@@ -25,7 +25,7 @@ export function DetailList({
 }: DetailListProps) {
   return (
     <Component
-      className={cn("divide-y divide-white/8 border-y border-white/8", className)}
+      className={cn("divide-y divide-line-soft border-y border-line-soft", className)}
     >
       {children}
     </Component>

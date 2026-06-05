@@ -15,10 +15,10 @@ import { HighlightBlock } from "@/components/highlight-block";
 import { StatCard } from "@/components/stat-card";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatMarketValueEur } from "@/lib/bsd/format";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
-import { artifactSurface } from "@/lib/utils";
 
 function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   const marketValue = formatMarketValueEur(player.marketValueEur);
@@ -51,7 +51,7 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-5 border-y border-white/8 py-5">
+    <div className="flex flex-wrap gap-x-8 gap-y-5 border-y border-line-soft py-5">
       {stats.map((stat) => (
         <StatCard
           key={stat.label}
@@ -124,8 +124,9 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
   );
 
   return (
-    <article className={artifactSurface("p-6 md:p-8")}>
-      <div className="flex flex-col gap-8">
+    <Card variant="artifact" shape="artifact">
+      <CardContent className="p-6 md:p-8">
+        <div className="flex flex-col gap-8">
         <HeadlineStats player={player} />
 
         <ClubContext player={player} />
@@ -195,29 +196,30 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
             View {player.nation} at the World Cup
           </Link>
         </div>
-      </div>
-    </article>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
 export function PlayerHeroBadges({ player }: { player: ExplorePlayerCard }) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <span className="rounded-sm border border-white/10 bg-navy/85 px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
+      <Badge variant="meta">
         {player.nation}
-      </span>
-      <span className="rounded-sm border border-white/10 bg-navy/85 px-2.5 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+      </Badge>
+      <Badge variant="playerMeta">
         {player.position}
-      </span>
+      </Badge>
       {player.isCaptain ? (
-        <span className="rounded-sm bg-gold/15 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-gold">
+        <Badge variant="code" className="bg-gold/15 text-gold">
           Captain
-        </span>
+        </Badge>
       ) : null}
       {player.jerseyNumber != null ? (
-        <span className="rounded-sm bg-white/5 px-2 py-1 font-mono text-xs text-muted-foreground">
+        <Badge variant="code">
           #{player.jerseyNumber}
-        </span>
+        </Badge>
       ) : null}
     </div>
   );

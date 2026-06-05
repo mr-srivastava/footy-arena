@@ -27,6 +27,14 @@ const badgeVariants = cva(
           "rounded bg-surface-elevated/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground",
         muted:
           "bg-secondary font-normal text-muted-foreground [a]:hover:bg-secondary/80",
+        glass:
+          "rounded-sm border-line-strong bg-surface-glass px-2.5 py-1 font-semibold uppercase tracking-[0.16em] text-muted-foreground backdrop-blur-sm [a]:hover:border-gold/35 [a]:hover:text-gold",
+        code:
+          "rounded-sm bg-surface-glass px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground [a]:hover:bg-surface-glass-strong",
+        meta:
+          "rounded-sm border-line-strong bg-surface-glass px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold backdrop-blur-sm",
+        playerMeta:
+          "rounded-sm border-line-strong bg-navy/85 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur-sm",
       },
     },
     defaultVariants: {

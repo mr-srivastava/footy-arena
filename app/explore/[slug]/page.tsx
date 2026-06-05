@@ -64,7 +64,7 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
 
         <CategoryContent slug={category.slug} playerSlugs={playerSlugs} byCode={byCode} />
 
-        <div className="mt-16 border-t border-white/8 pt-10">
+        <div className="mt-16 border-t border-line-soft pt-10">
           <p className="text-sm text-muted">More to discover</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <DiscoveryCard

@@ -2,9 +2,9 @@ import { Calendar, Globe2, MapPin, Trophy, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ContentContainer } from "@/components/content-container";
 import { MediaImage } from "@/components/media-image";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HOME_HERO_IMAGE } from "@/lib/discovery";
-import { artifactSurface } from "@/lib/utils";
 import {
   HOST_CITIES,
   HOST_COUNTRIES,
@@ -39,12 +39,12 @@ export function HomeHeroSkeleton() {
         </div>
 
         <div className="relative">
-          <div className={artifactSurface("relative overflow-hidden shadow-board")}>
-            <div className="flex items-center justify-between border-b border-white/8 px-4 py-3">
+          <Card variant="artifact" shape="artifact" padding="none" className="relative shadow-board">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-line-soft px-4 py-3">
               <Skeleton className="h-3 w-40 rounded-sm" />
               <Skeleton className="h-3 w-24 rounded-sm" />
-            </div>
-            <div className="grid grid-cols-4 divide-x divide-white/8">
+            </CardHeader>
+            <CardContent className="grid grid-cols-4 divide-x divide-line-soft p-0">
               {Array.from({ length: 4 }, (_, index) => (
                 <div key={index} className="p-3 md:p-5">
                   <Skeleton className="mb-3 size-4 rounded-sm md:mb-8" />
@@ -52,12 +52,12 @@ export function HomeHeroSkeleton() {
                   <Skeleton className="mt-3 h-3 w-16 rounded-sm" />
                 </div>
               ))}
-            </div>
-            <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/8 px-4 py-3">
+            </CardContent>
+            <CardFooter className="grid grid-cols-[1fr_auto] items-center border-line-soft px-4 py-3">
               <Skeleton className="h-3 w-40 rounded-sm" />
               <Skeleton className="h-6 w-12 rounded-sm" />
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </ContentContainer>
@@ -150,7 +150,7 @@ export async function HomeHero() {
                 {["🇺🇸", "🇨🇦", "🇲🇽"].map((flag) => (
                   <div
                     key={flag}
-                    className="flex size-12 items-center justify-center rounded-sm border border-white/10 bg-white/6 text-2xl shadow-artifact-inset md:size-14"
+                    className="flex size-12 items-center justify-center rounded-sm border border-line-strong bg-surface-glass text-2xl shadow-artifact-inset md:size-14"
                   >
                     {flag}
                   </div>
@@ -171,19 +171,20 @@ export async function HomeHero() {
               className="absolute -inset-x-8 top-1/2 hidden h-px bg-gradient-to-r from-transparent via-pitch-bright/30 to-transparent lg:block"
               aria-hidden
             />
-            <div
-              className={artifactSurface(
-                "relative overflow-hidden shadow-board",
-              )}
+            <Card
+              variant="artifact"
+              shape="artifact"
+              padding="none"
+              className="relative shadow-board"
             >
-              <div className="flex items-center justify-between border-b border-white/8 px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <CardHeader className="flex flex-row items-center justify-between border-b border-line-soft px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 <span className="flex items-center gap-2 text-gold">
                   <Trophy className="h-3.5 w-3.5" aria-hidden />
                   Tournament Board
                 </span>
                 <span>North America</span>
-              </div>
-              <div className="grid grid-cols-4 divide-x divide-white/8">
+              </CardHeader>
+              <CardContent className="grid grid-cols-4 divide-x divide-line-soft p-0">
                 {stats.map((stat) => (
                   <div key={stat.label} className="p-3 md:p-5">
                     <stat.icon
@@ -198,14 +199,14 @@ export async function HomeHero() {
                     </p>
                   </div>
                 ))}
-              </div>
-              <div className="grid grid-cols-[1fr_auto] items-center border-t border-white/8 px-4 py-3 text-xs text-muted-foreground">
+              </CardContent>
+              <CardFooter className="grid grid-cols-[1fr_auto] items-center border-line-soft px-4 py-3 text-xs text-muted-foreground">
                 <span>Expanded 48-team format</span>
                 <span className="font-display text-xl tracking-wide text-gold">
                   2026
                 </span>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </ContentContainer>

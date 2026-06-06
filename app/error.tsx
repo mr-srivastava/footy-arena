@@ -3,6 +3,7 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
+import { MESSAGES } from "@/lib/copy/messages";
 
 export default function Error({
   error,
@@ -24,12 +25,9 @@ export default function Error({
       <section className="relative z-10 max-w-xl rounded-2xl border border-line-strong bg-artifact-muted p-8 text-center shadow-board md:p-12">
         <AlertCircle className="mx-auto size-12 text-gold" aria-hidden />
         <h1 className="editorial-title type-section-title mt-6">
-          Match data unavailable
+          {MESSAGES.pageLoadError.title}
         </h1>
-        <p className="mt-4 text-muted">
-          We couldn&apos;t load fixture data right now. The schedule may be
-          temporarily offline - please try again in a moment.
-        </p>
+        <p className="mt-4 text-muted">{MESSAGES.pageLoadError.body}</p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <button
             type="button"
@@ -37,13 +35,13 @@ export default function Error({
             className="btn-shine flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white"
           >
             <RefreshCw className="size-4" aria-hidden />
-            Try again
+            {MESSAGES.pageLoadError.retry}
           </button>
           <Link
             href="/"
             className="rounded-full border border-line-strong px-6 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground"
           >
-            Back to home
+            {MESSAGES.pageLoadError.home}
           </Link>
         </div>
       </section>

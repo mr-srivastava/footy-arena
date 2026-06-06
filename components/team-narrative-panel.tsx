@@ -39,7 +39,7 @@ export function TeamNarrativePanel({
         </SubsectionTitle>
 
         <h2 className="editorial-title type-section-title mt-4 text-white">
-          A nation in motion
+          {narrative.vibe}
         </h2>
         <p className="mt-5 text-base leading-relaxed text-white/80">
           {narrative.narrative}

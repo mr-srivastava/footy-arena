@@ -29,9 +29,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = getDiscoveryCategory(slug);
-  if (!category) return { title: "Explore - Footy Arena" };
+  if (!category) return { title: "Explore · Footy Arena" };
   return {
-    title: `${category.title} - Footy Arena`,
+    title: `${category.title} · Footy Arena`,
     description: category.description,
   };
 }

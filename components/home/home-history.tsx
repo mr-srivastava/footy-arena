@@ -227,7 +227,7 @@ export default function History() {
         <SectionHeading
           align="center"
           className="mb-0"
-          eyebrow="Act II - Mythology"
+          eyebrow="World Cup history"
           title="WHY IT MATTERS"
           icon={Clock}
           subtitle="Five eras. Scroll sideways - or use the arrows - through the story of the tournament."

@@ -141,14 +141,17 @@ export function isPlaceholderTeam(team: string): boolean {
 }
 
 export function formatPlaceholderTeam(code: string): string {
-  if (code.startsWith("W") || code.startsWith("L")) {
-    return `Winner of ${code.slice(1)}`;
+  if (code.startsWith("W")) {
+    return `Winner of Match ${code.slice(1)}`;
+  }
+  if (code.startsWith("L")) {
+    return `Loser of Match ${code.slice(1)}`;
   }
   if (code.startsWith("1") || code.startsWith("2")) {
-    return `${code.charAt(0) === "1" ? "1st" : "2nd"} in ${code.slice(1)}`;
+    return `${code.charAt(0) === "1" ? "1st" : "2nd"} in Group ${code.slice(1)}`;
   }
   if (code.startsWith("3")) {
-    return `3rd place (${code.slice(1).replace(/\//g, ", ")})`;
+    return `3rd in Group ${code.slice(1).replace(/\//g, " or ")}`;
   }
   return code;
 }

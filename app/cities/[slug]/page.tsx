@@ -20,8 +20,8 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const city = getHostCity((await params).slug);
   return city
-    ? { title: `${city.city} - Footy Arena`, description: city.dek }
-    : { title: "Host City - Footy Arena" };
+    ? { title: `${city.city} · Footy Arena`, description: city.dek }
+    : { title: "Host City · Footy Arena" };
 }
 
 export default async function CityPage({ params }: PageProps) {

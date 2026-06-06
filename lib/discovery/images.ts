@@ -52,12 +52,24 @@ const HOMEPAGE_CARD_IMAGES: Record<string, string> = {
 
 const NATION_IMAGES: Record<string, string> = {
   Germany: DISCOVERY_STOCK.pitchLines,
-  Italy: DISCOVERY_STOCK.stadiumLights,
+  Uruguay: DISCOVERY_STOCK.stadiumLights,
   Brazil: DISCOVERY_STOCK.celebration,
   Morocco: DISCOVERY_STOCK.nightGame,
   Japan: DISCOVERY_STOCK.matchAction,
-  Georgia: DISCOVERY_STOCK.sprint,
+  Canada: DISCOVERY_STOCK.sprint,
 };
+
+const TEAM_NARRATIVE_STOCK = [
+  DISCOVERY_STOCK.modernArena,
+  DISCOVERY_STOCK.celebration,
+  DISCOVERY_STOCK.dribble,
+  DISCOVERY_STOCK.pitchLines,
+  DISCOVERY_STOCK.stadiumCrowd,
+  DISCOVERY_STOCK.matchAction,
+  DISCOVERY_STOCK.nightGame,
+  DISCOVERY_STOCK.sprint,
+  DISCOVERY_STOCK.stadiumLights,
+] as const;
 
 const TEAM_NARRATIVE_IMAGES: Record<string, string> = {
   FRA: DISCOVERY_STOCK.modernArena,
@@ -66,6 +78,18 @@ const TEAM_NARRATIVE_IMAGES: Record<string, string> = {
   ESP: DISCOVERY_STOCK.pitchLines,
   ENG: DISCOVERY_STOCK.stadiumCrowd,
   NED: DISCOVERY_STOCK.matchAction,
+  MEX: DISCOVERY_STOCK.stadiumLights,
+  USA: DISCOVERY_STOCK.modernArena,
+  CAN: DISCOVERY_STOCK.sprint,
+  MAR: DISCOVERY_STOCK.nightGame,
+  JPN: DISCOVERY_STOCK.matchAction,
+  GER: DISCOVERY_STOCK.pitchLines,
+  URU: DISCOVERY_STOCK.stadiumLights,
+  COL: DISCOVERY_STOCK.celebration,
+  KOR: DISCOVERY_STOCK.sprint,
+  SEN: DISCOVERY_STOCK.nightGame,
+  EGY: DISCOVERY_STOCK.matchAction,
+  KSA: DISCOVERY_STOCK.stadiumCrowd,
 };
 
 const CATCH_UP_IMAGES: Record<string, string> = {
@@ -92,9 +116,14 @@ export function getNationImage(nation: string): string {
 }
 
 export function getTeamNarrativeImage(fifaCode: string): string {
-  return (
-    TEAM_NARRATIVE_IMAGES[fifaCode.toUpperCase()] ?? DISCOVERY_STOCK.pitchLines
-  );
+  const code = fifaCode.toUpperCase();
+  if (TEAM_NARRATIVE_IMAGES[code]) {
+    return TEAM_NARRATIVE_IMAGES[code];
+  }
+  const index =
+    code.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) %
+    TEAM_NARRATIVE_STOCK.length;
+  return TEAM_NARRATIVE_STOCK[index];
 }
 
 export function getCatchUpImage(slug: string): string {

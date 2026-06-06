@@ -11,7 +11,7 @@ import { StatCard } from "@/components/stat-card";
 import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
 
 export const metadata: Metadata = {
-  title: "Groups - Footy Arena",
+  title: "Groups · Footy Arena",
   description:
     "FIFA World Cup 2026 group stage - all 12 groups from A to L with four nations each.",
 };

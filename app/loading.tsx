@@ -2,6 +2,7 @@ import { ContentContainer } from "@/components/content-container";
 import { PageShell } from "@/components/page-shell";
 import { PanelSkeleton } from "@/components/surface-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MESSAGES } from "@/lib/copy/messages";
 
 function PageCardSkeleton() {
   return <PanelSkeleton media />;
@@ -10,6 +11,7 @@ function PageCardSkeleton() {
 export default function Loading() {
   return (
     <PageShell>
+      <span className="sr-only">{MESSAGES.loading}</span>
       <ContentContainer className="py-10 md:py-14">
         <div className="py-16 md:py-24">
           <Skeleton className="h-4 w-40 rounded-full" />

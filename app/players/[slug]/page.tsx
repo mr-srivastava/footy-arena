@@ -21,11 +21,11 @@ export async function generateMetadata({
   const profile = getPlayerBySlug(slug);
 
   if (!profile) {
-    return { title: "Player - Footy Arena" };
+    return { title: "Player · Footy Arena" };
   }
 
   return {
-    title: `${profile.name} - Footy Arena`,
+    title: `${profile.name} · Footy Arena`,
     description: profile.whyExcited,
   };
 }

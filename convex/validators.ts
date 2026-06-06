@@ -27,3 +27,9 @@ export const playerFields = {
   previousWorldCupsList: v.array(v.string()),
   profileSlug: v.optional(v.string()),
 };
+
+export const mappingConfidence = v.union(
+  v.literal("high"),
+  v.literal("medium"),
+  v.literal("low"),
+);

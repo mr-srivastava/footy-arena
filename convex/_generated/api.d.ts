@@ -9,6 +9,7 @@
  */
 
 import type * as countries from "../countries.js";
+import type * as fixtureMappings from "../fixtureMappings.js";
 import type * as players from "../players.js";
 import type * as positions from "../positions.js";
 import type * as squads from "../squads.js";
@@ -23,6 +24,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   countries: typeof countries;
+  fixtureMappings: typeof fixtureMappings;
   players: typeof players;
   positions: typeof positions;
   squads: typeof squads;

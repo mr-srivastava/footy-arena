@@ -28,12 +28,39 @@ function getStageLabel(match: OpenFootballMatch): string {
   return match.round;
 }
 
-function fixtureId(match: OpenFootballMatch, index: number): string {
-  if (match.num) return `match-${match.num}`;
-  const slug = `${match.date}-${match.time}-${match.team1}-${match.team2}`
+function slugPart(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function legacyUnsanitizedFixtureSlug(match: OpenFootballMatch) {
+  return `${match.date}-${match.time}-${match.team1}-${match.team2}`
     .toLowerCase()
     .replace(/\s+/g, "-");
-  return slug || `match-${index}`;
+}
+
+function descriptiveFixtureSlug(match: OpenFootballMatch) {
+  return [
+    match.date,
+    slugPart(match.time),
+    slugPart(match.team1),
+    slugPart(match.team2),
+  ]
+    .filter(Boolean)
+    .join("-");
+}
+
+function fixtureId(match: OpenFootballMatch, index: number): string {
+  if (match.num != null) {
+    return `match-${match.num}`;
+  }
+
+  const slug = descriptiveFixtureSlug(match);
+  return slug || `fixture-${index + 1}`;
 }
 
 function toFixture(match: OpenFootballMatch, index: number): Fixture {
@@ -150,6 +177,29 @@ export function getFixtureStageCounts(fixtures: Fixture[]) {
     groupMatches,
     knockoutMatches: fixtures.length - groupMatches,
   };
+}
+
+export function getFixtureById(fixtures: Fixture[], fixtureId: string) {
+  const decodedFixtureId = decodeURIComponent(fixtureId);
+
+  return (
+    fixtures.find((fixture) => {
+      if (fixture.id === decodedFixtureId) {
+        return true;
+      }
+
+      const legacyId = fixture.num ? `match-${fixture.num}` : null;
+      if (legacyId === decodedFixtureId) {
+        return true;
+      }
+
+      if (legacyUnsanitizedFixtureSlug(fixture) === decodedFixtureId) {
+        return true;
+      }
+
+      return descriptiveFixtureSlug(fixture) === decodedFixtureId;
+    }) ?? null
+  );
 }
 
 export { formatKickoff };

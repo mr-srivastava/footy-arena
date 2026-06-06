@@ -21,6 +21,7 @@ export type SquadPlayer = {
   isCaptain?: boolean;
   league?: string;
   bsdPlayerId?: number;
+  availability?: string | null;
 };
 
 export type SquadManager = {

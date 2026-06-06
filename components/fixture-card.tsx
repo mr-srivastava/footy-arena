@@ -135,7 +135,15 @@ export function FixtureCard({
 
         <div className="type-meta relative flex items-start gap-2 border-t border-line-soft bg-white/[0.025] px-6 py-4">
           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
-          <span className="leading-relaxed">{fixture.ground}</span>
+          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+            <span className="leading-relaxed">{fixture.ground}</span>
+            <Link
+              href={`/fixtures/${fixture.id}`}
+              className="shrink-0 text-gold transition-colors hover:text-foreground"
+            >
+              Match brief
+            </Link>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -15,6 +15,8 @@ import { TeamNarrativePanel } from "@/components/team-narrative-panel";
 import { Button } from "@/components/ui/button";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
+import { TeamInsightPanel } from "@/components/team-insight-panel";
+import { loadTeamInsight } from "@/lib/bsd/insights";
 import { getPlayersBySlugs, getTeamNarrative } from "@/lib/discovery";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import {
@@ -70,6 +72,7 @@ export default async function TeamPage({ params }: PageProps) {
     ? getPlayersBySlugs(narrative.keyPlayerSlugs)
     : [];
   const teamFixtures = getTeamFixtures(fixtures, team);
+  const teamInsight = await loadTeamInsight(team);
 
   return (
     <PageShell>
@@ -122,6 +125,8 @@ export default async function TeamPage({ params }: PageProps) {
             <TeamNarrativePanel narrative={narrative} keyPlayers={keyPlayers} />
           </div>
         ) : null}
+
+        <TeamInsightPanel insight={teamInsight} />
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
           <SquadPanelWithQuery slug={code.toLowerCase()} initialSquad={initialSquad} />

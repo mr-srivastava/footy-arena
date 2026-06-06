@@ -50,6 +50,7 @@ function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
     isCaptain: player.isCaptain,
     league: player.club.league,
     bsdPlayerId: player.bzzoiro?.playerId,
+    availability: player.bzzoiro?.availability ?? null,
   };
 }
 

@@ -5,6 +5,11 @@ type ExplorePlayerEditorial = Pick<
   "archetype" | "whyExcited" | "watchFor" | "similarEnergy"
 >;
 
+import type {
+  PlayerAppearanceSummary,
+  PlayerNationalTeamRecord,
+} from "@/lib/bsd/enrichment-types";
+
 export type ExplorePlayerCard = {
   id: string;
   slug: string;
@@ -31,6 +36,12 @@ export type ExplorePlayerCard = {
   previousWorldCupsCount?: number;
   bsdPlayerId?: number;
   imageUrl?: string;
+  formRating?: number | null;
+  seasonAverageRating?: number | null;
+  recentAppearances?: PlayerAppearanceSummary[];
+  nationalTeamRecord?: PlayerNationalTeamRecord | null;
+  strengths?: string[];
+  weaknesses?: string[];
   enriched: boolean;
   editorial?: ExplorePlayerEditorial;
   playerHref: string;

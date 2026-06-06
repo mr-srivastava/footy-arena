@@ -62,7 +62,9 @@ function PlayerHeroPortrait({
 
 export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePlayerCard }) {
   const { data: players = [initialPlayer], isFetching } = useQuery(
-    explorePlayersQueryOptions([initialPlayer.slug], [initialPlayer]),
+    explorePlayersQueryOptions([initialPlayer.slug], [initialPlayer], {
+      includePerformance: true,
+    }),
   );
   const player = players[0] ?? initialPlayer;
 

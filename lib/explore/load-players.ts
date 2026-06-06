@@ -2,6 +2,7 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import type { Doc } from "@/convex/_generated/dataModel";
 import { hasBsdToken } from "@/lib/bsd/client";
+import { loadPlayerPerformance } from "@/lib/bsd/insights";
 import { toConvexCountrySnapshot } from "@/lib/bsd/convex-snapshots";
 import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
 import { enrichPlayers, normalizePlayer } from "@/lib/bsd/normalize-player";
@@ -99,6 +100,7 @@ function toExplorePlayerCard(input: {
 async function enrichPlayersByCountry(
   entries: Array<{ slug: string; player: PlayerDoc; editorial?: PlayerProfile }>,
   countryById: Map<string, CountryDoc>,
+  options?: { includePerformance?: boolean },
 ) {
   const grouped = new Map<
     string,
@@ -127,14 +129,30 @@ async function enrichPlayersByCountry(
       try {
         const enriched = await enrichPlayers(players, countrySnapshot);
         for (const [index, result] of enriched.entries()) {
+          const performance =
+            options?.includePerformance && result.player.bzzoiro?.playerId
+              ? await loadPlayerPerformance(result.player.bzzoiro.playerId, {
+                  availability: result.player.bzzoiro.availability,
+                  strengths: result.player.bzzoiro.strengths,
+                  weaknesses: result.player.bzzoiro.weaknesses,
+                })
+              : null;
           cards.push(
-            toExplorePlayerCard({
-              slug: bucket[index]!.slug,
-              player: result.player,
-              country,
-              editorial: bucket[index]!.editorial,
-              enriched: result.match.bsdPlayerId != null,
-            }),
+            {
+              ...toExplorePlayerCard({
+                slug: bucket[index]!.slug,
+                player: result.player,
+                country,
+                editorial: bucket[index]!.editorial,
+                enriched: result.match.bsdPlayerId != null,
+              }),
+              formRating: performance?.formRating ?? null,
+              seasonAverageRating: performance?.seasonAverageRating ?? null,
+              recentAppearances: performance?.recentAppearances ?? [],
+              nationalTeamRecord: performance?.nationalTeamRecord ?? null,
+              strengths: performance?.strengths ?? result.player.bzzoiro?.strengths ?? [],
+              weaknesses: performance?.weaknesses ?? result.player.bzzoiro?.weaknesses ?? [],
+            },
           );
         }
         continue;
@@ -235,6 +253,7 @@ export async function loadExplorePlayerShellBySlug(
 
 export async function loadExplorePlayersBySlugs(
   slugs: string[],
+  options?: { includePerformance?: boolean },
 ): Promise<ExplorePlayerCard[]> {
   if (slugs.length === 0) {
     return [];
@@ -246,7 +265,7 @@ export async function loadExplorePlayersBySlugs(
     return [];
   }
 
-  const cards = await enrichPlayersByCountry(matched, countryById);
+  const cards = await enrichPlayersByCountry(matched, countryById, options);
   const cardsBySlug = new Map(cards.map((card) => [card.slug, card]));
 
   return slugs

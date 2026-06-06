@@ -24,6 +24,11 @@ function squadPlayerMeta(player: SquadPlayer) {
     .join(" · ");
 }
 
+function availabilityLabel(value: string | null | undefined) {
+  if (!value || value === "available") return null;
+  return value.replace(/_/g, " ");
+}
+
 function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
   const displayName = player.shortName ?? player.name;
 
@@ -111,6 +116,11 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                                 {player.isCaptain ? (
                                   <Badge variant="code" className="bg-gold/15 text-gold">
                                     C
+                                  </Badge>
+                                ) : null}
+                                {availabilityLabel(player.availability) ? (
+                                  <Badge variant="code" className="bg-red/12 text-red">
+                                    {availabilityLabel(player.availability)}
                                   </Badge>
                                 ) : null}
                                 {player.number ? (

@@ -1,6 +1,11 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { playerFields, positionGroup, squadStatus } from "./validators";
+import {
+  mappingConfidence,
+  playerFields,
+  positionGroup,
+  squadStatus,
+} from "./validators";
 
 export default defineSchema({
   countries: defineTable({
@@ -32,4 +37,15 @@ export default defineSchema({
   })
     .index("by_country", ["countryId"])
     .index("by_profile_slug", ["profileSlug"]),
+
+  fixtureMappings: defineTable({
+    fixtureId: v.string(),
+    bsdEventId: v.number(),
+    confidence: mappingConfidence,
+    homeTeamId: v.optional(v.number()),
+    awayTeamId: v.optional(v.number()),
+    lastResolvedAt: v.string(),
+  })
+    .index("by_fixture_id", ["fixtureId"])
+    .index("by_bsd_event_id", ["bsdEventId"]),
 });

@@ -1,4 +1,5 @@
 import {
+  Activity,
   Calendar,
   Footprints,
   MapPin,
@@ -21,6 +22,12 @@ import type { ExplorePlayerCard } from "@/lib/explore/types";
 function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   const marketValue = formatMarketValueEur(player.marketValueEur);
   const stats = [
+    player.formRating != null
+      ? { label: "Form", value: player.formRating.toFixed(2), icon: Activity }
+      : null,
+    player.seasonAverageRating != null
+      ? { label: "Season", value: player.seasonAverageRating.toFixed(2), icon: TrendingUp }
+      : null,
     player.jerseyNumber != null
       ? { label: "Shirt", value: String(player.jerseyNumber), icon: Shirt }
       : null,
@@ -35,6 +42,13 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
       ? {
           label: "World Cups",
           value: String(player.previousWorldCupsCount),
+          icon: Trophy,
+        }
+      : null,
+    player.nationalTeamRecord
+      ? {
+          label: "Caps / Goals",
+          value: `${player.nationalTeamRecord.caps}/${player.nationalTeamRecord.goals}`,
           icon: Trophy,
         }
       : null,
@@ -60,6 +74,72 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
         />
       ))}
     </div>
+  );
+}
+
+function FormGuide({ player }: { player: ExplorePlayerCard }) {
+  if (!player.recentAppearances?.length) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-8">
+      <SubsectionTitle level="label" tone="gold">
+        Form guide
+      </SubsectionTitle>
+      <DetailList className="mt-4">
+        {player.recentAppearances.map((appearance, index) => (
+          <DetailListRow
+            key={`${appearance.eventId ?? "appearance"}-${index}`}
+            label={[
+              appearance.opponentName ?? "Opponent TBC",
+              appearance.rating != null ? `Rating ${appearance.rating.toFixed(1)}` : null,
+              appearance.goals ? `${appearance.goals} goal${appearance.goals === 1 ? "" : "s"}` : null,
+              appearance.assists ? `${appearance.assists} assist${appearance.assists === 1 ? "" : "s"}` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+            value={appearance.result ?? "—"}
+          />
+        ))}
+      </DetailList>
+    </section>
+  );
+}
+
+function PerformanceDetail({ player }: { player: ExplorePlayerCard }) {
+  if (!(player.strengths?.length || player.weaknesses?.length)) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-8">
+      <SubsectionTitle level="label">Performance detail</SubsectionTitle>
+      {player.strengths?.length ? (
+        <div className="mt-4">
+          <p className="broadcast-label text-gold">Strengths</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {player.strengths.map((item) => (
+              <Badge key={item} variant="group" className="h-auto rounded-sm px-3 py-1">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {player.weaknesses?.length ? (
+        <div className="mt-5">
+          <p className="broadcast-label text-red">Watchouts</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {player.weaknesses.map((item) => (
+              <Badge key={item} variant="code" className="bg-red/10 text-red">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -150,6 +230,11 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
               <SecondaryDetails player={player} />
             </section>
           </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <FormGuide player={player} />
+          <PerformanceDetail player={player} />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line-strong bg-artifact-muted p-5">

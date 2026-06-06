@@ -9,7 +9,7 @@ import { getHomeOpeningFixturesData } from "@/lib/page-data/home";
 
 function FixtureCardSkeleton() {
   return (
-    <Card padding="none" className="rounded-sm bg-artifact-strong" aria-hidden>
+    <Card padding="none" className="rounded-2xl bg-artifact-strong" aria-hidden>
       <CardContent className="relative overflow-hidden p-0">
         <div className="relative flex items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
           <div className="min-w-0">
@@ -23,7 +23,7 @@ function FixtureCardSkeleton() {
         </div>
         <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-7">
           <Skeleton className="h-8 w-full rounded-sm" />
-          <Skeleton className="size-11 rounded-sm" />
+          <Skeleton className="size-12 rounded-full" />
           <Skeleton className="h-8 w-full rounded-sm" />
         </div>
         <div className="relative flex items-start gap-2 border-t border-line-soft bg-background/25 px-5 py-3">

@@ -19,7 +19,7 @@ export function HighlightBlock({
 }: HighlightBlockProps) {
   return (
     <section
-      className={cn("border-l pl-4", toneClasses[tone], className)}
+      className={cn("rounded-r-xl border-l-2 bg-white/[0.025] px-5 py-4", toneClasses[tone], className)}
     >
       {children}
     </section>

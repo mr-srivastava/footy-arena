@@ -58,13 +58,11 @@ export default function ExplorePage() {
             title={startJourney.title.toUpperCase()}
             icon={Sparkles}
           />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {startJourney.cards.map((card) => (
-              <DiscoveryCard
-                key={card.href}
-                {...card}
-                image={getHomepageCardImage(card.href)}
-              />
+          <div className="grid auto-rows-[minmax(18rem,auto)] gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {startJourney.cards.map((card, index) => (
+              <div key={card.href} className={index === 0 ? "md:col-span-2 lg:row-span-2" : ""}>
+                <DiscoveryCard {...card} image={getHomepageCardImage(card.href)} />
+              </div>
             ))}
           </div>
         </PageSection>

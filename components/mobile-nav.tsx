@@ -28,9 +28,9 @@ export function MobileNav() {
       >
         <Menu aria-hidden />
       </SheetTrigger>
-      <SheetContent side="right" className="w-72 border-line-strong bg-artifact">
+      <SheetContent side="right" className="w-80 border-line-strong bg-artifact/95 backdrop-blur-2xl">
         <SheetHeader>
-          <SheetTitle className="font-display text-xl tracking-[0.15em]">
+          <SheetTitle className="editorial-title text-3xl">
             FOOTY ARENA
           </SheetTitle>
         </SheetHeader>

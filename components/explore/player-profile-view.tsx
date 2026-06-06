@@ -1,15 +1,14 @@
 "use client";
 
-import { ArrowLeft, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { ContentContainer } from "@/components/content-container";
 import {
   PlayerHeroBadges,
   PlayerProfilePanel,
 } from "@/components/explore/player-profile-panel";
-import { PlayerPortrait } from "@/components/player-portrait";
-import { Card, CardContent } from "@/components/ui/card";
 import { getPlayerImage } from "@/lib/discovery";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
@@ -27,35 +26,36 @@ function PlayerHeroPortrait({
   if (imageSrc) {
     if (player.bsdPlayerId && player.imageUrl === imageSrc) {
       return (
-        <div className="relative overflow-hidden border-b border-line-soft md:border-b-0 md:border-r">
-          <div className="relative mx-auto aspect-square w-full max-w-xs bg-[radial-gradient(ellipse_at_50%_92%,rgba(107,158,135,0.28),transparent_68%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_36%)] sm:max-w-sm md:mx-0 md:max-w-none">
-            <Image
-              src={imageSrc}
-              alt={displayName}
-              fill
-              priority
-              className="object-contain object-bottom p-6"
-              sizes="(max-width: 768px) 72vw, 260px"
-            />
-          </div>
+        <div className="absolute inset-0">
+          <Image
+            src={imageSrc}
+            alt={displayName}
+            fill
+            priority
+            className="portrait-shadow-hero object-contain object-bottom px-4 pt-20 md:px-10"
+            sizes="(max-width: 768px) 92vw, 46vw"
+          />
         </div>
       );
     }
 
     return (
-      <PlayerPortrait
-        player={{ name: displayName }}
+      <div className="absolute inset-0">
+        <Image
         src={imageSrc}
-        variant="hero"
+        alt={displayName}
+        fill
         priority
-        className="border-b border-line-soft md:border-b-0 md:border-r"
-      />
+        className="portrait-shadow-hero object-contain object-bottom px-4 pt-20 md:px-10"
+        sizes="(max-width: 768px) 92vw, 46vw"
+        />
+      </div>
     );
   }
 
   return (
-    <div className="flex aspect-square w-full max-w-xs items-center justify-center border-b border-line-soft bg-linear-to-br from-pitch/15 via-navy to-navy-light/40 md:max-w-none md:border-b-0 md:border-r">
-      <UserRound className="h-16 w-16 text-muted-foreground/60" aria-hidden />
+    <div className="absolute inset-0 flex items-center justify-center">
+      <UserRound className="size-32 text-white/15" aria-hidden />
     </div>
   );
 }
@@ -74,43 +74,41 @@ export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePla
 
   return (
     <div className={isFetching ? "opacity-90 transition-opacity" : undefined}>
-      <div className="animate-fade-up py-10 md:py-14">
-        <Link
-          href="/explore"
-          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-line-strong bg-surface-glass px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          Explore
-        </Link>
-
-        <Card
-          variant="artifact"
-          shape="artifact"
-          padding="none"
-          className="md:grid md:grid-cols-[minmax(220px,260px)_1fr] md:items-stretch"
-        >
+      <section className="surface-player-hero relative isolate min-h-[76vh] overflow-hidden border-b border-line-soft">
+        <div className="absolute inset-0 editorial-grid opacity-45" />
+        <div className="absolute inset-y-0 right-0 w-full md:w-1/2">
           <PlayerHeroPortrait player={player} imageSrc={imageSrc} />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent md:bg-gradient-to-r md:from-background md:via-background/10 md:to-transparent" />
+        </div>
+        <ContentContainer as="div" className="flex min-h-[76vh] flex-col justify-between pb-10 pt-12 md:pb-16 md:pt-16">
+          <Link
+            href="/explore"
+            className="relative z-10 inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/25 px-4 py-2 text-sm text-white/75 backdrop-blur-md transition-colors hover:border-gold/40 hover:text-gold"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Explore players
+          </Link>
 
-          <CardContent className="relative flex flex-col justify-center p-6 md:p-8">
-            <div
-              className="surface-watermark pointer-events-none absolute -right-2 top-4 font-display text-7xl leading-none"
-              aria-hidden
-            >
-              {player.fifaCode}
-            </div>
+          <div className="relative z-10 max-w-3xl">
             <p className="section-eyebrow">{player.nation}</p>
-            <h1 className="mt-2 font-display text-5xl tracking-wide text-foreground md:text-6xl">
-              {displayName.toUpperCase()}
+            <h1 className="editorial-title type-hero mt-4 text-white">
+              {displayName}
             </h1>
             <PlayerHeroBadges player={player} />
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
+            <p className="type-lead mt-7 max-w-xl text-white/70">
               {headline}
             </p>
-          </CardContent>
-        </Card>
-      </div>
+            <Link href={player.teamHref} className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold">
+              View {player.nation}
+              <ArrowUpRight className="size-4" />
+            </Link>
+          </div>
+        </ContentContainer>
+      </section>
 
-      <PlayerProfilePanel player={player} />
+      <ContentContainer className="py-14 md:py-20">
+        <PlayerProfilePanel player={player} />
+      </ContentContainer>
     </div>
   );
 }

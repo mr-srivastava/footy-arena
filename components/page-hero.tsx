@@ -56,7 +56,7 @@ export function PageHero(props: PageHeroProps) {
 
     return (
       <div className={className.trim()}>
-        <div className="animate-fade-up border-b border-line-soft py-12 md:py-16">
+        <div className="animate-fade-up border-b border-line-soft py-16 md:py-24">
           <SectionHeading
             as="h1"
             eyebrow={eyebrow}
@@ -74,14 +74,16 @@ export function PageHero(props: PageHeroProps) {
           ) : null}
         </div>
         {bannerImage ? (
-          <MediaImage
-            src={bannerImage}
-            alt={bannerAlt}
-            overlay="hero"
-            priority
-            className="animate-fade-up animate-delay-2 h-44 md:h-56"
-            sizes="100vw"
-          />
+          <div className="animate-fade-up animate-delay-2 overflow-hidden rounded-2xl border border-line-strong shadow-card">
+            <MediaImage
+              src={bannerImage}
+              alt={bannerAlt}
+              overlay="hero"
+              priority
+              className="h-64 md:h-96"
+              sizes="100vw"
+            />
+          </div>
         ) : null}
       </div>
     );
@@ -108,7 +110,7 @@ export function PageHero(props: PageHeroProps) {
       <div className={`animate-fade-up py-10 md:py-14`.trim()}>
         <Link
           href={backHref}
-          className="mb-8 inline-flex items-center gap-2 rounded-sm border border-line-strong bg-surface-glass px-3 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface-glass px-4 py-2 text-sm text-muted transition-colors hover:border-gold/35 hover:text-gold"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           {backLabel}
@@ -124,7 +126,7 @@ export function PageHero(props: PageHeroProps) {
                 {eyebrow ? <p className="section-eyebrow">{eyebrow}</p> : null}
                 {title ? (
                   <h1
-                    className={`font-display text-5xl tracking-wide text-foreground md:text-6xl ${titleClassName}`.trim()}
+                    className={`editorial-title type-page-title text-foreground ${titleClassName}`.trim()}
                   >
                     {title}
                   </h1>
@@ -137,13 +139,15 @@ export function PageHero(props: PageHeroProps) {
         )}
       </div>
       {bannerImage ? (
-        <MediaImage
-          src={bannerImage}
-          alt={bannerAlt}
-          overlay={bannerOverlay}
-          className="animate-fade-up animate-delay-2 mb-10 h-44 md:mb-12 md:h-52"
-          sizes="100vw"
-        />
+        <div className="animate-fade-up animate-delay-2 mb-10 overflow-hidden rounded-2xl border border-line-strong shadow-card md:mb-12">
+          <MediaImage
+            src={bannerImage}
+            alt={bannerAlt}
+            overlay={bannerOverlay}
+            className="h-64 md:h-96"
+            sizes="100vw"
+          />
+        </div>
       ) : null}
     </div>
   );

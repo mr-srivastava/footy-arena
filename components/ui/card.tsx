@@ -14,7 +14,7 @@ const accentStripeClasses = {
 export type CardAccent = keyof typeof accentStripeClasses
 
 const cardVariants = cva(
-  "group/card relative flex flex-col overflow-hidden border text-sm text-card-foreground has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[density=compact]:gap-3 data-[density=compact]:py-3 data-[density=compact]:has-data-[slot=card-footer]:pb-0 data-[density=normal]:gap-4 data-[density=normal]:py-4 data-[density=spacious]:gap-5 data-[density=spacious]:py-5 data-[density=spacious]:has-data-[slot=card-footer]:pb-0 data-[shape=artifact]:rounded-sm data-[shape=soft]:rounded-xl data-[shape=featured]:rounded-[calc(var(--radius-3xl)-1px)] data-[variant=default]:border-border data-[variant=default]:bg-card data-[variant=default]:shadow-card data-[variant=artifact]:border-line-strong data-[variant=artifact]:bg-artifact data-[variant=artifact]:shadow-artifact-inset data-[variant=elevated]:border-line-strong data-[variant=elevated]:bg-artifact-muted data-[variant=elevated]:shadow-card data-[variant=featured]:border-line-strong data-[variant=featured]:bg-artifact data-[variant=featured]:shadow-card",
+  "group/card relative flex flex-col overflow-hidden border text-sm text-card-foreground has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[density=compact]:gap-3 data-[density=compact]:py-3 data-[density=compact]:has-data-[slot=card-footer]:pb-0 data-[density=normal]:gap-4 data-[density=normal]:py-4 data-[density=spacious]:gap-5 data-[density=spacious]:py-5 data-[density=spacious]:has-data-[slot=card-footer]:pb-0 data-[shape=artifact]:rounded-xl data-[shape=soft]:rounded-2xl data-[shape=featured]:rounded-[calc(var(--radius-3xl)-1px)] data-[variant=default]:border-border data-[variant=default]:bg-card data-[variant=default]:shadow-card data-[variant=artifact]:border-line-strong data-[variant=artifact]:bg-artifact/92 data-[variant=artifact]:shadow-card data-[variant=elevated]:border-line-strong data-[variant=elevated]:bg-artifact-muted data-[variant=elevated]:shadow-card data-[variant=featured]:border-line-strong data-[variant=featured]:bg-artifact data-[variant=featured]:shadow-card",
   {
     variants: {
       density: {
@@ -136,7 +136,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[density=compact]/card:text-sm",
+        "font-heading text-lg leading-tight font-semibold tracking-[-0.02em] group-data-[density=compact]/card:text-base",
         className
       )}
       {...props}
@@ -148,7 +148,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("type-copy", className)}
       {...props}
     />
   )

@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { HighlightBlock } from "@/components/highlight-block";
 import { MediaImage } from "@/components/media-image";
@@ -16,14 +16,15 @@ export function TeamNarrativePanel({
   keyPlayers: PlayerProfile[];
 }) {
   return (
-    <Card variant="artifact" shape="artifact" padding="none" className="relative">
+    <Card variant="artifact" shape="artifact" padding="none" className="relative min-h-[34rem]">
       <MediaImage
         src={getTeamNarrativeImage(narrative.fifaCode)}
         alt={`${narrative.fifaCode} football culture`}
-        className="h-32"
+        className="absolute inset-0"
         sizes="(max-width: 1024px) 100vw, 50vw"
       />
-      <CardContent className="relative p-6 md:p-8">
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/72 to-black/25" />
+      <CardContent className="relative flex min-h-[34rem] max-w-3xl flex-col justify-end p-6 md:p-10">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-pitch-bright/12 to-transparent"
           aria-hidden
@@ -32,13 +33,16 @@ export function TeamNarrativePanel({
           THE STORY
         </SubsectionTitle>
 
-        <p className="mt-4 text-base leading-relaxed text-foreground/90">
+        <h2 className="editorial-title type-section-title mt-4 text-white">
+          A nation in motion
+        </h2>
+        <p className="mt-5 text-base leading-relaxed text-white/80">
           {narrative.narrative}
         </p>
 
         <p className="mt-2 text-sm italic text-gold">{narrative.vibe}</p>
 
-        <HighlightBlock className="mt-6">
+        <HighlightBlock className="mt-6 bg-black/25">
           <SubsectionTitle level="label">Why watch</SubsectionTitle>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {narrative.whyCasualFansShouldCare}
@@ -76,9 +80,10 @@ export function TeamNarrativePanel({
                 <Link
                   key={player.slug}
                   href={`/players/${player.slug}`}
-                  className="rounded-sm border border-line-strong bg-surface-glass px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-gold/40 hover:text-gold"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/25 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:border-gold/40 hover:text-gold"
                 >
                   {player.name}
+                  <ArrowUpRight className="size-3.5" />
                 </Link>
               ))}
             </div>

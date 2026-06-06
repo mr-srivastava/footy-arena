@@ -26,13 +26,13 @@ export function HomeHeroSkeleton() {
             <Skeleton className="h-5 w-5/6 rounded-sm" />
           </div>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
-            <div className="rounded-sm border border-gold/20 bg-gold/8 px-5 py-3">
+            <div className="rounded-xl border border-gold/20 bg-gold/8 px-5 py-3">
               <Skeleton className="h-3 w-36 rounded-sm" />
               <Skeleton className="mt-2 h-8 w-44 rounded-sm" />
             </div>
             <div className="flex gap-2">
               {Array.from({ length: 3 }, (_, index) => (
-                <Skeleton key={index} className="size-12 rounded-sm md:size-14" />
+                <Skeleton key={index} className="size-12 rounded-full md:size-14" />
               ))}
             </div>
           </div>
@@ -100,30 +100,33 @@ export async function HomeHero() {
     ];
 
   return (
-    <>
-
-      <ContentContainer as="div" className="pb-24 pt-10 md:pt-16">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-          <div className="text-center lg:text-left">
+    <section className="relative isolate min-h-[78vh] overflow-hidden border-b border-line-soft">
+      <MediaImage
+        src={HOME_HERO_IMAGE}
+        alt="World Cup 2026 host stadium atmosphere"
+        overlay="hero"
+        priority
+        className="absolute inset-0 -z-20"
+        imageClassName="scale-105"
+        sizes="100vw"
+      />
+      <div className="hero-ink-overlay absolute inset-0 -z-10" />
+      <ContentContainer as="div" className="flex min-h-[78vh] flex-col justify-end pb-10 pt-24 md:pb-14">
+        <div className="grid items-end gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <div>
             <p className="animate-fade-up animate-delay-1 section-eyebrow justify-center lg:justify-start">
-              FIFA World Cup
+              FIFA World Cup · North America
             </p>
 
-            <div className="relative mt-2">
-              <p
-                className="hero-watermark pointer-events-none absolute -left-2 top-1/2 -translate-y-1/2 font-display text-[clamp(6rem,22vw,14rem)] leading-none tracking-tight select-none md:-left-4"
-                aria-hidden
-              >
-                26
-              </p>
-              <h1 className="animate-fade-up animate-delay-2 relative font-display text-[clamp(4.5rem,16vw,10rem)] leading-[0.88] tracking-tight">
-                <span className="text-foreground">20</span>
-                <span className="text-pitch-bright">26</span>
+            <div className="relative mt-5">
+              <h1 className="animate-fade-up animate-delay-2 editorial-title type-hero relative max-w-4xl text-white">
+                The world comes
+                <span className="block text-gold">to play.</span>
               </h1>
             </div>
 
-            <p className="animate-fade-up animate-delay-3 mx-auto mt-6 max-w-lg text-lg leading-relaxed text-muted lg:mx-0 md:text-xl">
-              The greatest show on earth returns to North America.{" "}
+            <p className="animate-fade-up animate-delay-3 type-lead mt-8 max-w-xl text-white/70">
+              Football&apos;s greatest ceremony returns to North America.{" "}
               <span className="text-foreground">
                 {TOURNAMENT_NATIONS} nations
               </span>
@@ -132,8 +135,8 @@ export async function HomeHero() {
               three countries united by the beautiful game.
             </p>
 
-            <div className="animate-fade-up animate-delay-4 mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
-              <div className="relative overflow-hidden rounded-sm border border-gold/35 bg-gold/8 px-5 py-3 shadow-artifact-inset">
+            <div className="animate-fade-up animate-delay-4 mt-9 flex flex-col items-start gap-4 sm:flex-row">
+              <div className="relative overflow-hidden rounded-xl border border-gold/35 bg-black/30 px-5 py-3 backdrop-blur-md">
                 <div
                   className="absolute inset-y-0 left-0 w-1 bg-gold"
                   aria-hidden
@@ -150,7 +153,7 @@ export async function HomeHero() {
                 {["🇺🇸", "🇨🇦", "🇲🇽"].map((flag) => (
                   <div
                     key={flag}
-                    className="flex size-12 items-center justify-center rounded-sm border border-line-strong bg-surface-glass text-2xl shadow-artifact-inset md:size-14"
+                    className="flex size-12 items-center justify-center rounded-full border border-line-strong bg-surface-glass text-2xl shadow-artifact-inset md:size-14"
                   >
                     {flag}
                   </div>
@@ -160,13 +163,6 @@ export async function HomeHero() {
           </div>
 
           <div className="animate-fade-up animate-delay-5 relative">
-            <MediaImage
-              src={HOME_HERO_IMAGE}
-              alt="World Cup 2026 host stadium atmosphere"
-              overlay="hero"
-              className="absolute -inset-4 -z-10 hidden rounded-sm opacity-35 lg:block"
-              sizes="40vw"
-            />
             <div
               className="absolute -inset-x-8 top-1/2 hidden h-px bg-gradient-to-r from-transparent via-pitch-bright/30 to-transparent lg:block"
               aria-hidden
@@ -175,7 +171,7 @@ export async function HomeHero() {
               variant="artifact"
               shape="artifact"
               padding="none"
-              className="relative shadow-board"
+              className="relative border-white/12 bg-black/35 shadow-board backdrop-blur-xl"
             >
               <CardHeader className="flex flex-row items-center justify-between border-b border-line-soft px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 <span className="flex items-center gap-2 text-gold">
@@ -210,6 +206,6 @@ export async function HomeHero() {
           </div>
         </div>
       </ContentContainer>
-    </>
+    </section>
   );
 }

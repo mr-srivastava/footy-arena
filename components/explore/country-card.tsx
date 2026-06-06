@@ -1,16 +1,10 @@
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { DetailList, DetailListItem } from "@/components/detail-list";
 import { MediaImage } from "@/components/media-image";
-import { SurfaceLink } from "@/components/surface-link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  type CardAccent,
-} from "@/components/ui/card";
+import type { CardAccent } from "@/components/ui/card";
 import { getNationImage } from "@/lib/discovery";
 import type { Team } from "@/lib/openfootball/types";
 import { cn } from "@/lib/utils";
@@ -49,53 +43,46 @@ export function CountryCard({
   children,
 }: CountryCardProps) {
   const accentClass = accent === "pitch" ? "text-pitch-bright" : "text-gold";
-  const imageGlowClass =
-    accent === "pitch" ? "from-pitch-bright/14" : "from-gold/12";
-
-  return (
-    <Card
-      variant="artifact"
-      padding="none"
-      interactive
-      accent={accent}
-      className="h-full"
+  const content = (
+    <article
+      className="group relative flex min-h-[34rem] h-full flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover md:p-7"
     >
       <MediaImage
         src={getNationImage(nation)}
         alt={imageAlt}
-        className="h-28 shrink-0 transition-transform duration-300 group-hover/card:scale-[1.02]"
+        className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.035]"
         sizes="(max-width: 768px) 100vw, 33vw"
       />
-      <CardHeader className="relative px-5 pt-1">
-        <div
-          className={cn(
-            "pointer-events-none absolute inset-x-0 -top-4 h-20 bg-gradient-to-b to-transparent",
-            imageGlowClass,
-          )}
-          aria-hidden
-        />
-        <p
-          className={cn(
-            "relative text-[0.65rem] font-semibold uppercase tracking-[0.22em]",
-            accentClass,
-          )}
-        >
+      <div className="relative z-10 flex items-center justify-between">
+        <p className={cn("broadcast-label rounded-full border border-white/15 bg-black/25 px-3 py-2 backdrop-blur-md", accentClass)}>
           {eyebrow}
         </p>
-        <h2 className="relative font-display text-4xl leading-none tracking-wide text-foreground transition-colors group-hover/card:text-gold">
-          {nation.toUpperCase()}
+        {href ? (
+          <ArrowUpRight className="size-5 text-white transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+        ) : null}
+      </div>
+
+      <div className="relative z-10">
+        <h2 className="editorial-title type-section-title text-white transition-colors group-hover:text-gold">
+          {nation}
         </h2>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col px-5 pb-1">{children}</CardContent>
-      {href && team ? (
-        <CardFooter className="mt-auto border-line-soft bg-artifact-muted/40 px-5 py-4">
-          <SurfaceLink href={href}>
-            View {team.displayName}
-          </SurfaceLink>
-        </CardFooter>
-      ) : null}
-    </Card>
+        <div className="mt-5 rounded-2xl border border-white/10 bg-black/35 p-4 text-white/80 backdrop-blur-md">
+          {children}
+          {href && team ? (
+            <Link
+              href={href}
+              className="mt-4 flex items-center justify-between border-t border-white/10 pt-4 text-sm font-semibold text-gold"
+            >
+              View {team.displayName}
+              <ArrowUpRight className="size-4 transition-transform hover:-translate-y-0.5 hover:translate-x-0.5" />
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </article>
   );
+
+  return content;
 }
 
 export function CountryPlayerLinks({
@@ -135,7 +122,7 @@ export function CountryTimeline({
               "text-xs font-semibold uppercase tracking-widest",
               item.tone === "accent" && "text-gold",
               item.tone === "bright" && "text-pitch-bright",
-              (!item.tone || item.tone === "muted") && "text-muted",
+              (!item.tone || item.tone === "muted") && "text-white/55",
             )}
           >
             {item.label}
@@ -143,7 +130,7 @@ export function CountryTimeline({
           <dd
             className={cn(
               "mt-1 leading-relaxed",
-              item.tone === "bright" ? "text-foreground/90" : "text-muted",
+              item.tone === "bright" ? "text-white" : "text-white/72",
             )}
           >
             {item.value}

@@ -59,7 +59,7 @@ export function MediaImage({
       {overlay === "portrait" ? (
         <>
           <div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.08),transparent_55%)]"
+            className="media-portrait-light absolute inset-0"
             aria-hidden
           />
           <div

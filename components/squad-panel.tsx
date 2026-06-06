@@ -29,7 +29,7 @@ function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
 
   if (player.bsdPlayerId) {
     return (
-      <div className="relative size-10 shrink-0 overflow-hidden rounded-sm border border-line-strong bg-navy-light/60">
+      <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-line-strong bg-navy-light/60">
         <Image
           src={playerImageUrl(player.bsdPlayerId)}
           alt={displayName}
@@ -43,7 +43,7 @@ function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
 
   return (
     <div
-      className="flex size-10 shrink-0 items-center justify-center rounded-sm border border-line-strong bg-surface-glass"
+      className="flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface-glass"
       aria-hidden
     >
       <UserRound className="h-4 w-4 text-muted-foreground" />
@@ -58,16 +58,16 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
   return (
     <section className="flex flex-col gap-6">
       {squad.manager ? (
-        <Card variant="elevated" shape="artifact">
-          <CardContent className="p-5">
+        <Card variant="elevated" shape="artifact" className="surface-gold-glow">
+          <CardContent className="p-6">
             <SubsectionTitle level="label">Head coach</SubsectionTitle>
             <div className="mt-3 flex items-center gap-4">
               <EntityIconFrame className="border-gold/25 bg-gold/10">
                 <UserRound className="h-6 w-6 text-gold" aria-hidden />
               </EntityIconFrame>
               <div>
-                <p className="font-display text-2xl tracking-wide text-foreground">
-                  {squad.manager.name.toUpperCase()}
+                <p className="editorial-title type-card-title text-foreground">
+                  {squad.manager.name}
                 </p>
                 {squad.manager.nationality ? (
                   <p className="mt-0.5 text-sm text-muted-foreground">
@@ -80,8 +80,8 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
         </Card>
       ) : null}
 
-      <Card variant="elevated" shape="artifact">
-        <CardContent className="p-5">
+      <Card variant="elevated" shape="artifact" className="bg-artifact-muted/90">
+        <CardContent className="p-6 md:p-7">
           <SubsectionTitle level="panel" icon={ClipboardList}>
             SQUAD
           </SubsectionTitle>
@@ -104,7 +104,7 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                             href={`/players/${player.profileSlug}`}
                             leading={<SquadPlayerAvatar player={player} />}
                             title={player.shortName ?? player.name}
-                            titleClassName="font-body text-sm font-medium normal-case tracking-normal"
+                            titleClassName="editorial-title text-2xl normal-case tracking-normal"
                             meta={squadPlayerMeta(player)}
                             trailing={
                               <div className="flex items-center gap-2">

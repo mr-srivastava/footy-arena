@@ -29,7 +29,7 @@ export function SectionHeading({
 }) {
   const Heading = as;
   const baseTitleClass =
-    "mt-3 font-display text-4xl tracking-wide text-foreground md:text-6xl";
+    "editorial-title type-section-title mt-3 text-foreground";
   const centered = align === "center";
 
   return (
@@ -52,7 +52,7 @@ export function SectionHeading({
         </Heading>
         {subtitle ? (
           <p
-            className={`mt-4 max-w-2xl leading-relaxed text-muted ${
+            className={`type-lead mt-5 ${
               centered ? "mx-auto" : ""
             }`.trim()}
           >

@@ -25,7 +25,7 @@ export function DetailList({
 }: DetailListProps) {
   return (
     <Component
-      className={cn("divide-y divide-line-soft border-y border-line-soft", className)}
+      className={cn("divide-y divide-line-soft", className)}
     >
       {children}
     </Component>
@@ -37,7 +37,7 @@ export function DetailListItem({
   className,
   as: Component = "li",
 }: DetailListItemProps) {
-  return <Component className={cn("py-3", className)}>{children}</Component>;
+  return <Component className={cn("py-4", className)}>{children}</Component>;
 }
 
 export function DetailListRow({ label, value }: DetailListRowProps) {

@@ -41,7 +41,7 @@ export function PlayerPortrait({
     <div className={cn("relative overflow-hidden", className)}>
       <div
         className={cn(
-          "relative bg-[radial-gradient(ellipse_at_50%_92%,rgba(107,158,135,0.28),transparent_68%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_36%)]",
+          "surface-portrait relative",
           styles.frame,
         )}
       >
@@ -64,7 +64,7 @@ export function PlayerPortrait({
             sizes={styles.imageSizes}
             priority={priority}
             className={cn(
-              "h-auto origin-bottom object-contain object-bottom drop-shadow-[0_14px_36px_rgba(0,0,0,0.6)]",
+              "portrait-shadow-card h-auto origin-bottom object-contain object-bottom",
               styles.image,
             )}
           />

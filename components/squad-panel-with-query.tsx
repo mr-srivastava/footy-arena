@@ -11,20 +11,20 @@ import type { TeamSquad } from "@/lib/tournament/types";
 function SquadPanelSkeleton() {
   return (
     <section className="flex flex-col gap-6">
-      <Card variant="elevated" shape="artifact">
+      <Card variant="elevated" shape="artifact" className="bg-artifact-muted/90">
         <CardContent className="p-5">
         <Skeleton className="h-3 w-24 rounded-sm" />
         <div className="mt-3 flex items-center gap-4">
-          <Skeleton className="size-12 rounded-sm" />
+          <Skeleton className="size-12 rounded-full" />
           <div className="min-w-0 flex-1">
-            <Skeleton className="h-7 w-48 rounded-sm" />
+            <Skeleton className="h-9 w-48 rounded-xl" />
             <Skeleton className="mt-2 h-3 w-28 rounded-sm" />
           </div>
         </div>
         </CardContent>
       </Card>
 
-      <Card variant="elevated" shape="artifact">
+      <Card variant="elevated" shape="artifact" className="bg-artifact-muted/90">
         <CardContent className="p-5">
         <div className="flex items-center gap-2">
           <Skeleton className="size-5 rounded-sm" />
@@ -40,7 +40,7 @@ function SquadPanelSkeleton() {
                   <DetailListItem key={index} className="py-3">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <Skeleton className="size-10 shrink-0 rounded-sm" />
+                        <Skeleton className="size-12 shrink-0 rounded-full" />
                         <div className="min-w-0">
                           <Skeleton className="h-4 w-36 rounded-sm" />
                           <Skeleton className="mt-2 h-3 w-52 rounded-sm" />

@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { Archivo, Bebas_Neue, Geist } from "next/font/google";
+import { Archivo, Bebas_Neue, Cormorant_Garamond } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -15,6 +13,12 @@ const bebas = Bebas_Neue({
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
+});
+
+const editorial = Cormorant_Garamond({
+  variable: "--font-editorial",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +42,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={cn("h-full", bebas.variable, archivo.variable, "font-sans", geist.variable)}
+      className={cn("h-full", bebas.variable, archivo.variable, editorial.variable)}
     >
       <body className="min-h-full font-[family-name:var(--font-archivo)] antialiased">
         <QueryProvider>{children}</QueryProvider>

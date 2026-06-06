@@ -51,7 +51,7 @@ function HistoryLegendCard({ player }: { player: HistoryLegend }) {
 
       <CardContent className="relative flex items-start gap-3 border-b border-line-soft p-3">
           <span
-            className="flex size-9 items-center justify-center rounded-sm border border-line-strong bg-surface-glass text-xl leading-none"
+            className="flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface-glass text-xl leading-none"
             aria-hidden
           >
             {player.flag}
@@ -60,7 +60,7 @@ function HistoryLegendCard({ player }: { player: HistoryLegend }) {
             <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
               {player.country}
             </p>
-            <h4 className="mt-1 font-display text-xl leading-none tracking-wide text-foreground">
+            <h4 className="editorial-title mt-1 text-2xl leading-none text-foreground">
               {player.name}
             </h4>
             <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -121,7 +121,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         <p className="section-eyebrow">{era.title}</p>
         <h3
           id={`history-era-title-${index}`}
-          className="mt-2 max-w-xl font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl"
+          className="editorial-title type-section-title mt-3 max-w-xl text-foreground"
         >
           {era.headline}
         </h3>
@@ -277,7 +277,7 @@ export default function History() {
             <button
               type="button"
               onClick={goPrev}
-              className="absolute left-3 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-sm border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
+              className="absolute left-3 top-1/2 z-30 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
               aria-label="Previous era"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
@@ -285,7 +285,7 @@ export default function History() {
             <button
               type="button"
               onClick={goNext}
-              className="absolute right-3 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-sm border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
+              className="absolute right-3 top-1/2 z-30 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
               aria-label="Next era"
             >
               <ChevronRight className="h-4 w-4" aria-hidden />
@@ -313,7 +313,7 @@ export default function History() {
                   aria-selected={i === index}
                   aria-controls={`history-slide-${i}`}
                   onClick={() => scrollToIndex(i)}
-                  className={`rounded-sm px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${i === index
+                  className={`rounded-full px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${i === index
                     ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
                     : "text-muted hover:bg-surface-glass hover:text-foreground"
                     }`}

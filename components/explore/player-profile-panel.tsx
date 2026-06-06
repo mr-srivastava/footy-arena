@@ -11,11 +11,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { DetailList, DetailListRow } from "@/components/detail-list";
-import { HighlightBlock } from "@/components/highlight-block";
 import { StatCard } from "@/components/stat-card";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { formatMarketValueEur } from "@/lib/bsd/format";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
@@ -51,14 +49,14 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-5 border-y border-line-soft py-5">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat) => (
         <StatCard
           key={stat.label}
           label={stat.label}
           value={stat.value}
           icon={stat.icon}
-          layout="inline"
+          layout="stacked"
         />
       ))}
     </div>
@@ -67,10 +65,10 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
 
 function ClubContext({ player }: { player: ExplorePlayerCard }) {
   return (
-    <HighlightBlock>
+    <section className="surface-sage-glow rounded-2xl border border-line-strong p-6 shadow-card md:p-8">
       <SubsectionTitle level="label">At the club</SubsectionTitle>
-      <p className="mt-2 font-display text-2xl tracking-wide text-foreground">
-        {player.club.toUpperCase()}
+      <p className="editorial-title type-card-title mt-4 text-foreground">
+        {player.club}
       </p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {player.league}
@@ -80,7 +78,7 @@ function ClubContext({ player }: { player: ExplorePlayerCard }) {
         {player.detailedPosition || player.position}
         {player.preferredFoot ? ` · ${player.preferredFoot} foot` : ""}
       </p>
-    </HighlightBlock>
+    </section>
   );
 }
 
@@ -117,65 +115,44 @@ function SecondaryDetails({ player }: { player: ExplorePlayerCard }) {
 }
 
 export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
-  const hasEditorial = Boolean(
-    player.editorial?.whyExcited ||
-      player.editorial?.watchFor ||
-      player.editorial?.similarEnergy,
-  );
-
   return (
-    <Card variant="artifact" shape="artifact">
-      <CardContent className="p-6 md:p-8">
-        <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-12">
         <HeadlineStats player={player} />
 
-        <ClubContext player={player} />
-
-        {!hasEditorial ? (
-          <section>
-            <SubsectionTitle level="panel" icon={Sparkles}>
-              IN THE SQUAD
-            </SubsectionTitle>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              {exploreCardSubtitle(player)}
+        <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+          <article className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-9">
+            <p className="section-eyebrow">
+              <Sparkles className="size-4" />
+              Player file
             </p>
-          </section>
-        ) : null}
-
-        {player.editorial?.whyExcited ? (
-          <section>
-            <SubsectionTitle level="panel" icon={Sparkles}>
-              WHY PEOPLE ARE EXCITED
-            </SubsectionTitle>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              {player.editorial.whyExcited}
+            <h2 className="editorial-title type-section-title mt-4">
+              {player.editorial?.whyExcited ? "Why the tournament is watching" : "In the squad"}
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-muted">
+              {player.editorial?.whyExcited ?? exploreCardSubtitle(player)}
             </p>
-          </section>
-        ) : null}
+            {player.editorial?.watchFor ? (
+              <div className="mt-8 border-l-2 border-gold pl-5">
+                <p className="broadcast-label text-gold">Watch for</p>
+                <p className="mt-3 text-lg leading-relaxed text-foreground/90">{player.editorial.watchFor}</p>
+              </div>
+            ) : null}
+            {player.editorial?.similarEnergy ? (
+              <p className="mt-8 border-t border-line-soft pt-6 font-heading text-2xl italic text-gold">
+                “{player.editorial.similarEnergy}”
+              </p>
+            ) : null}
+          </article>
 
-        {player.editorial?.watchFor ? (
-          <HighlightBlock tone="gold">
-            <SubsectionTitle level="label" tone="accent">
-              Watch for
-            </SubsectionTitle>
-            <p className="mt-2 text-base leading-relaxed text-foreground/90">
-              {player.editorial.watchFor}
-            </p>
-          </HighlightBlock>
-        ) : null}
+          <div className="flex flex-col gap-6">
+            <ClubContext player={player} />
+            <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card">
+              <SecondaryDetails player={player} />
+            </section>
+          </div>
+        </div>
 
-        {player.editorial?.similarEnergy ? (
-          <section>
-            <SubsectionTitle level="label">Similar energy</SubsectionTitle>
-            <p className="mt-2 text-base italic leading-relaxed text-gold">
-              {player.editorial.similarEnergy}
-            </p>
-          </section>
-        ) : null}
-
-        <SecondaryDetails player={player} />
-
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line-strong bg-artifact-muted p-5">
           {player.isCaptain ? (
             <Badge variant="group" className="h-auto gap-1.5 rounded-sm px-3 py-1">
               <Shield className="h-3.5 w-3.5" aria-hidden />
@@ -190,15 +167,13 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
           ) : null}
           <Link
             href={player.teamHref}
-            className="inline-flex items-center gap-2 rounded-sm border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
           >
             <MapPin className="h-4 w-4" aria-hidden />
             View {player.nation} at the World Cup
           </Link>
         </div>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

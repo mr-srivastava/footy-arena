@@ -21,9 +21,9 @@ export function StatCard({
         variant="artifact"
         shape="artifact"
         interactive
-        className="relative hover:border-pitch-bright/30"
+        className="surface-sage-glow relative min-h-40 transition-all duration-500 hover:-translate-y-1 hover:border-pitch-bright/30 hover:shadow-card-hover"
       >
-        <CardContent className="p-4">
+        <CardContent className="p-5">
           <Icon className="mb-5 size-4 text-pitch-bright/80" aria-hidden />
           <p className={cn("font-display text-4xl leading-none md:text-5xl", accent)}>
             {value}

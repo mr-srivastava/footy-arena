@@ -32,7 +32,7 @@ export function EntityRow({
       <div className="min-w-0">
         <div
           className={cn(
-            "truncate font-display text-2xl leading-none tracking-wide text-foreground transition-colors group-hover/entity-row:text-gold",
+            "type-broadcast truncate text-2xl text-foreground transition-colors group-hover/entity-row:text-gold",
             titleClassName,
           )}
         >
@@ -41,7 +41,7 @@ export function EntityRow({
         {meta ? (
           <div
             className={cn(
-              "mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground",
+              "type-label mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground",
               metaClassName,
             )}
           >
@@ -60,7 +60,7 @@ export function EntityRow({
   );
 
   const classes = cn(
-    "group/entity-row grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-line-soft px-1 py-4 transition-colors hover:border-gold/40",
+    "group/entity-row grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-xl border border-transparent px-3 py-4 transition-all hover:border-line-strong hover:bg-surface-glass",
     trailing && showChevron && "grid-cols-[auto_1fr_auto_auto]",
     !leading && "grid-cols-[1fr_auto]",
     !leading && trailing && showChevron && "grid-cols-[1fr_auto_auto]",
@@ -85,7 +85,7 @@ export function EntityIconFrame({
   return (
     <div
       className={cn(
-        "flex size-12 items-center justify-center rounded-sm border border-line-strong bg-surface-glass shadow-artifact-inset",
+        "flex size-12 items-center justify-center rounded-full border border-line-strong bg-surface-glass shadow-artifact-inset",
         className,
       )}
       {...props}

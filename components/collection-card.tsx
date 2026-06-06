@@ -1,8 +1,7 @@
-import { Layers } from "lucide-react";
+import { ArrowUpRight, Layers } from "lucide-react";
 import Link from "next/link";
 import { MediaImage } from "@/components/media-image";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { getCollectionImage } from "@/lib/discovery";
 import type { DiscoveryCollection } from "@/lib/discovery/types";
 
@@ -14,39 +13,36 @@ export function CollectionCard({
   playerCount: number;
 }) {
   return (
-    <Link href={`/explore/collections/${collection.slug}`} className="group block h-full">
-      <article
-        className="h-full"
-      >
-        <Card
-          variant="elevated"
-          shape="artifact"
-          padding="none"
-          interactive
-          className="h-full group-hover:border-gold/35"
-        >
-          <MediaImage
-            src={getCollectionImage(collection.slug)}
-            alt=""
-            className="h-32"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          <CardContent className="relative p-5">
-            <div className="flex flex-row items-start justify-between gap-3">
-              <Layers className="size-5 shrink-0 text-pitch-bright" aria-hidden />
-              <Badge variant="muted">{playerCount} players</Badge>
-            </div>
-            <div className="mt-6">
-              <h3 className="font-display text-3xl leading-none tracking-wide text-foreground transition-colors group-hover:text-gold">
-                {collection.title.toUpperCase()}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {collection.description}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </article>
+    <Link
+      href={`/explore/collections/${collection.slug}`}
+      className="group relative block min-h-96 overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover"
+    >
+      <MediaImage
+        src={getCollectionImage(collection.slug)}
+        alt=""
+        className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.035]"
+        sizes="(max-width: 768px) 100vw, 50vw"
+      />
+      <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-7">
+        <div className="flex items-center justify-between">
+          <span className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-black/25 text-gold backdrop-blur-md">
+            <Layers className="size-4" aria-hidden />
+          </span>
+          <div className="flex items-center gap-3">
+            <Badge variant="muted" className="border-white/15 bg-black/25 text-white/75 backdrop-blur-md">{playerCount} players</Badge>
+            <ArrowUpRight className="size-5 text-white transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+          </div>
+        </div>
+        <div>
+          <p className="broadcast-label text-gold">Discovery collection</p>
+          <h3 className="editorial-title type-card-title mt-3 text-white transition-colors group-hover:text-gold">
+            {collection.title}
+          </h3>
+          <p className="type-copy mt-4 max-w-lg text-white/70">
+            {collection.description}
+          </p>
+        </div>
+      </div>
     </Link>
   );
 }

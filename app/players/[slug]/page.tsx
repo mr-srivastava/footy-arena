@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ContentContainer } from "@/components/content-container";
 import { PlayerProfileView } from "@/components/explore/player-profile-view";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
@@ -48,9 +47,7 @@ export default async function PlayerPage({ params }: PageProps) {
     <PageShell>
       <SiteHeader />
 
-      <ContentContainer width="narrow">
-        <PlayerProfileView initialPlayer={player} />
-      </ContentContainer>
+      <PlayerProfileView initialPlayer={player} />
 
       <SiteFooter />
     </PageShell>

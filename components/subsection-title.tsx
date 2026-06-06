@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 const panelClass =
-  "flex items-center gap-2 font-display text-2xl tracking-wide text-foreground";
+  "editorial-title type-panel-title flex items-center gap-3 text-foreground";
 
 const labelToneClass = {
   muted: "text-muted",
@@ -34,7 +34,7 @@ export function SubsectionTitle({
 
   return (
     <h3
-      className={`text-xs font-semibold uppercase tracking-widest ${labelToneClass[tone]} ${className}`.trim()}
+      className={`type-label ${labelToneClass[tone]} ${className}`.trim()}
     >
       {children}
     </h3>

@@ -8,7 +8,7 @@ import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
-import { TeamCard } from "@/components/team-card";
+import { TeamDirectory } from "@/components/teams/team-directory";
 import { api } from "@/convex/_generated/api";
 import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
 
@@ -70,11 +70,7 @@ export default async function TeamsPage() {
           }
         />
 
-        <div className="reveal-grid lazy-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
-            <TeamCard key={team.fifa_code} team={team} />
-          ))}
-        </div>
+        <TeamDirectory teams={teams} />
       </ContentContainer>
 
       <SiteFooter

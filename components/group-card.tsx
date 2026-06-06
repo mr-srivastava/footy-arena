@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { EntityIconFrame, EntityRow } from "@/components/entity-row";
 import { TeamFlag } from "@/components/team-flag";
@@ -21,7 +21,7 @@ export function GroupCard({ group }: { group: TournamentGroup }) {
         shape="artifact"
         padding="none"
         interactive
-        className="h-full bg-artifact/85 group-hover:border-gold/35"
+        className="surface-gold-glow h-full min-h-[25rem] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/30 group-hover:shadow-card-hover"
       >
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-gold/18 to-transparent"
@@ -35,15 +35,15 @@ export function GroupCard({ group }: { group: TournamentGroup }) {
         </div>
         <CardHeader className="relative flex flex-row items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
           <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="type-label text-muted-foreground">
               Draw board
             </p>
-            <h3 className="mt-1 font-display text-4xl leading-none tracking-wide text-gold">
-              {group.label.toUpperCase()}
+            <h3 className="editorial-title type-card-title mt-2 text-foreground">
+              {group.label}
             </h3>
           </div>
-          <ChevronRight
-            className="mt-1 size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-gold"
+          <ArrowUpRight
+            className="mt-1 size-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-gold"
             aria-hidden
           />
         </CardHeader>

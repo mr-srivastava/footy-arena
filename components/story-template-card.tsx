@@ -8,20 +8,20 @@ export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }
       variant="artifact"
       shape="artifact"
       interactive
-      className="relative h-full hover:border-gold/35"
+      className="surface-gold-glow relative h-full min-h-80 transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover"
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-gold/12 to-transparent"
         aria-hidden
       />
       <CardContent className="relative p-5">
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-gold">
+        <p className="type-label text-gold">
           Match lens
         </p>
-        <h3 className="mt-3 font-display text-3xl leading-none tracking-wide text-foreground">
-          {template.title.toUpperCase()}
+        <h3 className="editorial-title type-card-title mt-5 text-foreground">
+          {template.title}
         </h3>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        <p className="type-copy mt-4">
           {template.narrative}
         </p>
         <DetailList className="mt-5">

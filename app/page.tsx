@@ -28,7 +28,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HOST_CITIES } from "@/lib/openfootball/constants";
 import { HOST_CITY_VENUES, HOST_NATIONS } from "@/lib/openfootball/host-venues";
 import { MediaImage } from "@/components/media-image";
+import { CityJournalCard } from "@/components/cities/city-journal-card";
 import { getHomepageCardImage, HOMEPAGE_MODULES } from "@/lib/discovery";
+import { HOST_CITIES as CITY_JOURNAL } from "@/lib/cities";
 
 export default function Home() {
   const startJourney = HOMEPAGE_MODULES.find(
@@ -71,13 +73,7 @@ export default function Home() {
                   href={featuredJourneyCard.href}
                   className="group block min-h-80"
                 >
-                  <Card
-                    variant="artifact"
-                    shape="artifact"
-                    padding="none"
-                    interactive
-                    className="relative min-h-80 p-6 group-hover:border-gold/35 md:p-8"
-                  >
+                  <Card variant="artifact" shape="artifact" padding="none" interactive className="relative min-h-[30rem] p-6 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/35 group-hover:shadow-card-hover md:p-8">
                     <MediaImage
                       src={getHomepageCardImage(featuredJourneyCard.href)}
                       alt={`${featuredJourneyCard.title} atmosphere`}
@@ -96,8 +92,8 @@ export default function Home() {
                         <span className="text-gold">01</span>
                       </div>
                       <div>
-                        <h3 className="max-w-xl font-display text-5xl leading-none tracking-wide text-foreground transition-colors group-hover:text-gold md:text-7xl">
-                          {featuredJourneyCard.title.toUpperCase()}
+                        <h3 className="editorial-title type-section-title max-w-xl text-foreground transition-colors group-hover:text-gold">
+                          {featuredJourneyCard.title}
                         </h3>
                         <p className="mt-4 max-w-md text-base leading-relaxed text-muted">
                           {featuredJourneyCard.description}
@@ -145,11 +141,11 @@ export default function Home() {
             title="THREE NATIONS, ONE DREAM"
             icon={Globe2}
           />
-          <div className="overflow-hidden rounded-sm border-y border-line-strong">
+          <div className="overflow-hidden rounded-2xl border border-line-strong bg-artifact-muted shadow-card">
             {HOST_NATIONS.map((nation) => (
               <div
                 key={nation.country}
-                className="group relative grid gap-4 border-b border-line-soft px-2 py-7 last:border-b-0 md:grid-cols-[0.55fr_0.3fr_1fr] md:items-center md:px-0"
+                className="group relative grid gap-4 border-b border-line-soft px-6 py-8 last:border-b-0 md:grid-cols-[0.55fr_0.3fr_1fr] md:items-center md:px-8"
               >
                 <div
                   className={`pointer-events-none absolute inset-x-0 h-px bg-gradient-to-r ${nation.accent} to-transparent opacity-0 transition-opacity group-hover:opacity-80`}
@@ -163,8 +159,8 @@ export default function Home() {
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                       Host nation
                     </p>
-                    <h3 className="font-display text-4xl tracking-wide text-foreground">
-                      {nation.country.toUpperCase()}
+                    <h3 className="editorial-title type-card-title text-foreground">
+                      {nation.country}
                     </h3>
                   </div>
                 </div>
@@ -236,6 +232,24 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          <div className="mt-20">
+            <SectionHeading
+              eyebrow="The host-city journal"
+              title="BEYOND THE STADIUM"
+              icon={MapPin}
+            >
+              <Link href="/cities" className="group flex items-center gap-2 text-sm font-semibold text-gold">
+                Explore all cities
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </SectionHeading>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {CITY_JOURNAL.slice(0, 4).map((city, index) => (
+                <CityJournalCard key={city.slug} city={city} featured={index === 0} />
+              ))}
             </div>
           </div>
         </PageSection>

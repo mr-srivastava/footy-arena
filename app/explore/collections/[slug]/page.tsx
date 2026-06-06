@@ -23,7 +23,9 @@ export function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const collection = getDiscoveryCollection(slug);
   if (!collection) return { title: "Collection - Footy Arena" };
@@ -62,7 +64,7 @@ export default async function CollectionPage({ params }: PageProps) {
         <ExplorePlayersGrid
           slugs={collection.playerSlugs}
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          emptyMessage="Collection players will appear here once matching squad records are available in Convex."
+          emptyMessage="Collection players will appear here once matching squad records are available from BSD."
         />
       </ContentContainer>
 

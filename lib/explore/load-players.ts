@@ -1,59 +1,82 @@
-import { fetchQuery } from "convex/nextjs";
-import { api } from "@/convex/_generated/api";
-import type { Doc } from "@/convex/_generated/dataModel";
-import { hasBsdToken } from "@/lib/bsd/client";
-import { toConvexCountrySnapshot } from "@/lib/bsd/convex-snapshots";
-import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
-import { enrichPlayers, normalizePlayer } from "@/lib/bsd/normalize-player";
+import {
+  BSD_PLAYER_PORTRAIT_OPTIONS,
+  formatPlayerMetaLine,
+  playerImageUrl,
+} from "@/lib/bsd/format";
+import { loadPlayerPerformance } from "@/lib/bsd/insights";
+import { normalizedPlayerFromCallup } from "@/lib/bsd/team-seeds";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
-import { PLAYERS } from "@/lib/discovery/seed/players";
+import { teamSlugFromName } from "@/lib/teams/metadata";
+import {
+  getCachedAllWorldCupCallups,
+  getCachedPlayerDetail,
+} from "@/lib/bsd/cache";
+import { getAllWorldCupCallups } from "@/lib/bsd/worldcup";
+import { getWorldCupTeams } from "@/lib/openfootball/teams";
+import { PLAYERS } from "@/lib/discovery/content/players";
 import type { PlayerProfile } from "@/lib/discovery/types";
 import { playerSlugFromName } from "@/lib/explore/player-slug";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
 
-type CountryDoc = Doc<"countries">;
-type PlayerDoc = Doc<"players">;
-
-function buildPlayerLookup(players: PlayerDoc[]) {
-  const bySlug = new Map<string, PlayerDoc>();
-
-  for (const player of players) {
-    const slug = player.profileSlug ?? playerSlugFromName(player.name);
-    if (!bySlug.has(slug)) {
-      bySlug.set(slug, player);
-    }
-  }
-
-  return bySlug;
-}
+type WorldCupCallupEntry = Awaited<
+  ReturnType<typeof getAllWorldCupCallups>
+>[number];
 
 function editorialBySlug() {
   return new Map(PLAYERS.map((player) => [player.slug, player]));
 }
 
-function exploreCardSubtitle(player: ExplorePlayerCard) {
-  const marketValue = formatMarketValueEur(player.marketValueEur);
+export function explorePlayerCardFromProfile(
+  profile: PlayerProfile,
+): ExplorePlayerCard {
+  const countrySlug = teamSlugFromName(profile.nation);
 
-  return [
-    player.detailedPosition,
-    player.club,
-    player.age ? `Age ${player.age}` : null,
-    player.heightCm ? `${player.heightCm} cm` : null,
-    player.preferredFoot ? `${player.preferredFoot} foot` : null,
-    marketValue,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  return {
+    id: profile.slug,
+    slug: profile.slug,
+    name: profile.name,
+    nation: profile.nation,
+    countrySlug,
+    nationBsdTeamId: null,
+    clubTeamId: null,
+    fifaCode: profile.fifaCode ?? "",
+    position: profile.position,
+    detailedPosition: profile.position,
+    club: "",
+    league: "",
+    clubCountry: "",
+    age: 0,
+    enriched: false,
+    editorial: {
+      archetype: profile.archetype,
+      whyExcited: profile.whyExcited,
+      watchFor: profile.watchFor,
+      similarEnergy: profile.similarEnergy,
+    },
+    playerHref: `/players/${profile.slug}`,
+    teamHref: `/teams/${countrySlug}`,
+  };
+}
+
+export function exploreCardSubtitle(player: ExplorePlayerCard) {
+  return formatPlayerMetaLine({
+    detailedPosition: player.detailedPosition,
+    club: player.club,
+    age: player.age,
+    heightCm: player.heightCm,
+    preferredFoot: player.preferredFoot,
+    marketValueEur: player.marketValueEur,
+  });
 }
 
 function toExplorePlayerCard(input: {
   slug: string;
   player: NormalizedPlayer;
-  country: CountryDoc;
+  team: Awaited<ReturnType<typeof getWorldCupTeams>>["teams"][number];
   editorial?: PlayerProfile;
   enriched: boolean;
 }): ExplorePlayerCard {
-  const { slug, player, country, editorial, enriched } = input;
+  const { slug, player, team, editorial, enriched } = input;
   const bsdPlayerId = player.bzzoiro?.playerId;
 
   return {
@@ -61,9 +84,11 @@ function toExplorePlayerCard(input: {
     slug,
     name: player.name,
     shortName: player.shortName ?? undefined,
-    nation: country.displayName,
-    countrySlug: country.slug,
-    fifaCode: country.fifaCode,
+    nation: team.displayName,
+    countrySlug: team.slug,
+    nationBsdTeamId: team.bsdTeamId ?? null,
+    clubTeamId: player.club.bzzoiroTeamId ?? null,
+    fifaCode: team.fifa_code,
     position: player.position,
     detailedPosition: player.detailedPosition,
     club: player.club.name,
@@ -81,7 +106,9 @@ function toExplorePlayerCard(input: {
     isCaptain: player.isCaptain,
     previousWorldCupsCount: player.previousWorldCupsCount,
     bsdPlayerId,
-    imageUrl: bsdPlayerId ? playerImageUrl(bsdPlayerId) : undefined,
+    imageUrl: bsdPlayerId
+      ? playerImageUrl(bsdPlayerId, BSD_PLAYER_PORTRAIT_OPTIONS)
+      : undefined,
     enriched,
     editorial: editorial
       ? {
@@ -92,173 +119,130 @@ function toExplorePlayerCard(input: {
         }
       : undefined,
     playerHref: `/players/${slug}`,
-    teamHref: `/teams/${country.slug}`,
+    teamHref: `/teams/${team.slug}`,
   };
 }
 
-async function enrichPlayersByCountry(
-  entries: Array<{ slug: string; player: PlayerDoc; editorial?: PlayerProfile }>,
-  countryById: Map<string, CountryDoc>,
-) {
-  const grouped = new Map<
-    string,
-    Array<{ slug: string; player: PlayerDoc; editorial?: PlayerProfile }>
-  >();
-
-  for (const entry of entries) {
-    const countryId = entry.player.countryId;
-    const bucket = grouped.get(countryId) ?? [];
-    bucket.push(entry);
-    grouped.set(countryId, bucket);
+async function loadPlayerDetail(playerId: number | null) {
+  if (!playerId) {
+    return null;
   }
+  return getCachedPlayerDetail(playerId);
+}
 
-  const cards: ExplorePlayerCard[] = [];
-
-  for (const [countryId, bucket] of grouped) {
-    const country = countryById.get(countryId);
-    if (!country) {
-      continue;
-    }
-
-    const countrySnapshot = toConvexCountrySnapshot(country);
-    const players = bucket.map((entry) => entry.player);
-
-    if (hasBsdToken()) {
-      try {
-        const enriched = await enrichPlayers(players, countrySnapshot);
-        for (const [index, result] of enriched.entries()) {
-          cards.push(
-            toExplorePlayerCard({
-              slug: bucket[index]!.slug,
-              player: result.player,
-              country,
-              editorial: bucket[index]!.editorial,
-              enriched: result.match.bsdPlayerId != null,
-            }),
-          );
-        }
-        continue;
-      } catch {
-        // Fall through to Convex-only normalization.
-      }
-    }
-
-    for (const entry of bucket) {
-      cards.push(
-        toExplorePlayerCard({
-          slug: entry.slug,
-          player: normalizePlayer(entry.player, null, null),
-          country,
-          editorial: entry.editorial,
-          enriched: false,
-        }),
-      );
+async function buildCallupBySlugMap() {
+  const callups = await getCachedAllWorldCupCallups();
+  const callupBySlug = new Map<string, WorldCupCallupEntry>();
+  for (const callup of callups) {
+    const slug = playerSlugFromName(callup.name);
+    if (!callupBySlug.has(slug)) {
+      callupBySlug.set(slug, callup);
     }
   }
-
-  return cards;
+  return callupBySlug;
 }
 
 async function loadExplorePlayerEntries(slugs: string[]) {
   if (slugs.length === 0) {
-    return {
-      matched: [] as Array<{ slug: string; player: PlayerDoc; editorial?: PlayerProfile }>,
-      countryById: new Map<string, CountryDoc>(),
-    };
+    return [] as Array<{
+      slug: string;
+      callup: WorldCupCallupEntry;
+      team: Awaited<ReturnType<typeof getWorldCupTeams>>["teams"][number];
+      editorial?: PlayerProfile;
+    }>;
   }
 
-  const [allPlayers, countries] = await Promise.all([
-    fetchQuery(api.players.listAll, {}),
-    fetchQuery(api.countries.list, {}),
+  const [{ teams }, callupBySlug] = await Promise.all([
+    getWorldCupTeams(),
+    buildCallupBySlugMap(),
   ]);
 
-  const playersBySlug = buildPlayerLookup(allPlayers);
+  const teamById = new Map(
+    teams
+      .filter((team) => team.bsdTeamId != null)
+      .map((team) => [team.bsdTeamId!, team]),
+  );
   const editorial = editorialBySlug();
-  const countryById = new Map(countries.map((country) => [country._id, country]));
 
-  const matched = slugs.flatMap((slug) => {
-    const player = playersBySlug.get(slug);
-    if (!player) {
+  return slugs.flatMap((slug) => {
+    const callup = callupBySlug.get(slug);
+    const team = callup ? teamById.get(callup.team_id) : undefined;
+    if (!callup || !team) {
       return [];
     }
 
-    return [{ slug, player, editorial: editorial.get(slug) }];
+    return [{ slug, callup, team, editorial: editorial.get(slug) }];
   });
-
-  return { matched, countryById };
-}
-
-function buildShellExploreCards(
-  entries: Array<{ slug: string; player: PlayerDoc; editorial?: PlayerProfile }>,
-  countryById: Map<string, CountryDoc>,
-) {
-  return entries.flatMap((entry) => {
-    const country = countryById.get(entry.player.countryId);
-    if (!country) {
-      return [];
-    }
-
-    return [
-      toExplorePlayerCard({
-        slug: entry.slug,
-        player: normalizePlayer(entry.player, null, null),
-        country,
-        editorial: entry.editorial,
-        enriched: false,
-      }),
-    ];
-  });
-}
-
-export async function loadExplorePlayerShellsBySlugs(
-  slugs: string[],
-): Promise<ExplorePlayerCard[]> {
-  const { matched, countryById } = await loadExplorePlayerEntries(slugs);
-  if (matched.length === 0) {
-    return [];
-  }
-
-  const cards = buildShellExploreCards(matched, countryById);
-  const cardsBySlug = new Map(cards.map((card) => [card.slug, card]));
-
-  return slugs
-    .map((slug) => cardsBySlug.get(slug))
-    .filter((card): card is ExplorePlayerCard => card != null);
 }
 
 export async function loadExplorePlayerShellBySlug(
-  slug: string,
-): Promise<ExplorePlayerCard | null> {
-  const [player] = await loadExplorePlayerShellsBySlugs([slug]);
-  return player ?? null;
-}
-
-export async function loadExplorePlayersBySlugs(
-  slugs: string[],
-): Promise<ExplorePlayerCard[]> {
-  if (slugs.length === 0) {
-    return [];
-  }
-
-  const { matched, countryById } = await loadExplorePlayerEntries(slugs);
-
-  if (matched.length === 0) {
-    return [];
-  }
-
-  const cards = await enrichPlayersByCountry(matched, countryById);
-  const cardsBySlug = new Map(cards.map((card) => [card.slug, card]));
-
-  return slugs
-    .map((slug) => cardsBySlug.get(slug))
-    .filter((card): card is ExplorePlayerCard => card != null);
-}
-
-export async function loadExplorePlayerBySlug(
   slug: string,
 ): Promise<ExplorePlayerCard | null> {
   const [player] = await loadExplorePlayersBySlugs([slug]);
   return player ?? null;
 }
 
-export { exploreCardSubtitle };
+export async function loadExplorePlayersBySlugs(
+  slugs: string[],
+  options?: { includePerformance?: boolean },
+): Promise<ExplorePlayerCard[]> {
+  if (slugs.length === 0) {
+    return [];
+  }
+
+  const matched = await loadExplorePlayerEntries(slugs);
+  if (matched.length === 0) {
+    return [];
+  }
+
+  const details = await Promise.all(
+    matched.map((entry) => loadPlayerDetail(entry.callup.player_id)),
+  );
+
+  const cards = await Promise.all(
+    matched.map(async (entry, index) => {
+      const normalized = normalizedPlayerFromCallup(
+        entry.callup,
+        details[index] ?? null,
+        entry.team.slug,
+      );
+      const baseCard = toExplorePlayerCard({
+        slug: entry.slug,
+        player: normalized,
+        team: entry.team,
+        editorial: entry.editorial,
+        enriched: Boolean(entry.callup.player_id),
+      });
+
+      if (!options?.includePerformance || !normalized.bzzoiro?.playerId) {
+        return baseCard;
+      }
+
+      const performance = await loadPlayerPerformance(
+        normalized.bzzoiro.playerId,
+        {
+          availability: normalized.bzzoiro.availability,
+          strengths: normalized.bzzoiro.strengths,
+          weaknesses: normalized.bzzoiro.weaknesses,
+        },
+      );
+
+      return {
+        ...baseCard,
+        formRating: performance?.formRating ?? null,
+        seasonAverageRating: performance?.seasonAverageRating ?? null,
+        recentAppearances: performance?.recentAppearances ?? [],
+        nationalTeamRecord: performance?.nationalTeamRecord ?? null,
+        strengths:
+          performance?.strengths ?? normalized.bzzoiro?.strengths ?? [],
+        weaknesses:
+          performance?.weaknesses ?? normalized.bzzoiro?.weaknesses ?? [],
+      };
+    }),
+  );
+
+  const cardBySlug = new Map(cards.map((card) => [card.slug, card]));
+  return slugs
+    .map((slug) => cardBySlug.get(slug))
+    .filter((card): card is ExplorePlayerCard => card != null);
+}

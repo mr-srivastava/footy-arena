@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
+import { DetailList, DetailListItem } from "@/components/detail-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { CATCH_UP_TOPICS, getCatchUpImage, getCatchUpTopic } from "@/lib/discovery";
-import { artifactSurface } from "@/lib/utils";
+import {
+  CATCH_UP_TOPICS,
+  getCatchUpImage,
+  getCatchUpTopic,
+} from "@/lib/discovery";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,7 +21,9 @@ export function generateStaticParams() {
   return CATCH_UP_TOPICS.map((topic) => ({ slug: topic.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const topic = getCatchUpTopic(slug);
   if (!topic) return { title: "Catch Up - Footy Arena" };
@@ -53,10 +59,10 @@ export default async function CatchUpPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <article className={artifactSurface("p-6 md:p-8")}>
-          <ul className="divide-y divide-white/8 border-y border-white/8">
+        <article className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-10">
+          <DetailList className="divide-y divide-line-soft">
             {topic.bullets.map((bullet) => (
-              <li
+              <DetailListItem
                 key={bullet}
                 className="grid grid-cols-[auto_1fr] gap-4 py-5 text-base leading-relaxed text-muted-foreground"
               >
@@ -65,9 +71,9 @@ export default async function CatchUpPage({ params }: PageProps) {
                   aria-hidden
                 />
                 {bullet}
-              </li>
+              </DetailListItem>
             ))}
-          </ul>
+          </DetailList>
         </article>
       </ContentContainer>
 

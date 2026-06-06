@@ -1,82 +1,146 @@
-import type { Doc } from "@/convex/_generated/dataModel";
 import { hasBsdToken } from "@/lib/bsd/client";
-import { toConvexCountrySnapshot } from "@/lib/bsd/convex-snapshots";
-import { enrichPlayers, normalizePlayer } from "@/lib/bsd/normalize-player";
+import { getCachedPlayerDetail } from "@/lib/bsd/cache";
+import { enrichPlayers } from "@/lib/bsd/normalize-player";
+import { toTeamIdentity, toTeamPlayerSeed } from "@/lib/bsd/team-seeds";
+import { loadTeamManager } from "@/lib/bsd/team-analytics";
 import {
-  mapConvexSquad,
-  squadFromEnrichedPlayers,
-  squadManagerFromDoc,
-} from "@/lib/tournament/map-squad";
-import type { TeamSquad, TeamSquadPayload } from "@/lib/tournament/types";
+  getWorldCupTeamSquad,
+  type BsdWorldCupSquadRow,
+} from "@/lib/bsd/worldcup";
+import type { Team } from "@/lib/openfootball/types";
+import type { SquadManager, TeamSquadPayload } from "@/lib/tournament/types";
 
-export type TeamPageData = {
-  country: Doc<"countries">;
-  squad: Doc<"squads"> | null;
-  players: Doc<"players">[];
-};
+function inferSquadStatus(players: BsdWorldCupSquadRow[]) {
+  return players.some((player) => player.status === "official")
+    ? "announced"
+    : "pending";
+}
 
-function convexFallbackPayload(teamPageData: TeamPageData): TeamSquadPayload {
-  const country = toConvexCountrySnapshot(teamPageData.country);
+async function loadManager(teamId: number): Promise<SquadManager | undefined> {
+  const manager = await loadTeamManager(teamId).catch(() => null);
+  if (!manager) return undefined;
 
   return {
-    country,
-    status: teamPageData.squad?.status ?? "pending",
-    manager: squadManagerFromDoc(teamPageData.squad),
-    source: "convex",
-    players: teamPageData.players.map((player) => ({
-      player: normalizePlayer(player, null, null),
-      match: null,
-    })),
+    name: manager.name,
+    nationality: manager.country,
+    preferredFormation: manager.preferred_formation,
+    tacticalProfile: manager.tactical_profile,
+    careerRecord: `${manager.wins}-${manager.draws}-${manager.losses}`,
+    winPct: manager.win_pct,
+  };
+}
+
+function fallbackPayload(
+  team: Team,
+  squad: Awaited<ReturnType<typeof getWorldCupTeamSquad>>,
+  manager?: SquadManager,
+): TeamSquadPayload {
+  const players = squad.results.map((player) => ({
+    player: {
+      id: String(player.player_id ?? `${player.team_id}-${player.name}`),
+      name: player.name,
+      shortName: null,
+      jerseyNumber: player.jersey_number ?? null,
+      age: player.age,
+      position: player.position,
+      positionGroup: player.position,
+      detailedPosition: player.position,
+      preferredFoot: "",
+      club: {
+        name: player.club,
+        country: player.club_country,
+        league: "",
+        bzzoiroTeamId: null,
+        venueId: null,
+      },
+      countryId: team.slug,
+      isCaptain: false,
+      previousWorldCupsCount: 0,
+      previousWorldCupsList: [],
+      bzzoiro: null,
+    },
+    match: null,
+  }));
+
+  return {
+    country: toTeamIdentity(team),
+    status: inferSquadStatus(squad.results),
+    manager,
+    source: "fallback",
+    players,
     summary: {
-      total: teamPageData.players.length,
+      total: players.length,
       matched: 0,
     },
   };
 }
 
 export async function loadEnrichedTeamSquad(
-  teamPageData: TeamPageData | null,
+  team: Team,
 ): Promise<TeamSquadPayload | null> {
-  if (!teamPageData) {
+  if (!team.bsdTeamId || !hasBsdToken()) {
     return null;
   }
 
-  if (!hasBsdToken() || teamPageData.players.length === 0) {
-    return convexFallbackPayload(teamPageData);
+  const [squad, manager] = await Promise.all([
+    getWorldCupTeamSquad(team.bsdTeamId),
+    loadManager(team.bsdTeamId),
+  ]);
+
+  if (squad.count === 0) {
+    return {
+      country: toTeamIdentity(team),
+      status: "pending",
+      manager,
+      source: "fallback",
+      players: [],
+      summary: {
+        total: 0,
+        matched: 0,
+      },
+    };
   }
 
+  const linkedPlayers = squad.results.filter(
+    (player) => player.player_id != null,
+  );
+  const detailsById = new Map<
+    number,
+    Awaited<ReturnType<typeof getCachedPlayerDetail>>
+  >();
+
+  await Promise.all(
+    linkedPlayers.map(async (player) => {
+      const detail = await getCachedPlayerDetail(player.player_id!);
+      detailsById.set(player.player_id!, detail);
+    }),
+  );
+
+  const seeds = squad.results.map((player) =>
+    toTeamPlayerSeed(
+      player,
+      player.player_id != null
+        ? (detailsById.get(player.player_id) ?? null)
+        : null,
+    ),
+  );
+
   try {
-    const country = toConvexCountrySnapshot(teamPageData.country);
-    const enriched = await enrichPlayers(teamPageData.players, country);
+    const enriched = await enrichPlayers(seeds, toTeamIdentity(team));
 
     return {
-      country,
-      status: teamPageData.squad?.status ?? "pending",
-      manager: squadManagerFromDoc(teamPageData.squad),
+      country: toTeamIdentity(team),
+      status: inferSquadStatus(squad.results),
+      manager,
       source: "bsd",
       players: enriched.map(({ player, match }) => ({ player, match })),
       summary: {
         total: enriched.length,
-        matched: enriched.filter((result) => result.match.bsdPlayerId != null).length,
+        matched: enriched.filter((entry) => entry.match.bsdPlayerId != null)
+          .length,
       },
     };
   } catch {
-    return convexFallbackPayload(teamPageData);
+    return fallbackPayload(team, squad, manager);
   }
-}
-
-export async function loadTeamSquad(
-  teamPageData: TeamPageData | null,
-): Promise<TeamSquad> {
-  const payload = await loadEnrichedTeamSquad(teamPageData);
-
-  if (!payload) {
-    return mapConvexSquad(null, []);
-  }
-
-  return squadFromEnrichedPlayers(
-    payload.status,
-    payload.manager,
-    payload.players.map((entry) => entry.player),
-  );
 }

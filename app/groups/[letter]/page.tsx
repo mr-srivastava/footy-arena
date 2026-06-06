@@ -30,7 +30,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { letter } = await params;
   const normalized = letter.toUpperCase();
 
@@ -76,8 +78,7 @@ export default async function GroupPage({ params }: PageProps) {
           eyebrow="Group stage"
           title={
             <>
-              GROUP{" "}
-              <span className="text-pitch-bright">{group.letter}</span>
+              GROUP <span className="text-pitch-bright">{group.letter}</span>
             </>
           }
           titleClassName="md:text-7xl"
@@ -120,7 +121,10 @@ export default async function GroupPage({ params }: PageProps) {
           ) : (
             <p className="text-sm text-muted">
               Group fixtures are not available yet.{" "}
-              <Link href="/fixtures" className="text-gold hover:text-foreground">
+              <Link
+                href="/fixtures"
+                className="text-gold hover:text-foreground"
+              >
                 View full schedule
               </Link>
               .

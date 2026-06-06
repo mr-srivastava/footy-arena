@@ -1,9 +1,14 @@
 import type { PlayerProfile } from "@/lib/discovery/types";
 
-export type ExplorePlayerEditorial = Pick<
+type ExplorePlayerEditorial = Pick<
   PlayerProfile,
   "archetype" | "whyExcited" | "watchFor" | "similarEnergy"
 >;
+
+import type {
+  PlayerAppearanceSummary,
+  PlayerNationalTeamRecord,
+} from "@/lib/bsd/enrichment-types";
 
 export type ExplorePlayerCard = {
   id: string;
@@ -12,6 +17,8 @@ export type ExplorePlayerCard = {
   shortName?: string;
   nation: string;
   countrySlug: string;
+  nationBsdTeamId?: number | null;
+  clubTeamId?: number | null;
   fifaCode: string;
   position: string;
   detailedPosition: string;
@@ -31,6 +38,12 @@ export type ExplorePlayerCard = {
   previousWorldCupsCount?: number;
   bsdPlayerId?: number;
   imageUrl?: string;
+  formRating?: number | null;
+  seasonAverageRating?: number | null;
+  recentAppearances?: PlayerAppearanceSummary[];
+  nationalTeamRecord?: PlayerNationalTeamRecord | null;
+  strengths?: string[];
+  weaknesses?: string[];
   enriched: boolean;
   editorial?: ExplorePlayerEditorial;
   playerHref: string;

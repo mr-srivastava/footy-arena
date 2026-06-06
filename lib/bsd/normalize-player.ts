@@ -1,24 +1,23 @@
-import type { Doc } from '@/convex/_generated/dataModel';
 import {
   BSD_POSITION_GROUPS,
   BSD_POSITION_LABELS,
   BSD_PREFERRED_FOOT_LABELS,
-} from '@/lib/bsd/constants';
-import { toConvexPlayerSnapshot } from '@/lib/bsd/convex-snapshots';
+} from "@/lib/bsd/constants";
 import type {
   BsdPlayerListItem,
   BsdPlayerMatchMeta,
   BsdTeamListItem,
-  ConvexCountrySnapshot,
   NormalizedPlayer,
-} from '@/lib/bsd/enrichment-types';
+  TeamIdentity,
+  TeamPlayerSeed,
+} from "@/lib/bsd/enrichment-types";
 import {
   createClubLookupCaches,
   type ClubLookupCaches,
-} from '@/lib/bsd/club-lookup';
-import { resolveBsdPlayer } from '@/lib/bsd/resolve-player';
+} from "@/lib/bsd/club-lookup";
+import { resolveBsdPlayer } from "@/lib/bsd/resolve-player";
 
-function normalizePreferredFoot(value: string | null | undefined) {
+export function normalizePreferredFoot(value: string | null | undefined) {
   if (!value) {
     return null;
   }
@@ -27,17 +26,18 @@ function normalizePreferredFoot(value: string | null | undefined) {
 }
 
 export function normalizePlayer(
-  player: Doc<'players'>,
+  player: TeamPlayerSeed,
   team: BsdTeamListItem | null,
   bsdPlayer: BsdPlayerListItem | null,
 ): NormalizedPlayer {
   const positionGroup =
-    (bsdPlayer && BSD_POSITION_GROUPS[bsdPlayer.position]) || player.positionGroup;
+    (bsdPlayer && BSD_POSITION_GROUPS[bsdPlayer.position]) ||
+    player.positionGroup;
   const position =
     (bsdPlayer && BSD_POSITION_LABELS[bsdPlayer.position]) || player.position;
 
   return {
-    id: player._id,
+    id: player.id,
     name: bsdPlayer?.name ?? player.name,
     shortName: bsdPlayer?.short_name ?? null,
     jerseyNumber: bsdPlayer?.jersey_number ?? player.jerseyNumber ?? null,
@@ -54,10 +54,10 @@ export function normalizePlayer(
       bzzoiroTeamId: team?.id ?? bsdPlayer?.current_team_id ?? null,
       venueId: team?.venue_id ?? null,
     },
-    countryId: player.countryId,
+    countryId: player.countryId ?? "",
     isCaptain: player.isCaptain,
-    previousWorldCupsCount: player.previousWorldCupsCount,
-    previousWorldCupsList: player.previousWorldCupsList,
+    previousWorldCupsCount: player.previousWorldCupsCount ?? 0,
+    previousWorldCupsList: player.previousWorldCupsList ?? [],
     bzzoiro: bsdPlayer
       ? {
           playerId: bsdPlayer.id,
@@ -82,15 +82,15 @@ export type EnrichedPlayerResult = {
 };
 
 export async function enrichPlayer(
-  player: Doc<'players'>,
-  country?: ConvexCountrySnapshot | null,
+  player: TeamPlayerSeed,
+  country?: TeamIdentity | null,
   options?: {
     caches?: ClubLookupCaches;
     nationalTeamId?: number | null;
   },
 ): Promise<EnrichedPlayerResult> {
   const resolution = await resolveBsdPlayer({
-    player: toConvexPlayerSnapshot(player),
+    player,
     country,
     nationalTeamId: options?.nationalTeamId,
     caches: options?.caches,
@@ -102,31 +102,13 @@ export async function enrichPlayer(
   };
 }
 
-/** @deprecated Use enrichPlayer instead. */
-export async function enrichPlayerFromClubLookup(
-  player: Doc<'players'>,
-  country?: ConvexCountrySnapshot | null,
-): Promise<NormalizedPlayer> {
-  const result = await enrichPlayer(player, country);
-  return result.player;
-}
-
 export async function enrichPlayers(
-  players: Doc<'players'>[],
-  country: ConvexCountrySnapshot,
+  players: TeamPlayerSeed[],
+  country: TeamIdentity,
 ): Promise<EnrichedPlayerResult[]> {
   const caches = createClubLookupCaches();
 
   return Promise.all(
     players.map((player) => enrichPlayer(player, country, { caches })),
   );
-}
-
-/** @deprecated Use enrichPlayers instead. */
-export async function enrichPlayersFromClubLookup(
-  players: Doc<'players'>[],
-  country: ConvexCountrySnapshot,
-): Promise<NormalizedPlayer[]> {
-  const results = await enrichPlayers(players, country);
-  return results.map((result) => result.player);
 }

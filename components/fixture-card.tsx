@@ -1,5 +1,6 @@
 import { Clock, MapPin } from "lucide-react";
 import Link from "next/link";
+import { TeamCrest } from "@/components/team-crest";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,31 +15,40 @@ import { cn } from "@/lib/utils";
 function TeamName({
   name,
   href,
-  align = "left",
+  teamId,
 }: {
   name: string;
   href?: string;
-  align?: "left" | "right";
+  teamId?: number | null;
 }) {
   const placeholder = isPlaceholderTeam(name);
   const label = placeholder ? formatPlaceholderTeam(name) : name;
-  const className = cn(
-    "block text-balance font-display text-2xl leading-none tracking-wide transition-colors md:text-3xl",
-    align === "right" ? "text-right" : "text-left",
+  const nameClassName = cn(
+    "min-w-0 text-balance text-center",
     placeholder
       ? "font-body text-sm font-medium normal-case leading-snug tracking-normal text-muted-foreground italic md:text-base"
-      : "text-foreground",
+      : "type-broadcast text-xl leading-snug text-foreground md:text-2xl",
+  );
+
+  const stackClassName =
+    "flex w-full min-w-0 flex-col items-center gap-2 text-center";
+
+  const content = (
+    <>
+      <TeamCrest teamId={teamId} name={name} size="md" className="shrink-0" />
+      <span className={nameClassName}>{label}</span>
+    </>
   );
 
   if (href && !placeholder) {
     return (
-      <Link href={href} className={cn(className, "hover:text-gold")}>
-        {label}
+      <Link href={href} className={cn(stackClassName, "hover:text-gold")}>
+        {content}
       </Link>
     );
   }
 
-  return <span className={className}>{label}</span>;
+  return <span className={stackClassName}>{content}</span>;
 }
 
 const stageAccent: Record<string, CardAccent> = {
@@ -63,13 +73,23 @@ const stageTone: Record<string, string> = {
 
 export function FixtureCard({
   fixture,
+  team1Name,
+  team2Name,
   team1Href,
   team2Href,
+  team1Id,
+  team2Id,
 }: {
   fixture: Fixture;
+  team1Name?: string;
+  team2Name?: string;
   team1Href?: string;
   team2Href?: string;
+  team1Id?: number | null;
+  team2Id?: number | null;
 }) {
+  const homeName = team1Name ?? fixture.team1;
+  const awayName = team2Name ?? fixture.team2;
   const knockout = fixture.stage !== "group";
   const accent = stageAccent[fixture.stage] ?? "pitch";
   const tone = stageTone[fixture.stage] ?? stageTone.group;
@@ -77,10 +97,11 @@ export function FixtureCard({
 
   return (
     <Card
+      variant="artifact"
       accent={accent}
       interactive
       padding="none"
-      className="group rounded-sm bg-artifact-strong"
+      className="surface-sage-glow group rounded-2xl transition-shadow duration-200 hover:shadow-card-hover"
     >
       <CardContent className="relative overflow-hidden p-0">
         <div
@@ -91,12 +112,12 @@ export function FixtureCard({
           aria-hidden
         />
 
-        <div className="relative flex items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
+        <div className="relative flex items-start justify-between gap-4 border-b border-line-soft px-6 py-5">
           <div className="min-w-0">
             <Badge variant={knockout ? "knockout" : "group"}>
               {fixture.stageLabel}
             </Badge>
-            <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="type-label mt-2 text-muted-foreground">
               Matchday signal
             </p>
           </div>
@@ -106,35 +127,38 @@ export function FixtureCard({
                 #{fixture.num}
               </Badge>
             ) : null}
-            <p className="flex items-center justify-end gap-1 text-xs font-medium text-muted-foreground">
+            <p className="type-meta type-data flex items-center justify-end gap-1">
               <Clock className="h-3.5 w-3.5 text-pitch-bright/70" aria-hidden />
               {kickoff}
             </p>
           </div>
         </div>
 
-        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-7">
-          <div className="min-w-0">
-            <TeamName name={fixture.team1} href={team1Href} />
-          </div>
+        <div className="relative flex flex-col items-center gap-5 px-6 py-8">
+          <TeamName name={homeName} href={team1Href} teamId={team1Id} />
           <div
-            className="relative flex size-11 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-background/80 font-display text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
+            className="type-broadcast flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-background/80 text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
             aria-hidden
           >
             VS
           </div>
-          <div className="min-w-0">
-            <TeamName name={fixture.team2} href={team2Href} align="right" />
-          </div>
-          <div
-            className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-border to-transparent"
-            aria-hidden
-          />
+          <TeamName name={awayName} href={team2Href} teamId={team2Id} />
         </div>
 
-        <div className="relative flex items-start gap-2 border-t border-white/8 bg-background/25 px-5 py-3 text-xs text-muted-foreground">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
-          <span className="leading-relaxed">{fixture.ground}</span>
+        <div className="type-meta relative flex items-start gap-2 border-t border-line-soft bg-white/[0.025] px-6 py-4">
+          <MapPin
+            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70"
+            aria-hidden
+          />
+          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+            <span className="leading-relaxed">{fixture.ground}</span>
+            <Link
+              href={`/fixtures/${fixture.id}`}
+              className="shrink-0 text-gold transition-colors hover:text-foreground"
+            >
+              Match brief
+            </Link>
+          </div>
         </div>
       </CardContent>
     </Card>

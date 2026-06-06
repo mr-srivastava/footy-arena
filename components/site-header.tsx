@@ -1,23 +1,36 @@
+"use client";
+
 import { CalendarDays, Trophy } from "lucide-react";
 import Link from "next/link";
+import { motion, useScroll, useTransform } from "motion/react";
 import { MobileNav } from "@/components/mobile-nav";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 
 export function SiteHeader({ className = "" }: { className?: string }) {
+  const { scrollY } = useScroll();
+  const width = useTransform(
+    scrollY,
+    [0, 120],
+    ["100%", "min(72rem, calc(100% - 2rem))"],
+  );
+  const top = useTransform(scrollY, [0, 120], [0, 12]);
+  const radius = useTransform(scrollY, [0, 120], [0, 999]);
+
   return (
-    <header
-      className={`sticky top-0 z-50 border-b border-white/8 bg-background/92 backdrop-blur-xl ${className}`}
+    <motion.header
+      style={{ width, top, borderRadius: radius }}
+      className={`sticky z-50 mx-auto border border-line-soft bg-background/88 shadow-card backdrop-blur-2xl ${className}`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link
           href="/"
           className="group flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <div className="flex size-10 items-center justify-center rounded-sm border border-pitch/40 bg-pitch/12 transition-colors group-hover:border-gold/45">
+          <div className="flex size-9 items-center justify-center rounded-full border border-gold/25 bg-gold/8 transition-colors group-hover:border-gold/55">
             <Trophy className="h-5 w-5 text-gold" aria-hidden />
           </div>
-          <span className="font-display text-2xl tracking-[0.15em] text-foreground">
+          <span className="font-display text-xl tracking-[0.18em] text-foreground">
             FOOTY ARENA
           </span>
         </Link>
@@ -42,6 +55,6 @@ export function SiteHeader({ className = "" }: { className?: string }) {
           <MobileNav />
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

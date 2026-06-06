@@ -76,7 +76,7 @@ export type MetricTranslation = {
   casualTranslation: string;
 };
 
-export type HomepageCard = {
+type HomepageCard = {
   title: string;
   description: string;
   href: string;

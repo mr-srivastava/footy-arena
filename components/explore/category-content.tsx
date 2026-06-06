@@ -17,7 +17,11 @@ type CategoryContentProps = {
   byCode: Map<string, Team>;
 };
 
-export function CategoryContent({ slug, playerSlugs, byCode }: CategoryContentProps) {
+export function CategoryContent({
+  slug,
+  playerSlugs,
+  byCode,
+}: CategoryContentProps) {
   return (
     <>
       {slug === "lost-glories" ? <LostGloriesGrid byCode={byCode} /> : null}

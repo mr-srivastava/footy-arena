@@ -2,11 +2,17 @@
 
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { SectionHeading } from "@/components/section-heading";
-import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/seed/history";
+import { Card, CardContent } from "@/components/ui/card";
+import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/content/history";
 import type { HistoryEra, HistoryLegend } from "@/lib/discovery/types";
-import { artifactSurface } from "@/lib/utils";
 
 function subscribeToReducedMotion(onStoreChange: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -32,10 +38,11 @@ function usePrefersReducedMotion() {
 
 function HistoryLegendCard({ player }: { player: HistoryLegend }) {
   return (
-    <article
-      className={artifactSurface(
-        "group/legend relative flex h-full min-h-32 flex-col overflow-hidden bg-background/35 transition-colors hover:border-gold/30",
-      )}
+    <Card
+      variant="artifact"
+      shape="artifact"
+      interactive
+      className="group/legend relative h-full min-h-32 bg-background/35 hover:border-gold/30"
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-gold/10 to-transparent opacity-70"
@@ -48,33 +55,31 @@ function HistoryLegendCard({ player }: { player: HistoryLegend }) {
         {player.flag}
       </div>
 
-      <div className="relative flex items-start gap-3 border-b border-white/8 p-3">
-          <span
-            className="flex size-9 items-center justify-center rounded-sm border border-white/10 bg-white/5 text-xl leading-none"
-            aria-hidden
-          >
-            {player.flag}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
-              {player.country}
-            </p>
-            <h4 className="mt-1 font-display text-xl leading-none tracking-wide text-foreground">
-              {player.name}
-            </h4>
-            <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              {player.role}
-            </p>
-          </div>
-      </div>
+      <CardContent className="relative flex items-start gap-3 border-b border-line-soft p-3">
+        <span
+          className="flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface-glass text-xl leading-none"
+          aria-hidden
+        >
+          {player.flag}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="type-label text-gold">{player.country}</p>
+          <h4 className="editorial-title mt-1 text-2xl leading-none text-foreground">
+            {player.name}
+          </h4>
+          <p className="type-micro mt-2 font-semibold uppercase tracking-[var(--tracking-label)] text-muted-foreground">
+            {player.role}
+          </p>
+        </div>
+      </CardContent>
 
-      <div className="relative flex flex-1 flex-col justify-between p-3">
+      <CardContent className="relative flex flex-1 flex-col justify-between p-3">
         <p className="text-xs leading-relaxed text-muted-foreground">
           {player.achievement}
         </p>
         <div className="mt-3 h-px w-10 bg-gradient-to-r from-pitch-bright/70 to-transparent" />
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -105,7 +110,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         />
         <div className="grain absolute inset-0" aria-hidden />
         <div className="absolute bottom-5 left-5 lg:bottom-8 lg:left-8">
-          <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/55">
+          <p className="type-micro mb-2 font-semibold uppercase tracking-[var(--tracking-board)] text-muted-foreground">
             Archive frame
           </p>
           <p
@@ -120,7 +125,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         <p className="section-eyebrow">{era.title}</p>
         <h3
           id={`history-era-title-${index}`}
-          className="mt-2 max-w-xl font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl"
+          className="editorial-title type-section-title mt-3 max-w-xl text-foreground"
         >
           {era.headline}
         </h3>
@@ -129,7 +134,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         </p>
 
         <div className="mt-6">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-pitch-bright/80">
+          <p className="type-stat-label tracking-[0.24em] text-pitch-bright/80">
             Legends of the era
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -151,7 +156,8 @@ export default function History() {
 
   const scrollToIndex = useCallback(
     (next: number) => {
-      const i = (next + WORLD_CUP_HISTORY_ERAS.length) % WORLD_CUP_HISTORY_ERAS.length;
+      const i =
+        (next + WORLD_CUP_HISTORY_ERAS.length) % WORLD_CUP_HISTORY_ERAS.length;
       const track = trackRef.current;
       const slide = track?.querySelector<HTMLElement>(`[data-slide="${i}"]`);
       if (!slide) return;
@@ -215,7 +221,7 @@ export default function History() {
     <section
       id="history"
       aria-label="Why the World Cup matters"
-      className="relative z-10 border-y border-white/8 bg-background/45"
+      className="relative z-10 border-y border-line-soft bg-background/45"
     >
       <div className="relative mx-auto max-w-6xl px-6 py-10 md:py-12">
         <SectionHeading
@@ -229,10 +235,11 @@ export default function History() {
       </div>
 
       <div className="mx-auto max-w-6xl px-6 pb-10 md:pb-12">
-        <div
-          className={artifactSurface(
-            "history-carousel relative overflow-hidden",
-          )}
+        <Card
+          variant="artifact"
+          shape="artifact"
+          padding="none"
+          className="history-carousel relative"
           role="region"
           aria-roledescription="carousel"
           aria-label="World Cup history by era"
@@ -275,7 +282,7 @@ export default function History() {
             <button
               type="button"
               onClick={goPrev}
-              className="absolute left-3 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-sm border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
+              className="absolute left-3 top-1/2 z-30 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:left-4"
               aria-label="Previous era"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
@@ -283,7 +290,7 @@ export default function History() {
             <button
               type="button"
               onClick={goNext}
-              className="absolute right-3 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-sm border border-white/10 bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
+              className="absolute right-3 top-1/2 z-30 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line-strong bg-navy/80 text-foreground backdrop-blur-sm transition-colors hover:border-pitch-bright/40 hover:bg-navy-light/90 sm:right-4"
               aria-label="Next era"
             >
               <ChevronRight className="h-4 w-4" aria-hidden />
@@ -291,13 +298,13 @@ export default function History() {
           </div>
 
           <div
-            className="flex flex-col gap-3 border-t border-white/8 bg-background/30 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 border-t border-line-soft bg-background/30 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
             role="tablist"
             aria-label="Select an era"
           >
             <p className="text-center text-xs font-semibold uppercase tracking-[0.35em] text-muted/70 sm:text-left">
               {index + 1} / {WORLD_CUP_HISTORY_ERAS.length}
-              <span className="mx-2 text-white/20" aria-hidden>
+              <span className="mx-2 text-line-strong" aria-hidden>
                 ·
               </span>
               <span className="text-pitch-bright/70">Scroll sideways</span>
@@ -311,17 +318,18 @@ export default function History() {
                   aria-selected={i === index}
                   aria-controls={`history-slide-${i}`}
                   onClick={() => scrollToIndex(i)}
-                  className={`rounded-sm px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${i === index
-                    ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
-                    : "text-muted hover:bg-white/5 hover:text-foreground"
-                    }`}
+                  className={`rounded-full px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${
+                    i === index
+                      ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
+                      : "text-muted hover:bg-surface-glass hover:text-foreground"
+                  }`}
                 >
                   {item.year}
                 </button>
               ))}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </section>
   );

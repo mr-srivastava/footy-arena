@@ -1,21 +1,12 @@
-import type { Doc } from "@/convex/_generated/dataModel";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
-import type { PlayerPosition, SquadManager, SquadPlayer, TeamSquad } from "./types";
+import { playerSlugFromName } from "@/lib/explore/player-slug";
+import type {
+  PlayerPosition,
+  SquadManager,
+  SquadPlayer,
+  TeamSquad,
+} from "./types";
 import { toPositionGroup } from "./positions";
-
-type SquadDoc = Doc<"squads"> | null;
-type PlayerDoc = Doc<"players">;
-
-export function squadManagerFromDoc(squadDoc: SquadDoc): SquadManager | undefined {
-  if (!squadDoc?.managerName) {
-    return undefined;
-  }
-
-  return {
-    name: squadDoc.managerName,
-    nationality: squadDoc.managerNationality,
-  };
-}
 
 function toSquadPlayerPosition(
   positionGroup: string | undefined,
@@ -33,12 +24,14 @@ function toSquadPlayerPosition(
   return toPositionGroup(position);
 }
 
-export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
+function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
   return {
     name: player.name,
     shortName: player.shortName ?? undefined,
+    profileSlug: playerSlugFromName(player.name),
     position: toSquadPlayerPosition(player.positionGroup, player.position),
     club: player.club.name,
+    clubTeamId: player.club.bzzoiroTeamId ?? null,
     number: player.jerseyNumber ?? undefined,
     age: player.age,
     detailedPosition: player.detailedPosition,
@@ -48,39 +41,36 @@ export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPl
     isCaptain: player.isCaptain,
     league: player.club.league,
     bsdPlayerId: player.bzzoiro?.playerId,
+    availability: player.bzzoiro?.availability ?? null,
   };
 }
 
-export function mapNormalizedSquad(
-  squadDoc: SquadDoc,
-  players: NormalizedPlayer[],
-): TeamSquad {
-  return {
-    status: squadDoc?.status ?? "pending",
-    manager: squadManagerFromDoc(squadDoc),
-    players: players.map(normalizedPlayerToSquadPlayer),
-  };
+function squadPlayerKey(player: SquadPlayer): string {
+  if (player.bsdPlayerId != null) {
+    return `id:${player.bsdPlayerId}`;
+  }
+
+  return `${player.profileSlug}:${player.number ?? "na"}:${player.club ?? "na"}`;
 }
 
-export function mapConvexSquad(
-  squadDoc: SquadDoc,
-  players: PlayerDoc[],
-): TeamSquad {
-  return {
-    status: squadDoc?.status ?? "pending",
-    manager: squadManagerFromDoc(squadDoc),
-    players: players.map((p) => ({
-      name: p.name,
-      position: toSquadPlayerPosition(p.positionGroup, p.position),
-      club: p.club,
-      number: p.jerseyNumber ?? undefined,
-      age: p.age,
-      detailedPosition: p.detailedPosition,
-      preferredFoot: p.preferredFoot || undefined,
-      isCaptain: p.isCaptain,
-      league: p.league,
-    })),
-  };
+function dedupeSquadPlayers(players: SquadPlayer[]): SquadPlayer[] {
+  const seen = new Set<string>();
+  const unique: SquadPlayer[] = [];
+
+  for (const player of players) {
+    const key = squadPlayerKey(player);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(player);
+  }
+
+  return unique;
+}
+
+export function squadPlayerListKey(player: SquadPlayer, index: number): string {
+  return player.bsdPlayerId != null
+    ? `player-${player.bsdPlayerId}`
+    : `${squadPlayerKey(player)}-${index}`;
 }
 
 export function squadFromEnrichedPlayers(
@@ -91,6 +81,6 @@ export function squadFromEnrichedPlayers(
   return {
     status,
     manager,
-    players: players.map(normalizedPlayerToSquadPlayer),
+    players: dedupeSquadPlayers(players.map(normalizedPlayerToSquadPlayer)),
   };
 }

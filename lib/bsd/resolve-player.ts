@@ -1,36 +1,32 @@
-import { bsdFetch } from '@/lib/bsd/client';
+import { bsdFetch } from "@/lib/bsd/client";
 import {
   createClubLookupCaches,
   resolveClubPlayerDetails,
   type ClubLookupCaches,
-} from '@/lib/bsd/club-lookup';
-import {
-  BSD_TEAM_NAME_ALIASES,
-  iso2ForFifa,
-} from '@/lib/bsd/fifa-nation';
+} from "@/lib/bsd/club-lookup";
+import { BSD_TEAM_NAME_ALIASES, iso2ForFifa } from "@/lib/bsd/fifa-nation";
 import type {
   BsdMatchConfidence,
   BsdMatchStrategy,
   BsdPlayerListItem,
   BsdPlayersListResponse,
   BsdTeamListItem,
-  ConvexCountrySnapshot,
-  ConvexPlayerSnapshot,
-  BsdPlayerMatchMeta,
+  TeamIdentity,
+  TeamPlayerSeed,
   BsdPlayerResolution,
-} from '@/lib/bsd/enrichment-types';
+} from "@/lib/bsd/enrichment-types";
 import {
   pickBestPlayerMatch,
   playerSearchTerm,
   scorePlayerCandidate,
-} from '@/lib/bsd/match-player';
-import { getWorldCupNationalTeams } from '@/lib/bsd/national-teams';
+} from "@/lib/bsd/match-player";
+import { getWorldCupNationalTeams } from "@/lib/bsd/worldcup";
 
 const MIN_MATCH_SCORE = 55;
 const CONSENSUS_BONUS = 15;
 
 type StrategyMatch = {
-  strategy: Exclude<BsdMatchStrategy, 'consensus'>;
+  strategy: Exclude<BsdMatchStrategy, "consensus">;
   bsdPlayer: BsdPlayerListItem;
   team: BsdTeamListItem | null;
   score: number;
@@ -40,7 +36,7 @@ function normalizeTeamName(value: string) {
   return value.trim().toLowerCase();
 }
 
-export async function resolveNationalTeam(country: ConvexCountrySnapshot) {
+async function resolveNationalTeam(country: TeamIdentity) {
   const teams = await getWorldCupNationalTeams();
   const names = new Set(
     [
@@ -53,7 +49,9 @@ export async function resolveNationalTeam(country: ConvexCountrySnapshot) {
   );
 
   const match = teams.find((team) => {
-    const teamNames = [team.name, team.short_name, team.country].map(normalizeTeamName);
+    const teamNames = [team.name, team.short_name, team.country].map(
+      normalizeTeamName,
+    );
     return teamNames.some((name) => names.has(name));
   });
 
@@ -67,22 +65,24 @@ async function searchBsdPlayers(params: {
   limit?: number;
 }) {
   const query = new URLSearchParams();
-  query.set('name', playerSearchTerm(params.name));
-  query.set('limit', String(params.limit ?? 15));
+  query.set("name", playerSearchTerm(params.name));
+  query.set("limit", String(params.limit ?? 15));
   if (params.nationalTeamId) {
-    query.set('national_team_id', String(params.nationalTeamId));
+    query.set("national_team_id", String(params.nationalTeamId));
   }
   if (params.nationalityCode) {
-    query.set('nationality_code', params.nationalityCode);
+    query.set("nationality_code", params.nationalityCode);
   }
 
-  const data = await bsdFetch<BsdPlayersListResponse>(`players?${query.toString()}`);
+  const data = await bsdFetch<BsdPlayersListResponse>(
+    `players?${query.toString()}`,
+  );
   return data.results;
 }
 
 async function matchViaNationalTeam(
-  player: ConvexPlayerSnapshot,
-  country: ConvexCountrySnapshot,
+  player: TeamPlayerSeed,
+  country: TeamIdentity,
   nationalTeamId: number | null,
   clubTeamId: number | null,
 ): Promise<StrategyMatch | null> {
@@ -119,7 +119,7 @@ async function matchViaNationalTeam(
       const score = scorePlayerCandidate(player, byNumber, context);
       if (score >= MIN_MATCH_SCORE) {
         return {
-          strategy: 'national',
+          strategy: "national",
           bsdPlayer: byNumber,
           team: null,
           score: Math.max(score, 90),
@@ -128,13 +128,18 @@ async function matchViaNationalTeam(
     }
   }
 
-  const match = pickBestPlayerMatch(player, candidates, MIN_MATCH_SCORE, context);
+  const match = pickBestPlayerMatch(
+    player,
+    candidates,
+    MIN_MATCH_SCORE,
+    context,
+  );
   if (!match) {
     return null;
   }
 
   return {
-    strategy: 'national',
+    strategy: "national",
     bsdPlayer: match.player,
     team: null,
     score: match.score,
@@ -145,13 +150,13 @@ function confidenceFromScore(
   score: number,
   strategy: BsdMatchStrategy,
 ): BsdMatchConfidence {
-  if (strategy === 'consensus' || score >= 90) {
-    return 'high';
+  if (strategy === "consensus" || score >= 90) {
+    return "high";
   }
   if (score >= 75) {
-    return 'medium';
+    return "medium";
   }
-  return 'low';
+  return "low";
 }
 
 function reconcileMatches(
@@ -170,20 +175,21 @@ function reconcileMatches(
         match: {
           bsdPlayerId: clubMatch.bsdPlayer.id,
           score,
-          confidence: 'high',
-          strategy: 'consensus',
+          confidence: "high",
+          strategy: "consensus",
         },
       };
     }
 
-    const winner = clubMatch.score >= nationalMatch.score ? clubMatch : nationalMatch;
+    const winner =
+      clubMatch.score >= nationalMatch.score ? clubMatch : nationalMatch;
     return {
       team: winner.team,
       bsdPlayer: winner.bsdPlayer,
       match: {
         bsdPlayerId: winner.bsdPlayer.id,
         score: winner.score,
-        confidence: 'medium',
+        confidence: "medium",
         strategy: winner.strategy,
       },
     };
@@ -216,8 +222,8 @@ function reconcileMatches(
 }
 
 export async function resolveBsdPlayer(input: {
-  player: ConvexPlayerSnapshot;
-  country?: ConvexCountrySnapshot | null;
+  player: TeamPlayerSeed;
+  country?: TeamIdentity | null;
   nationalTeamId?: number | null;
   caches?: ClubLookupCaches;
 }): Promise<BsdPlayerResolution> {
@@ -227,7 +233,7 @@ export async function resolveBsdPlayer(input: {
   const clubMatch =
     clubResult.bsdPlayer && clubResult.score != null
       ? {
-          strategy: 'club' as const,
+          strategy: "club" as const,
           bsdPlayer: clubResult.bsdPlayer,
           team: clubResult.team,
           score: clubResult.score,
@@ -250,27 +256,4 @@ export async function resolveBsdPlayer(input: {
   }
 
   return reconcileMatches(clubMatch, nationalMatch);
-}
-
-export async function resolveBsdPlayers(input: {
-  players: ConvexPlayerSnapshot[];
-  country: ConvexCountrySnapshot;
-  nationalTeamId?: number | null;
-}) {
-  const caches = createClubLookupCaches();
-  const nationalTeamId =
-    input.nationalTeamId ??
-    (await resolveNationalTeam(input.country))?.id ??
-    null;
-
-  return Promise.all(
-    input.players.map((player) =>
-      resolveBsdPlayer({
-        player,
-        country: input.country,
-        nationalTeamId,
-        caches,
-      }),
-    ),
-  );
 }

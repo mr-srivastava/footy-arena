@@ -66,12 +66,12 @@ export function PlayerProfileView({
 }: {
   initialPlayer: ExplorePlayerCard;
 }) {
-  const { data: players = [initialPlayer], isFetching } = useQuery(
+  const { data: players, isFetching } = useQuery(
     explorePlayersQueryOptions([initialPlayer.slug], [initialPlayer], {
       includePerformance: true,
     }),
   );
-  const player = players[0] ?? initialPlayer;
+  const player = players?.[0] ?? initialPlayer;
 
   const displayName = player.shortName ?? player.name;
   const imageSrc = player.imageUrl ?? getPlayerImage(player.slug);

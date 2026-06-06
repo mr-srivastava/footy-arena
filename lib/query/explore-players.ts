@@ -34,15 +34,22 @@ export function explorePlayersQueryOptions(
   initialPlayers?: ExplorePlayerCard[],
   options?: { includePerformance?: boolean },
 ) {
-  const initialData = initialPlayers?.length ? initialPlayers : undefined;
   const includePerformance = options?.includePerformance ?? false;
+  const hasEnrichedInitial =
+    initialPlayers != null &&
+    initialPlayers.length > 0 &&
+    initialPlayers.every((player) => player.enriched);
 
   return queryOptions({
     queryKey: queryKeys.explorePlayers(slugs, includePerformance),
     queryFn: ({ signal }) =>
       fetchExplorePlayersWithSignal(slugs, includePerformance, signal),
     enabled: slugs.length > 0,
-    initialData,
+    initialData: hasEnrichedInitial ? initialPlayers : undefined,
+    placeholderData:
+      !hasEnrichedInitial && initialPlayers?.length
+        ? initialPlayers
+        : undefined,
     staleTime: QUERY_STALE_TIME_MS,
   });
 }

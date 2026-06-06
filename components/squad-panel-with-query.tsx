@@ -82,12 +82,14 @@ export function SquadPanelWithQuery({
   teamName?: string;
 }) {
   const {
-    data: squad = initialSquad,
+    data: squad,
     isPending,
     isFetching,
   } = useQuery(teamSquadQueryOptions(slug, initialSquad));
 
-  if (isPending && squad.players.length === 0) {
+  const resolvedSquad = squad ?? initialSquad;
+
+  if (isPending && resolvedSquad.players.length === 0) {
     return <SquadPanelSkeleton />;
   }
 
@@ -101,12 +103,12 @@ export function SquadPanelWithQuery({
     >
       {teamName ? (
         <TeamPotentialLineupPitch
-          squad={squad}
+          squad={resolvedSquad}
           teamName={teamName}
           managerAnalytics={managerAnalytics}
         />
       ) : null}
-      <SquadPanel squad={squad} managerAnalytics={managerAnalytics} />
+      <SquadPanel squad={resolvedSquad} managerAnalytics={managerAnalytics} />
     </div>
   );
 }

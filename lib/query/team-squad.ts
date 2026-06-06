@@ -17,15 +17,24 @@ async function fetchTeamSquad(slug: string): Promise<TeamSquad> {
   );
 }
 
+function isEnrichedSquad(squad?: TeamSquad) {
+  return (
+    squad != null &&
+    squad.players.length > 0 &&
+    squad.players.some((player) => player.bsdPlayerId != null)
+  );
+}
+
 export function teamSquadQueryOptions(slug: string, initialSquad?: TeamSquad) {
-  const hasInitialPlayers =
-    initialSquad != null && initialSquad.players.length > 0;
+  const hasEnrichedInitial = isEnrichedSquad(initialSquad);
 
   return queryOptions({
     queryKey: queryKeys.teamSquad(slug),
     queryFn: () => fetchTeamSquad(slug),
     enabled: slug.length > 0,
-    initialData: hasInitialPlayers ? initialSquad : undefined,
+    initialData: hasEnrichedInitial ? initialSquad : undefined,
+    placeholderData:
+      !hasEnrichedInitial && initialSquad ? initialSquad : undefined,
     staleTime: QUERY_STALE_TIME_MS,
   });
 }

@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { MatchInsight } from "@/lib/bsd/enrichment-types";
 import { fetchJson } from "@/lib/query/fetch-json";
+import { QUERY_STALE_TIME_MS } from "@/lib/query/constants";
 import { queryKeys } from "@/lib/query/keys";
 
 type MatchInsightResponse = {
@@ -22,7 +23,7 @@ export function matchInsightQueryOptions(
     queryKey: queryKeys.matchInsight(fixtureId),
     queryFn: () => fetchMatchInsight(fixtureId),
     enabled: fixtureId.length > 0,
-    initialData,
-    initialDataUpdatedAt: initialData ? 0 : undefined,
+    initialData: initialData ?? undefined,
+    staleTime: QUERY_STALE_TIME_MS,
   });
 }

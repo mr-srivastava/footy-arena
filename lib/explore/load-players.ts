@@ -4,9 +4,13 @@ import {
   playerImageUrl,
 } from "@/lib/bsd/format";
 import { loadPlayerPerformance } from "@/lib/bsd/insights";
-import { fetchBsdPlayerDetail } from "@/lib/bsd/player-detail";
 import { normalizedPlayerFromCallup } from "@/lib/bsd/team-seeds";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
+import { teamSlugFromName } from "@/lib/teams/metadata";
+import {
+  getCachedAllWorldCupCallups,
+  getCachedPlayerDetail,
+} from "@/lib/bsd/cache";
 import { getAllWorldCupCallups } from "@/lib/bsd/worldcup";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 import { PLAYERS } from "@/lib/discovery/content/players";
@@ -20,6 +24,38 @@ type WorldCupCallupEntry = Awaited<
 
 function editorialBySlug() {
   return new Map(PLAYERS.map((player) => [player.slug, player]));
+}
+
+export function explorePlayerCardFromProfile(
+  profile: PlayerProfile,
+): ExplorePlayerCard {
+  const countrySlug = teamSlugFromName(profile.nation);
+
+  return {
+    id: profile.slug,
+    slug: profile.slug,
+    name: profile.name,
+    nation: profile.nation,
+    countrySlug,
+    nationBsdTeamId: null,
+    clubTeamId: null,
+    fifaCode: profile.fifaCode ?? "",
+    position: profile.position,
+    detailedPosition: profile.position,
+    club: "",
+    league: "",
+    clubCountry: "",
+    age: 0,
+    enriched: false,
+    editorial: {
+      archetype: profile.archetype,
+      whyExcited: profile.whyExcited,
+      watchFor: profile.watchFor,
+      similarEnergy: profile.similarEnergy,
+    },
+    playerHref: `/players/${profile.slug}`,
+    teamHref: `/teams/${countrySlug}`,
+  };
 }
 
 export function exploreCardSubtitle(player: ExplorePlayerCard) {
@@ -88,7 +124,22 @@ function toExplorePlayerCard(input: {
 }
 
 async function loadPlayerDetail(playerId: number | null) {
-  return fetchBsdPlayerDetail(playerId);
+  if (!playerId) {
+    return null;
+  }
+  return getCachedPlayerDetail(playerId);
+}
+
+async function buildCallupBySlugMap() {
+  const callups = await getCachedAllWorldCupCallups();
+  const callupBySlug = new Map<string, WorldCupCallupEntry>();
+  for (const callup of callups) {
+    const slug = playerSlugFromName(callup.name);
+    if (!callupBySlug.has(slug)) {
+      callupBySlug.set(slug, callup);
+    }
+  }
+  return callupBySlug;
 }
 
 async function loadExplorePlayerEntries(slugs: string[]) {
@@ -101,9 +152,9 @@ async function loadExplorePlayerEntries(slugs: string[]) {
     }>;
   }
 
-  const [{ teams }, callups] = await Promise.all([
+  const [{ teams }, callupBySlug] = await Promise.all([
     getWorldCupTeams(),
-    getAllWorldCupCallups(),
+    buildCallupBySlugMap(),
   ]);
 
   const teamById = new Map(
@@ -112,14 +163,6 @@ async function loadExplorePlayerEntries(slugs: string[]) {
       .map((team) => [team.bsdTeamId!, team]),
   );
   const editorial = editorialBySlug();
-
-  const callupBySlug = new Map<string, WorldCupCallupEntry>();
-  for (const callup of callups) {
-    const slug = playerSlugFromName(callup.name);
-    if (!callupBySlug.has(slug)) {
-      callupBySlug.set(slug, callup);
-    }
-  }
 
   return slugs.flatMap((slug) => {
     const callup = callupBySlug.get(slug);

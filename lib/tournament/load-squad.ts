@@ -1,7 +1,7 @@
 import { hasBsdToken } from "@/lib/bsd/client";
-import { toTeamIdentity, toTeamPlayerSeed } from "@/lib/bsd/team-seeds";
+import { getCachedPlayerDetail } from "@/lib/bsd/cache";
 import { enrichPlayers } from "@/lib/bsd/normalize-player";
-import { fetchBsdPlayerDetail } from "@/lib/bsd/player-detail";
+import { toTeamIdentity, toTeamPlayerSeed } from "@/lib/bsd/team-seeds";
 import { loadTeamManager } from "@/lib/bsd/team-analytics";
 import {
   getWorldCupTeamSquad,
@@ -106,12 +106,12 @@ export async function loadEnrichedTeamSquad(
   );
   const detailsById = new Map<
     number,
-    Awaited<ReturnType<typeof fetchBsdPlayerDetail>>
+    Awaited<ReturnType<typeof getCachedPlayerDetail>>
   >();
 
   await Promise.all(
     linkedPlayers.map(async (player) => {
-      const detail = await fetchBsdPlayerDetail(player.player_id);
+      const detail = await getCachedPlayerDetail(player.player_id!);
       detailsById.set(player.player_id!, detail);
     }),
   );

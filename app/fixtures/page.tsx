@@ -15,6 +15,8 @@ import {
 } from "@/lib/openfootball/fixtures";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
+export const revalidate = 1800;
+
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const { fixtures } = await getWorldCupFixtures();

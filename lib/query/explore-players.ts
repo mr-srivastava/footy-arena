@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
 import { fetchJson } from "@/lib/query/fetch-json";
+import { QUERY_STALE_TIME_MS } from "@/lib/query/constants";
 import { queryKeys } from "@/lib/query/keys";
 
 type ExplorePlayersResponse = {
@@ -42,6 +43,6 @@ export function explorePlayersQueryOptions(
       fetchExplorePlayersWithSignal(slugs, includePerformance, signal),
     enabled: slugs.length > 0,
     initialData,
-    initialDataUpdatedAt: initialData ? 0 : undefined,
+    staleTime: QUERY_STALE_TIME_MS,
   });
 }

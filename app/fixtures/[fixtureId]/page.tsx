@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
 import { FixtureMatchupTitle } from "@/components/fixture-matchup-title";
-import { MatchInsightPanel } from "@/components/match-insight-panel";
+import { MatchInsightPanelWithQuery } from "@/components/match-insight-panel-with-query";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
-import { loadMatchInsight } from "@/lib/bsd/insights";
 import {
   formatKickoff,
   getFixtureById,
@@ -17,14 +16,12 @@ import {
 import { getWorldCupTeams, resolveTeamByName } from "@/lib/openfootball/teams";
 import { resolveTeamDisplayName } from "@/lib/teams/metadata";
 
+export const revalidate = 1800;
+export const dynamicParams = true;
+
 type PageProps = {
   params: Promise<{ fixtureId: string }>;
 };
-
-export async function generateStaticParams() {
-  const { fixtures } = await getWorldCupFixtures();
-  return fixtures.map((fixture) => ({ fixtureId: fixture.id }));
-}
 
 export async function generateMetadata({
   params,
@@ -58,7 +55,6 @@ export default async function FixtureDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const insight = await loadMatchInsight(fixture, byName);
   const homeTeam = resolveTeamByName(fixture.team1, byName);
   const awayTeam = resolveTeamByName(fixture.team2, byName);
   const homeLabel =
@@ -80,8 +76,8 @@ export default async function FixtureDetailPage({ params }: PageProps) {
             <FixtureMatchupTitle
               team1={homeLabel}
               team2={awayLabel}
-              team1Id={insight?.homeTeamId ?? homeTeam?.bsdTeamId}
-              team2Id={insight?.awayTeamId ?? awayTeam?.bsdTeamId}
+              team1Id={homeTeam?.bsdTeamId}
+              team2Id={awayTeam?.bsdTeamId}
             />
           }
           meta={
@@ -97,7 +93,10 @@ export default async function FixtureDetailPage({ params }: PageProps) {
         />
 
         <div className="pb-16">
-          <MatchInsightPanel insight={insight} venueFallback={fixture.ground} />
+          <MatchInsightPanelWithQuery
+            fixtureId={fixtureId}
+            venueFallback={fixture.ground}
+          />
         </div>
       </ContentContainer>
 

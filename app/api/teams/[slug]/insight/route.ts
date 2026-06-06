@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { BsdApiError } from "@/lib/bsd/client";
-import { loadTeamAnalytics } from "@/lib/bsd/team-analytics";
+import { getCachedTeamAnalytics } from "@/lib/bsd/cache";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
 type RouteContext = {
@@ -17,7 +17,7 @@ export async function GET(_request: Request, context: RouteContext) {
       return NextResponse.json({ detail: "Team not found" }, { status: 404 });
     }
 
-    const payload = await loadTeamAnalytics(team);
+    const payload = await getCachedTeamAnalytics(team);
     return NextResponse.json({ payload });
   } catch (error) {
     if (error instanceof BsdApiError) {

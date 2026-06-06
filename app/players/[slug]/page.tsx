@@ -4,51 +4,47 @@ import { PlayerProfileView } from "@/components/explore/player-profile-view";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getAllPlayers } from "@/lib/discovery";
-import {
-  exploreCardSubtitle,
-  loadExplorePlayerShellBySlug,
-} from "@/lib/explore/load-players";
+import { getPlayerBySlug } from "@/lib/discovery";
+import { explorePlayerCardFromProfile } from "@/lib/explore/load-players";
+
+export const revalidate = 1800;
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getAllPlayers().map((player) => ({ slug: player.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const player = await loadExplorePlayerShellBySlug(slug);
+  const profile = getPlayerBySlug(slug);
 
-  if (!player) {
+  if (!profile) {
     return { title: "Player - Footy Arena" };
   }
 
-  const displayName = player.shortName ?? player.name;
-
   return {
-    title: `${displayName} - Footy Arena`,
-    description: player.editorial?.whyExcited ?? exploreCardSubtitle(player),
+    title: `${profile.name} - Footy Arena`,
+    description: profile.whyExcited,
   };
 }
 
 export default async function PlayerPage({ params }: PageProps) {
   const { slug } = await params;
-  const player = await loadExplorePlayerShellBySlug(slug);
+  const profile = getPlayerBySlug(slug);
 
-  if (!player) {
+  if (!profile) {
     notFound();
   }
+
+  const initialPlayer = explorePlayerCardFromProfile(profile);
 
   return (
     <PageShell>
       <SiteHeader />
 
-      <PlayerProfileView initialPlayer={player} />
+      <PlayerProfileView initialPlayer={initialPlayer} />
 
       <SiteFooter />
     </PageShell>

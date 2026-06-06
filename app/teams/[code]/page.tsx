@@ -6,7 +6,6 @@ import { ContentContainer } from "@/components/content-container";
 import { FixtureList } from "@/components/fixture-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
-import { SquadPanelWithQuery } from "@/components/squad-panel-with-query";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SubsectionTitle } from "@/components/subsection-title";
@@ -14,27 +13,22 @@ import { TeamEmblem } from "@/components/team-emblem";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
 import { TeamPageTabs } from "@/components/team-page-tabs";
 import {
-  TeamCompetitionBreakdown,
-  TeamFormBrief,
-  TeamRecentResults,
-} from "@/components/team-insight-panel";
+  TeamFormBriefWithQuery,
+  TeamFormTabWithQuery,
+} from "@/components/team-insight-panel-with-query";
+import { TeamSquadTabWithQuery } from "@/components/team-squad-tab-with-query";
 import { Button } from "@/components/ui/button";
 import { loadTeamEditorialInsight } from "@/lib/bsd/insights";
-import { loadTeamAnalytics } from "@/lib/bsd/team-analytics";
 import { getPlayersBySlugs, getTeamNarrative } from "@/lib/discovery";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
 import { getTeamFixtures, getWorldCupTeams } from "@/lib/openfootball/teams";
-import { squadFromEnrichedPlayers } from "@/lib/tournament/map-squad";
-import { loadEnrichedTeamSquad } from "@/lib/tournament/load-squad";
+
+export const revalidate = 1800;
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{ code: string }>;
 };
-
-export async function generateStaticParams() {
-  const { teams } = await getWorldCupTeams();
-  return teams.map((team) => ({ code: team.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -65,27 +59,14 @@ export default async function TeamPage({ params }: PageProps) {
   const team = [...byCode.values()].find((t) => t.slug === code.toLowerCase());
   if (!team) notFound();
 
-  const [initialSquadPayload, editorialInsight, teamAnalytics] =
-    await Promise.all([
-      loadEnrichedTeamSquad(team),
-      Promise.resolve(loadTeamEditorialInsight(team)),
-      loadTeamAnalytics(team),
-    ]);
-
-  const initialSquad = initialSquadPayload
-    ? squadFromEnrichedPlayers(
-        initialSquadPayload.status,
-        initialSquadPayload.manager,
-        initialSquadPayload.players.map((entry) => entry.player),
-      )
-    : { status: "pending" as const, players: [] };
-
+  const editorialInsight = loadTeamEditorialInsight(team);
   const narrative = getTeamNarrative(team.fifa_code);
   const keyPlayers = narrative
     ? getPlayersBySlugs(narrative.keyPlayerSlugs)
     : [];
   const teamFixtures = getTeamFixtures(fixtures, team);
   const teamId = team.bsdTeamId ?? 0;
+  const slug = code.toLowerCase();
 
   return (
     <PageShell>
@@ -145,19 +126,14 @@ export default async function TeamPage({ params }: PageProps) {
                   />
                 </div>
               ) : null}
-              <TeamFormBrief
+              <TeamFormBriefWithQuery
+                slug={slug}
                 editorial={editorialInsight}
-                analytics={teamAnalytics}
               />
             </>
           }
           squad={
-            <SquadPanelWithQuery
-              slug={code.toLowerCase()}
-              initialSquad={initialSquad}
-              managerAnalytics={teamAnalytics?.manager}
-              teamName={team.displayName}
-            />
+            <TeamSquadTabWithQuery slug={slug} teamName={team.displayName} />
           }
           fixtures={
             <section>
@@ -185,16 +161,7 @@ export default async function TeamPage({ params }: PageProps) {
               )}
             </section>
           }
-          form={
-            <>
-              <TeamRecentResults
-                analytics={teamAnalytics}
-                teamId={teamId}
-                className="mt-0"
-              />
-              <TeamCompetitionBreakdown analytics={teamAnalytics} />
-            </>
-          }
+          form={<TeamFormTabWithQuery slug={slug} teamId={teamId} />}
         />
       </ContentContainer>
 

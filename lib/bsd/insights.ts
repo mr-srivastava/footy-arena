@@ -12,6 +12,10 @@ import type {
   TeamInsight,
 } from "@/lib/bsd/enrichment-types";
 import { bsdFetch, hasBsdToken } from "@/lib/bsd/client";
+import {
+  getCachedFixtureMapping,
+  getCachedTeamAnalytics,
+} from "@/lib/bsd/cache";
 import { BSD_WORLD_CUP_2026_LEAGUE_ID } from "@/lib/bsd/constants";
 import {
   formatRecord,
@@ -534,7 +538,7 @@ export async function loadMatchInsight(
 ): Promise<MatchInsight | null> {
   if (!hasBsdToken()) return null;
 
-  const mapping = await resolveFixtureMapping(fixture, byName);
+  const mapping = await getCachedFixtureMapping(fixture, byName);
   if (!mapping) return null;
 
   const [event, metadata, lineups, prediction] = await Promise.all([
@@ -552,8 +556,8 @@ export async function loadMatchInsight(
   const awayTeam = byName.get(normalizeTeamName(fixture.team2)) ?? null;
 
   const [homeAnalytics, awayAnalytics] = await Promise.all([
-    homeTeam ? loadTeamAnalytics(homeTeam) : Promise.resolve(null),
-    awayTeam ? loadTeamAnalytics(awayTeam) : Promise.resolve(null),
+    homeTeam ? getCachedTeamAnalytics(homeTeam) : Promise.resolve(null),
+    awayTeam ? getCachedTeamAnalytics(awayTeam) : Promise.resolve(null),
   ]);
 
   const homeEditorial = homeTeam ? loadTeamEditorialInsight(homeTeam) : null;

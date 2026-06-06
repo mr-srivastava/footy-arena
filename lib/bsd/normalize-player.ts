@@ -102,15 +102,6 @@ export async function enrichPlayer(
   };
 }
 
-/** @deprecated Use enrichPlayer instead. */
-export async function enrichPlayerFromClubLookup(
-  player: Doc<'players'>,
-  country?: ConvexCountrySnapshot | null,
-): Promise<NormalizedPlayer> {
-  const result = await enrichPlayer(player, country);
-  return result.player;
-}
-
 export async function enrichPlayers(
   players: Doc<'players'>[],
   country: ConvexCountrySnapshot,
@@ -120,13 +111,4 @@ export async function enrichPlayers(
   return Promise.all(
     players.map((player) => enrichPlayer(player, country, { caches })),
   );
-}
-
-/** @deprecated Use enrichPlayers instead. */
-export async function enrichPlayersFromClubLookup(
-  players: Doc<'players'>[],
-  country: ConvexCountrySnapshot,
-): Promise<NormalizedPlayer[]> {
-  const results = await enrichPlayers(players, country);
-  return results.map((result) => result.player);
 }

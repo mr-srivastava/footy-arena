@@ -1,6 +1,6 @@
 import type { PlayerProfile } from "@/lib/discovery/types";
 
-export type ExplorePlayerEditorial = Pick<
+type ExplorePlayerEditorial = Pick<
   PlayerProfile,
   "archetype" | "whyExcited" | "watchFor" | "similarEnergy"
 >;

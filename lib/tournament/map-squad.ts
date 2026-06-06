@@ -34,7 +34,7 @@ function toSquadPlayerPosition(
   return toPositionGroup(position);
 }
 
-export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
+function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
   return {
     name: player.name,
     shortName: player.shortName ?? undefined,
@@ -50,17 +50,6 @@ export function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPl
     isCaptain: player.isCaptain,
     league: player.club.league,
     bsdPlayerId: player.bzzoiro?.playerId,
-  };
-}
-
-export function mapNormalizedSquad(
-  squadDoc: SquadDoc,
-  players: NormalizedPlayer[],
-): TeamSquad {
-  return {
-    status: squadDoc?.status ?? "pending",
-    manager: squadManagerFromDoc(squadDoc),
-    players: players.map(normalizedPlayerToSquadPlayer),
   };
 }
 

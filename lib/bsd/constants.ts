@@ -1,5 +1,4 @@
 export const BSD_BASE_URL = 'https://sports.bzzoiro.com/api/v2/';
-export const BSD_IMAGE_BASE = 'https://sports.bzzoiro.com/img';
 export const BSD_WORLD_CUP_LEAGUE_ID = 16;
 
 export const BSD_POSITION_LABELS: Record<string, string> = {

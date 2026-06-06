@@ -1,5 +1,5 @@
 /** ISO 3166-1 alpha-2 codes for BSD `nationality_code` filters. */
-export const FIFA_TO_ISO2: Record<string, string> = {
+const FIFA_TO_ISO2: Record<string, string> = {
   ALG: "DZ",
   ARG: "AR",
   AUS: "AU",

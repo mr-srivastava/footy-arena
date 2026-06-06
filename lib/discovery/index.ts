@@ -58,16 +58,12 @@ export function getAllPlayers(): PlayerProfile[] {
   return PLAYERS;
 }
 
-export function getFeaturedPlayers(): PlayerProfile[] {
+function getFeaturedPlayers(): PlayerProfile[] {
   return PLAYERS.filter((player) => player.featured);
 }
 
 export function getFeaturedPlayerSlugs(): string[] {
   return getFeaturedPlayers().map((player) => player.slug);
-}
-
-export function getPlayerBySlug(slug: string): PlayerProfile | undefined {
-  return playersBySlug.get(slug);
 }
 
 export function getPlayersBySlugs(slugs: string[]): PlayerProfile[] {
@@ -127,4 +123,4 @@ export {
   getNationImage,
   getTeamNarrativeImage,
 } from "./images";
-export { getFotmobPlayerImageUrl, getPlayerImage } from "./player-images";
+export { getPlayerImage } from "./player-images";

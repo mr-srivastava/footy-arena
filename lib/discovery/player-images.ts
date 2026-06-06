@@ -43,7 +43,7 @@ const FOTMOB_PLAYER_IDS: Record<string, string> = {
   "khvicha-kvaratskhelia": "900433",
 };
 
-export function getFotmobPlayerImageUrl(fotmobId: string): string {
+function getFotmobPlayerImageUrl(fotmobId: string): string {
   return `https://images.fotmob.com/image_resources/playerimages/${fotmobId}.png`;
 }
 

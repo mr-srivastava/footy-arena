@@ -210,7 +210,7 @@ function buildShellExploreCards(
   });
 }
 
-export async function loadExplorePlayerShellsBySlugs(
+async function loadExplorePlayerShellsBySlugs(
   slugs: string[],
 ): Promise<ExplorePlayerCard[]> {
   const { matched, countryById } = await loadExplorePlayerEntries(slugs);
@@ -252,13 +252,6 @@ export async function loadExplorePlayersBySlugs(
   return slugs
     .map((slug) => cardsBySlug.get(slug))
     .filter((card): card is ExplorePlayerCard => card != null);
-}
-
-export async function loadExplorePlayerBySlug(
-  slug: string,
-): Promise<ExplorePlayerCard | null> {
-  const [player] = await loadExplorePlayersBySlugs([slug]);
-  return player ?? null;
 }
 
 export { exploreCardSubtitle };

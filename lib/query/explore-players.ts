@@ -7,10 +7,6 @@ type ExplorePlayersResponse = {
   players: ExplorePlayerCard[];
 };
 
-export async function fetchExplorePlayers(slugs: string[]) {
-  return fetchExplorePlayersWithSignal(slugs);
-}
-
 async function fetchExplorePlayersWithSignal(slugs: string[], signal?: AbortSignal) {
   if (slugs.length === 0) {
     return [];

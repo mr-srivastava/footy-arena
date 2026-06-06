@@ -42,7 +42,7 @@ export function playerSearchTerm(name: string) {
   return parts[parts.length - 1]!;
 }
 
-export function scorePlayerMatch(convexName: string, candidate: BsdPlayerListItem) {
+function scorePlayerMatch(convexName: string, candidate: BsdPlayerListItem) {
   const names = [candidate.short_name, candidate.name].filter(Boolean);
   let best = scoreNameMatch(convexName, names);
 

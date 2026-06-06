@@ -35,7 +35,7 @@ export type FixturesByDate = {
   matches: Fixture[];
 };
 
-export type OpenFootballTeam = {
+type OpenFootballTeam = {
   name: string;
   name_normalised?: string;
   continent: string;

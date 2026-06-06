@@ -14,7 +14,7 @@ export function hasBsdToken() {
   return Boolean(process.env.BSD_API_TOKEN?.trim());
 }
 
-export function isAllowedBsdPath(path: string) {
+function isAllowedBsdPath(path: string) {
   const normalized = path.replace(/^\/+|\/+$/g, "");
   return BSD_ALLOWED_PATH_PREFIXES.some(
     (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),

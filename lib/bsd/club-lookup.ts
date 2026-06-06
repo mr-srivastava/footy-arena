@@ -35,14 +35,14 @@ export function createClubLookupCaches(): ClubLookupCaches {
   };
 }
 
-export async function fetchLeaguesByCountry(country: string) {
+async function fetchLeaguesByCountry(country: string) {
   const query = new URLSearchParams();
   query.set('country', country.toLowerCase());
 
   return bsdFetch<BsdLeaguesListResponse>(`leagues?${query.toString()}`);
 }
 
-export async function fetchTeamsByLeagueAndName(
+async function fetchTeamsByLeagueAndName(
   leagueId: number,
   name: string,
 ) {
@@ -53,7 +53,7 @@ export async function fetchTeamsByLeagueAndName(
   return bsdFetch<BsdTeamsListResponse>(`teams?${query.toString()}`);
 }
 
-export async function fetchPlayersByNameAndTeam(name: string, teamId: number) {
+async function fetchPlayersByNameAndTeam(name: string, teamId: number) {
   const query = new URLSearchParams();
   query.set('name', name);
   query.set('team_id', String(teamId));

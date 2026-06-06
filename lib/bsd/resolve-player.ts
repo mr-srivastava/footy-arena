@@ -16,7 +16,6 @@ import type {
   BsdTeamListItem,
   ConvexCountrySnapshot,
   ConvexPlayerSnapshot,
-  BsdPlayerMatchMeta,
   BsdPlayerResolution,
 } from '@/lib/bsd/enrichment-types';
 import {
@@ -40,7 +39,7 @@ function normalizeTeamName(value: string) {
   return value.trim().toLowerCase();
 }
 
-export async function resolveNationalTeam(country: ConvexCountrySnapshot) {
+async function resolveNationalTeam(country: ConvexCountrySnapshot) {
   const teams = await getWorldCupNationalTeams();
   const names = new Set(
     [
@@ -250,27 +249,4 @@ export async function resolveBsdPlayer(input: {
   }
 
   return reconcileMatches(clubMatch, nationalMatch);
-}
-
-export async function resolveBsdPlayers(input: {
-  players: ConvexPlayerSnapshot[];
-  country: ConvexCountrySnapshot;
-  nationalTeamId?: number | null;
-}) {
-  const caches = createClubLookupCaches();
-  const nationalTeamId =
-    input.nationalTeamId ??
-    (await resolveNationalTeam(input.country))?.id ??
-    null;
-
-  return Promise.all(
-    input.players.map((player) =>
-      resolveBsdPlayer({
-        player,
-        country: input.country,
-        nationalTeamId,
-        caches,
-      }),
-    ),
-  );
 }

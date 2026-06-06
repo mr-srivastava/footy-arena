@@ -1,4 +1,4 @@
-export type BsdPlayerAttributes = {
+type BsdPlayerAttributes = {
   position: string;
   tactical: number;
   attacking: number;
@@ -29,7 +29,7 @@ export type BsdPlayerListItem = {
   weaknesses?: string[];
 };
 
-export type BsdLeagueListItem = {
+type BsdLeagueListItem = {
   id: number;
   name: string;
   country: string;

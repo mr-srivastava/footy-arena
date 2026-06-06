@@ -34,7 +34,7 @@ export type TeamSquad = {
   status: 'announced' | 'pending';
 };
 
-export type EnrichedSquadPlayer = {
+type EnrichedSquadPlayer = {
   player: NormalizedPlayer;
   match: BsdPlayerMatchMeta | null;
 };

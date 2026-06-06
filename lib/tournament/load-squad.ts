@@ -2,12 +2,8 @@ import type { Doc } from "@/convex/_generated/dataModel";
 import { hasBsdToken } from "@/lib/bsd/client";
 import { toConvexCountrySnapshot } from "@/lib/bsd/convex-snapshots";
 import { enrichPlayers, normalizePlayer } from "@/lib/bsd/normalize-player";
-import {
-  mapConvexSquad,
-  squadFromEnrichedPlayers,
-  squadManagerFromDoc,
-} from "@/lib/tournament/map-squad";
-import type { TeamSquad, TeamSquadPayload } from "@/lib/tournament/types";
+import { squadManagerFromDoc } from "@/lib/tournament/map-squad";
+import type { TeamSquadPayload } from "@/lib/tournament/types";
 
 export type TeamPageData = {
   country: Doc<"countries">;
@@ -63,20 +59,4 @@ export async function loadEnrichedTeamSquad(
   } catch {
     return convexFallbackPayload(teamPageData);
   }
-}
-
-export async function loadTeamSquad(
-  teamPageData: TeamPageData | null,
-): Promise<TeamSquad> {
-  const payload = await loadEnrichedTeamSquad(teamPageData);
-
-  if (!payload) {
-    return mapConvexSquad(null, []);
-  }
-
-  return squadFromEnrichedPlayers(
-    payload.status,
-    payload.manager,
-    payload.players.map((entry) => entry.player),
-  );
 }

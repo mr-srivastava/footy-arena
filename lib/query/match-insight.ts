@@ -15,15 +15,25 @@ async function fetchMatchInsight(fixtureId: string) {
   return data.insight;
 }
 
+function isEnrichedInsight(
+  insight?: MatchInsight | null,
+): insight is MatchInsight {
+  return insight != null && insight.eventId != null;
+}
+
 export function matchInsightQueryOptions(
   fixtureId: string,
   initialData?: MatchInsight | null,
 ) {
+  const hasEnrichedInitial = isEnrichedInsight(initialData);
+
   return queryOptions({
     queryKey: queryKeys.matchInsight(fixtureId),
     queryFn: () => fetchMatchInsight(fixtureId),
     enabled: fixtureId.length > 0,
-    initialData: initialData ?? undefined,
+    initialData: hasEnrichedInitial ? initialData : undefined,
+    placeholderData:
+      initialData != null && !hasEnrichedInitial ? initialData : undefined,
     staleTime: QUERY_STALE_TIME_MS,
   });
 }

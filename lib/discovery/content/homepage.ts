@@ -1,3 +1,4 @@
+import { teamSlugFromName } from "@/lib/teams/metadata";
 import type { CatchUpTopic, HomepageModule } from "../types";
 
 export const HOMEPAGE_MODULES: HomepageModule[] = [
@@ -67,27 +68,27 @@ export const HOMEPAGE_MODULES: HomepageModule[] = [
       {
         title: "France",
         description: "The deepest squad in world football.",
-        href: "/teams/fra",
+        href: `/teams/${teamSlugFromName("France")}`,
       },
       {
         title: "Argentina",
         description: "Defending champions with a new generation emerging.",
-        href: "/teams/arg",
+        href: `/teams/${teamSlugFromName("Argentina")}`,
       },
       {
         title: "Morocco",
         description: "Relentless underdogs building on historic success.",
-        href: "/teams/mar",
+        href: `/teams/${teamSlugFromName("Morocco")}`,
       },
       {
         title: "Germany",
         description: "A sleeping giant awakening with elite young creators.",
-        href: "/teams/ger",
+        href: `/teams/${teamSlugFromName("Germany")}`,
       },
       {
         title: "Japan",
         description: "Disciplined disruptors challenging the elite.",
-        href: "/teams/jpn",
+        href: `/teams/${teamSlugFromName("Japan")}`,
       },
     ],
   },

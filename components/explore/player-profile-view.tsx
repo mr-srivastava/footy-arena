@@ -112,13 +112,15 @@ export function PlayerProfileView({
             </h1>
             <PlayerHeroBadges player={player} />
             <p className="type-lead mt-7 max-w-xl text-white/70">{headline}</p>
-            <Link
-              href={player.teamHref}
-              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold"
-            >
-              View {player.nation}
-              <ArrowUpRight className="size-4" />
-            </Link>
+            {player.teamHref ? (
+              <Link
+                href={player.teamHref}
+                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold"
+              >
+                View {player.nation}
+                <ArrowUpRight className="size-4" />
+              </Link>
+            ) : null}
           </div>
         </ContentContainer>
       </section>

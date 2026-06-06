@@ -1,3 +1,4 @@
+import { teamSlugFromName } from "@/lib/teams/metadata";
 import type { DiscoveryCategorySlug } from "./types";
 
 const unsplash = (id: string, w = 1200) =>
@@ -42,11 +43,11 @@ const HOMEPAGE_CARD_IMAGES: Record<string, string> = {
   "/explore/catch-up/new-midfield-era": DISCOVERY_STOCK.pitchLines,
   "/explore/catch-up/smaller-nations-rising": DISCOVERY_STOCK.celebration,
   "/explore/catch-up/tactics-evolved": DISCOVERY_STOCK.matchAction,
-  "/teams/fra": DISCOVERY_STOCK.modernArena,
-  "/teams/arg": DISCOVERY_STOCK.celebration,
-  "/teams/mar": DISCOVERY_STOCK.nightGame,
-  "/teams/ger": DISCOVERY_STOCK.pitchLines,
-  "/teams/jpn": DISCOVERY_STOCK.matchAction,
+  [`/teams/${teamSlugFromName("France")}`]: DISCOVERY_STOCK.modernArena,
+  [`/teams/${teamSlugFromName("Argentina")}`]: DISCOVERY_STOCK.celebration,
+  [`/teams/${teamSlugFromName("Morocco")}`]: DISCOVERY_STOCK.nightGame,
+  [`/teams/${teamSlugFromName("Germany")}`]: DISCOVERY_STOCK.pitchLines,
+  [`/teams/${teamSlugFromName("Japan")}`]: DISCOVERY_STOCK.matchAction,
 };
 
 const NATION_IMAGES: Record<string, string> = {

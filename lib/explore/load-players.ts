@@ -6,7 +6,7 @@ import {
 import { loadPlayerPerformance } from "@/lib/bsd/insights";
 import { normalizedPlayerFromCallup } from "@/lib/bsd/team-seeds";
 import type { NormalizedPlayer } from "@/lib/bsd/enrichment-types";
-import { teamSlugFromName } from "@/lib/teams/metadata";
+import { teamPageHrefFromNation } from "@/lib/teams/metadata";
 import {
   getCachedAllWorldCupCallups,
   getCachedPlayerDetail,
@@ -29,14 +29,14 @@ function editorialBySlug() {
 export function explorePlayerCardFromProfile(
   profile: PlayerProfile,
 ): ExplorePlayerCard {
-  const countrySlug = teamSlugFromName(profile.nation);
+  const teamHref = teamPageHrefFromNation(profile.nation);
 
   return {
     id: profile.slug,
     slug: profile.slug,
     name: profile.name,
     nation: profile.nation,
-    countrySlug,
+    countrySlug: teamHref?.replace("/teams/", "") ?? "",
     nationBsdTeamId: null,
     clubTeamId: null,
     fifaCode: profile.fifaCode ?? "",
@@ -54,7 +54,7 @@ export function explorePlayerCardFromProfile(
       similarEnergy: profile.similarEnergy,
     },
     playerHref: `/players/${profile.slug}`,
-    teamHref: `/teams/${countrySlug}`,
+    teamHref,
   };
 }
 

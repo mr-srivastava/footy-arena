@@ -1,6 +1,7 @@
 "use client";
 
-import { CalendarDays, Trophy } from "lucide-react";
+import { CalendarDays } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import { MobileNav } from "@/components/mobile-nav";
@@ -27,9 +28,15 @@ export function SiteHeader({ className = "" }: { className?: string }) {
           href="/"
           className="group flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <div className="flex size-9 items-center justify-center rounded-full border border-gold/25 bg-gold/8 transition-colors group-hover:border-gold/55">
-            <Trophy className="h-5 w-5 text-gold" aria-hidden />
-          </div>
+          <Image
+            src="/logo.png"
+            alt=""
+            width={36}
+            height={36}
+            className="size-9"
+            priority
+            aria-hidden
+          />
           <span className="font-display text-xl tracking-[0.18em] text-foreground">
             FOOTY ARENA
           </span>

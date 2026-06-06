@@ -49,6 +49,7 @@ export type Team = OpenFootballTeam & {
   displayName: string;
   slug: string;
   groupLabel: string;
+  bsdTeamId?: number;
 };
 
 export type TournamentGroup = {

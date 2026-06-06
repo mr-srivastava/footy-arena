@@ -3,7 +3,13 @@ import Link from "next/link";
 import { MediaImage } from "@/components/media-image";
 import type { HostCity } from "@/lib/cities";
 
-export function CityJournalCard({ city, featured = false }: { city: HostCity; featured?: boolean }) {
+export function CityJournalCard({
+  city,
+  featured = false,
+}: {
+  city: HostCity;
+  featured?: boolean;
+}) {
   return (
     <Link
       href={`/cities/${city.slug}`}
@@ -16,7 +22,11 @@ export function CityJournalCard({ city, featured = false }: { city: HostCity; fe
         alt={`${city.city} host-city atmosphere`}
         overlay="card"
         className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.025]"
-        sizes={featured ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
+        sizes={
+          featured
+            ? "(max-width: 768px) 100vw, 66vw"
+            : "(max-width: 768px) 100vw, 33vw"
+        }
       />
       <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-8">
         <div className="flex items-center justify-between">
@@ -30,7 +40,9 @@ export function CityJournalCard({ city, featured = false }: { city: HostCity; fe
             <MapPin className="size-4 text-gold" />
             {city.venue}
           </p>
-          <h2 className={`editorial-title mt-3 text-white ${featured ? "type-section-title" : "type-card-title"}`}>
+          <h2
+            className={`editorial-title mt-3 text-white ${featured ? "type-section-title" : "type-card-title"}`}
+          >
             {city.city}
           </h2>
           <p className="type-copy mt-4 max-w-xl text-white/75">{city.dek}</p>

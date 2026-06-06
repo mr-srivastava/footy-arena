@@ -364,7 +364,8 @@ export const PLAYERS: PlayerProfile[] = [
     fifaCode: "CRO",
     position: "Midfielder",
     archetype: "Veteran legend",
-    whyExcited: "A generational midfielder in the twilight of an iconic career.",
+    whyExcited:
+      "A generational midfielder in the twilight of an iconic career.",
     watchFor: "Tempo control and outside-of-boot passes.",
     similarEnergy: "The soul of Croatian football.",
     featured: true,

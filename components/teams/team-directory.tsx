@@ -16,14 +16,17 @@ export function TeamDirectory({ teams }: { teams: Team[] }) {
   const [group, setGroup] = useState(searchParams.get("group") ?? "all");
   const [confed, setConfed] = useState(searchParams.get("confed") ?? "all");
   const deferredQuery = useDeferredValue(query);
-  const confeds = useMemo(() => [...new Set(teams.map((team) => team.confed))].toSorted(), [teams]);
+  const confeds = useMemo(
+    () => [...new Set(teams.map((team) => team.confed))].toSorted(),
+    [teams],
+  );
   const groupOptions = useMemo(
     () => [
       { value: "all", label: "All groups" },
-      ...("ABCDEFGHIJKL".split("").map((letter) => ({
+      ..."ABCDEFGHIJKL".split("").map((letter) => ({
         value: letter,
         label: `Group ${letter}`,
-      }))),
+      })),
     ],
     [],
   );
@@ -46,8 +49,14 @@ export function TeamDirectory({ teams }: { teams: Team[] }) {
   }
 
   const filtered = teams.filter((team) => {
-    const matchesQuery = team.displayName.toLowerCase().includes(deferredQuery.toLowerCase());
-    return matchesQuery && (group === "all" || team.group === group) && (confed === "all" || team.confed === confed);
+    const matchesQuery = team.displayName
+      .toLowerCase()
+      .includes(deferredQuery.toLowerCase());
+    return (
+      matchesQuery &&
+      (group === "all" || team.group === group) &&
+      (confed === "all" || team.confed === confed)
+    );
   });
 
   return (
@@ -84,7 +93,9 @@ export function TeamDirectory({ teams }: { teams: Team[] }) {
       </div>
       <p className="mb-5 text-sm text-muted">{filtered.length} nations</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((team) => <TeamCard key={team.fifa_code} team={team} />)}
+        {filtered.map((team) => (
+          <TeamCard key={team.fifa_code} team={team} />
+        ))}
       </div>
     </section>
   );

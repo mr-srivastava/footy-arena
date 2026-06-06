@@ -2,7 +2,12 @@ import { Calendar, Globe2, MapPin, Trophy, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ContentContainer } from "@/components/content-container";
 import { MediaImage } from "@/components/media-image";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HOME_HERO_IMAGE } from "@/lib/discovery";
 import {
@@ -32,14 +37,22 @@ export function HomeHeroSkeleton() {
             </div>
             <div className="flex gap-2">
               {Array.from({ length: 3 }, (_, index) => (
-                <Skeleton key={index} className="size-12 rounded-full md:size-14" />
+                <Skeleton
+                  key={index}
+                  className="size-12 rounded-full md:size-14"
+                />
               ))}
             </div>
           </div>
         </div>
 
         <div className="relative">
-          <Card variant="artifact" shape="artifact" padding="none" className="relative shadow-board">
+          <Card
+            variant="artifact"
+            shape="artifact"
+            padding="none"
+            className="relative shadow-board"
+          >
             <CardHeader className="flex flex-row items-center justify-between border-b border-line-soft px-4 py-3">
               <Skeleton className="h-3 w-40 rounded-sm" />
               <Skeleton className="h-3 w-24 rounded-sm" />
@@ -73,31 +86,31 @@ export async function HomeHero() {
     icon: LucideIcon;
     ticker: string;
   }[] = [
-      {
-        value: TOURNAMENT_NATIONS,
-        label: "Nations",
-        icon: Users,
-        ticker: `${TOURNAMENT_NATIONS} NATIONS`,
-      },
-      {
-        value: matchCount,
-        label: "Matches",
-        icon: Calendar,
-        ticker: `${matchCount} MATCHES`,
-      },
-      {
-        value: HOST_CITIES,
-        label: "Host Cities",
-        icon: MapPin,
-        ticker: `${HOST_CITIES} CITIES`,
-      },
-      {
-        value: HOST_COUNTRIES,
-        label: "Countries",
-        icon: Globe2,
-        ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
-      },
-    ];
+    {
+      value: TOURNAMENT_NATIONS,
+      label: "Nations",
+      icon: Users,
+      ticker: `${TOURNAMENT_NATIONS} NATIONS`,
+    },
+    {
+      value: matchCount,
+      label: "Matches",
+      icon: Calendar,
+      ticker: `${matchCount} MATCHES`,
+    },
+    {
+      value: HOST_CITIES,
+      label: "Host Cities",
+      icon: MapPin,
+      ticker: `${HOST_CITIES} CITIES`,
+    },
+    {
+      value: HOST_COUNTRIES,
+      label: "Countries",
+      icon: Globe2,
+      ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
+    },
+  ];
 
   return (
     <section className="relative isolate min-h-[78vh] overflow-hidden border-b border-line-soft">
@@ -111,7 +124,10 @@ export async function HomeHero() {
         sizes="100vw"
       />
       <div className="hero-ink-overlay absolute inset-0 -z-10" />
-      <ContentContainer as="div" className="flex min-h-[78vh] flex-col justify-end pb-10 pt-24 md:pb-14">
+      <ContentContainer
+        as="div"
+        className="flex min-h-[78vh] flex-col justify-end pb-10 pt-24 md:pb-14"
+      >
         <div className="grid items-end gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div>
             <p className="animate-fade-up animate-delay-1 section-eyebrow justify-center lg:justify-start">
@@ -130,8 +146,7 @@ export async function HomeHero() {
               <span className="text-foreground">
                 {TOURNAMENT_NATIONS} nations
               </span>
-              ,{" "}
-              <span className="text-foreground">{matchCount} matches</span>,
+              , <span className="text-foreground">{matchCount} matches</span>,
               three countries united by the beautiful game.
             </p>
 

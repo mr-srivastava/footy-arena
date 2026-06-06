@@ -26,16 +26,16 @@ export function SubsectionTitle({
   if (level === "panel") {
     return (
       <h2 className={`${panelClass} ${className}`.trim()}>
-        {Icon ? <Icon className="h-6 w-6 text-pitch-bright" aria-hidden /> : null}
+        {Icon ? (
+          <Icon className="h-6 w-6 text-pitch-bright" aria-hidden />
+        ) : null}
         {children}
       </h2>
     );
   }
 
   return (
-    <h3
-      className={`type-label ${labelToneClass[tone]} ${className}`.trim()}
-    >
+    <h3 className={`type-label ${labelToneClass[tone]} ${className}`.trim()}>
       {children}
     </h3>
   );

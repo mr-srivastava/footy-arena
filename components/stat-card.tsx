@@ -25,7 +25,12 @@ export function StatCard({
       >
         <CardContent className="p-5">
           <Icon className="mb-5 size-4 text-pitch-bright/80" aria-hidden />
-          <p className={cn("font-display text-4xl leading-none md:text-5xl", accent)}>
+          <p
+            className={cn(
+              "font-display text-4xl leading-none md:text-5xl",
+              accent,
+            )}
+          >
             {value}
           </p>
           <p className="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">

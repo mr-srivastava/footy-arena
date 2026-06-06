@@ -48,7 +48,11 @@ export function SelectField({
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Portal>
-        <SelectPrimitive.Positioner sideOffset={8} alignItemWithTrigger={false} className="z-[80] outline-none">
+        <SelectPrimitive.Positioner
+          sideOffset={8}
+          alignItemWithTrigger={false}
+          className="z-[80] outline-none"
+        >
           <SelectPrimitive.Popup className="w-[var(--anchor-width)] min-w-56 origin-[var(--transform-origin)] overflow-hidden rounded-2xl border border-line-strong bg-artifact-deep p-1.5 text-foreground shadow-board backdrop-blur-2xl transition-[transform,scale,opacity] data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
             <SelectPrimitive.List className="max-h-80 overflow-y-auto py-1">
               {options.map((option) => (
@@ -58,9 +62,13 @@ export function SelectField({
                   className="group/item grid cursor-default grid-cols-[1fr_auto] items-center gap-4 rounded-xl px-3 py-2.5 text-sm outline-none transition-colors data-[highlighted]:bg-white/[0.055] data-[selected]:text-gold"
                 >
                   <div>
-                    <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
+                    <SelectPrimitive.ItemText>
+                      {option.label}
+                    </SelectPrimitive.ItemText>
                     {option.description ? (
-                      <p className="mt-0.5 text-xs text-muted-foreground">{option.description}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {option.description}
+                      </p>
                     ) : null}
                   </div>
                   <SelectPrimitive.ItemIndicator className="text-gold">

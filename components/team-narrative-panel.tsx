@@ -16,7 +16,12 @@ export function TeamNarrativePanel({
   keyPlayers: PlayerProfile[];
 }) {
   return (
-    <Card variant="artifact" shape="artifact" padding="none" className="relative min-h-[34rem]">
+    <Card
+      variant="artifact"
+      shape="artifact"
+      padding="none"
+      className="relative min-h-[34rem]"
+    >
       <MediaImage
         src={getTeamNarrativeImage(narrative.fifaCode)}
         alt={`${narrative.fifaCode} football culture`}
@@ -51,7 +56,11 @@ export function TeamNarrativePanel({
 
         <div className="mt-6 flex flex-wrap gap-2">
           {narrative.identityTags.map((tag) => (
-            <Badge key={tag} variant="group" className="h-auto rounded-sm px-3 py-1">
+            <Badge
+              key={tag}
+              variant="group"
+              className="h-auto rounded-sm px-3 py-1"
+            >
               {tag}
             </Badge>
           ))}
@@ -65,7 +74,10 @@ export function TeamNarrativePanel({
                 key={theme}
                 className="grid grid-cols-[auto_1fr] gap-2 text-sm text-muted-foreground"
               >
-                <span className="mt-2 h-px w-4 bg-pitch-bright/55" aria-hidden />
+                <span
+                  className="mt-2 h-px w-4 bg-pitch-bright/55"
+                  aria-hidden
+                />
                 <span>{theme}</span>
               </li>
             ))}

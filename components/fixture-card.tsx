@@ -1,5 +1,6 @@
 import { Clock, MapPin } from "lucide-react";
 import Link from "next/link";
+import { TeamCrest } from "@/components/team-crest";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,10 +15,12 @@ import { cn } from "@/lib/utils";
 function TeamName({
   name,
   href,
+  teamId,
   align = "left",
 }: {
   name: string;
   href?: string;
+  teamId?: number | null;
   align?: "left" | "right";
 }) {
   const placeholder = isPlaceholderTeam(name);
@@ -30,15 +33,30 @@ function TeamName({
       : "text-foreground",
   );
 
+  const content = (
+    <>
+      <TeamCrest teamId={teamId} name={name} size="md" />
+      <span className="min-w-0">{label}</span>
+    </>
+  );
+
+  const rowClassName = cn(
+    "flex items-center gap-2.5",
+    align === "right" ? "flex-row-reverse" : "flex-row",
+  );
+
   if (href && !placeholder) {
     return (
-      <Link href={href} className={cn(className, "hover:text-gold")}>
-        {label}
+      <Link
+        href={href}
+        className={cn(className, rowClassName, "hover:text-gold")}
+      >
+        {content}
       </Link>
     );
   }
 
-  return <span className={className}>{label}</span>;
+  return <span className={cn(className, rowClassName)}>{content}</span>;
 }
 
 const stageAccent: Record<string, CardAccent> = {
@@ -65,10 +83,14 @@ export function FixtureCard({
   fixture,
   team1Href,
   team2Href,
+  team1Id,
+  team2Id,
 }: {
   fixture: Fixture;
   team1Href?: string;
   team2Href?: string;
+  team1Id?: number | null;
+  team2Id?: number | null;
 }) {
   const knockout = fixture.stage !== "group";
   const accent = stageAccent[fixture.stage] ?? "pitch";
@@ -116,7 +138,7 @@ export function FixtureCard({
 
         <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-9">
           <div className="min-w-0">
-            <TeamName name={fixture.team1} href={team1Href} />
+            <TeamName name={fixture.team1} href={team1Href} teamId={team1Id} />
           </div>
           <div
             className="type-broadcast relative flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-background/80 text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
@@ -125,7 +147,12 @@ export function FixtureCard({
             VS
           </div>
           <div className="min-w-0">
-            <TeamName name={fixture.team2} href={team2Href} align="right" />
+            <TeamName
+              name={fixture.team2}
+              href={team2Href}
+              teamId={team2Id}
+              align="right"
+            />
           </div>
           <div
             className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-border to-transparent"
@@ -134,7 +161,10 @@ export function FixtureCard({
         </div>
 
         <div className="type-meta relative flex items-start gap-2 border-t border-line-soft bg-white/[0.025] px-6 py-4">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70" aria-hidden />
+          <MapPin
+            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pitch-bright/70"
+            aria-hidden
+          />
           <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
             <span className="leading-relaxed">{fixture.ground}</span>
             <Link

@@ -2,7 +2,13 @@
 
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { SectionHeading } from "@/components/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
 import { WORLD_CUP_HISTORY_ERAS } from "@/lib/discovery/content/history";
@@ -50,23 +56,23 @@ function HistoryLegendCard({ player }: { player: HistoryLegend }) {
       </div>
 
       <CardContent className="relative flex items-start gap-3 border-b border-line-soft p-3">
-          <span
-            className="flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface-glass text-xl leading-none"
-            aria-hidden
-          >
-            {player.flag}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
-              {player.country}
-            </p>
-            <h4 className="editorial-title mt-1 text-2xl leading-none text-foreground">
-              {player.name}
-            </h4>
-            <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              {player.role}
-            </p>
-          </div>
+        <span
+          className="flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface-glass text-xl leading-none"
+          aria-hidden
+        >
+          {player.flag}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
+            {player.country}
+          </p>
+          <h4 className="editorial-title mt-1 text-2xl leading-none text-foreground">
+            {player.name}
+          </h4>
+          <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            {player.role}
+          </p>
+        </div>
       </CardContent>
 
       <CardContent className="relative flex flex-1 flex-col justify-between p-3">
@@ -152,7 +158,8 @@ export default function History() {
 
   const scrollToIndex = useCallback(
     (next: number) => {
-      const i = (next + WORLD_CUP_HISTORY_ERAS.length) % WORLD_CUP_HISTORY_ERAS.length;
+      const i =
+        (next + WORLD_CUP_HISTORY_ERAS.length) % WORLD_CUP_HISTORY_ERAS.length;
       const track = trackRef.current;
       const slide = track?.querySelector<HTMLElement>(`[data-slide="${i}"]`);
       if (!slide) return;
@@ -313,10 +320,11 @@ export default function History() {
                   aria-selected={i === index}
                   aria-controls={`history-slide-${i}`}
                   onClick={() => scrollToIndex(i)}
-                  className={`rounded-full px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${i === index
-                    ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
-                    : "text-muted hover:bg-surface-glass hover:text-foreground"
-                    }`}
+                  className={`rounded-full px-3 py-1.5 font-display text-sm tracking-wide transition-colors sm:px-3 sm:py-1.5 sm:text-base ${
+                    i === index
+                      ? "bg-pitch/20 text-pitch-bright ring-1 ring-pitch-bright/35"
+                      : "text-muted hover:bg-surface-glass hover:text-foreground"
+                  }`}
                 >
                   {item.year}
                 </button>

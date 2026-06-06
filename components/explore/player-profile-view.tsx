@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { ContentContainer } from "@/components/content-container";
+import { TeamCrest } from "@/components/team-crest";
 import {
   PlayerHeroBadges,
   PlayerProfilePanel,
@@ -42,12 +43,12 @@ function PlayerHeroPortrait({
     return (
       <div className="absolute inset-0">
         <Image
-        src={imageSrc}
-        alt={displayName}
-        fill
-        priority
-        className="portrait-shadow-hero object-contain object-bottom px-4 pt-20 md:px-10"
-        sizes="(max-width: 768px) 92vw, 46vw"
+          src={imageSrc}
+          alt={displayName}
+          fill
+          priority
+          className="portrait-shadow-hero object-contain object-bottom px-4 pt-20 md:px-10"
+          sizes="(max-width: 768px) 92vw, 46vw"
         />
       </div>
     );
@@ -60,7 +61,11 @@ function PlayerHeroPortrait({
   );
 }
 
-export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePlayerCard }) {
+export function PlayerProfileView({
+  initialPlayer,
+}: {
+  initialPlayer: ExplorePlayerCard;
+}) {
   const { data: players = [initialPlayer], isFetching } = useQuery(
     explorePlayersQueryOptions([initialPlayer.slug], [initialPlayer], {
       includePerformance: true,
@@ -82,7 +87,10 @@ export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePla
           <PlayerHeroPortrait player={player} imageSrc={imageSrc} />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent md:bg-gradient-to-r md:from-background md:via-background/10 md:to-transparent" />
         </div>
-        <ContentContainer as="div" className="flex min-h-[76vh] flex-col justify-between pb-10 pt-12 md:pb-16 md:pt-16">
+        <ContentContainer
+          as="div"
+          className="flex min-h-[76vh] flex-col justify-between pb-10 pt-12 md:pb-16 md:pt-16"
+        >
           <Link
             href="/explore"
             className="relative z-10 inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/25 px-4 py-2 text-sm text-white/75 backdrop-blur-md transition-colors hover:border-gold/40 hover:text-gold"
@@ -92,15 +100,23 @@ export function PlayerProfileView({ initialPlayer }: { initialPlayer: ExplorePla
           </Link>
 
           <div className="relative z-10 max-w-3xl">
-            <p className="section-eyebrow">{player.nation}</p>
+            <p className="section-eyebrow flex items-center gap-2">
+              <TeamCrest
+                teamId={player.nationBsdTeamId}
+                name={player.nation}
+                size="sm"
+              />
+              {player.nation}
+            </p>
             <h1 className="editorial-title type-hero mt-4 text-white">
               {displayName}
             </h1>
             <PlayerHeroBadges player={player} />
-            <p className="type-lead mt-7 max-w-xl text-white/70">
-              {headline}
-            </p>
-            <Link href={player.teamHref} className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold">
+            <p className="type-lead mt-7 max-w-xl text-white/70">{headline}</p>
+            <Link
+              href={player.teamHref}
+              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold"
+            >
               View {player.nation}
               <ArrowUpRight className="size-4" />
             </Link>

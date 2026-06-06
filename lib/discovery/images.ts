@@ -91,7 +91,9 @@ export function getNationImage(nation: string): string {
 }
 
 export function getTeamNarrativeImage(fifaCode: string): string {
-  return TEAM_NARRATIVE_IMAGES[fifaCode.toUpperCase()] ?? DISCOVERY_STOCK.pitchLines;
+  return (
+    TEAM_NARRATIVE_IMAGES[fifaCode.toUpperCase()] ?? DISCOVERY_STOCK.pitchLines
+  );
 }
 
 export function getCatchUpImage(slug: string): string {

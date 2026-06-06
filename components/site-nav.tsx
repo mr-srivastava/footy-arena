@@ -1,6 +1,12 @@
 "use client";
 
-import { Building2, CalendarDays, Compass, LayoutGrid, Users } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  Compass,
+  LayoutGrid,
+  Users,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,7 +35,11 @@ function navLinkClass(active: boolean, mobile: boolean) {
     : "flex items-center gap-1.5 rounded-full px-3 py-2 transition-colors hover:bg-surface-glass hover:text-foreground";
 }
 
-export function SiteNav({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
+export function SiteNav({
+  variant = "desktop",
+}: {
+  variant?: "desktop" | "mobile";
+}) {
   const pathname = usePathname();
   const mobile = variant === "mobile";
 

@@ -19,17 +19,24 @@ export async function GET(_request: Request, context: RouteContext) {
     const fixture = fixtures.find((entry) => entry.id === fixtureId);
 
     if (!fixture) {
-      return NextResponse.json({ detail: "Fixture not found" }, { status: 404 });
+      return NextResponse.json(
+        { detail: "Fixture not found" },
+        { status: 404 },
+      );
     }
 
     const insight = await loadMatchInsight(fixture, byName);
     return NextResponse.json({ insight });
   } catch (error) {
     if (error instanceof BsdApiError) {
-      return NextResponse.json({ detail: error.message }, { status: error.status });
+      return NextResponse.json(
+        { detail: error.message },
+        { status: error.status },
+      );
     }
 
-    const detail = error instanceof Error ? error.message : "Failed to load match insight";
+    const detail =
+      error instanceof Error ? error.message : "Failed to load match insight";
     return NextResponse.json({ detail }, { status: 500 });
   }
 }

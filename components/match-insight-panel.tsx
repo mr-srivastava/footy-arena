@@ -1,6 +1,7 @@
 import { CloudSun, Goal, Sparkles, Users } from "lucide-react";
 import type { MatchInsight, MatchLineupSide } from "@/lib/bsd/enrichment-types";
 import { FormStrip } from "@/components/form-strip";
+import { TeamCrest } from "@/components/team-crest";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +21,9 @@ function LineupCard({
     return (
       <Card variant="artifact" shape="artifact">
         <CardContent className="p-5">
-          <p className="editorial-title type-card-title text-foreground">Lineup pending</p>
+          <p className="editorial-title type-card-title text-foreground">
+            Lineup pending
+          </p>
         </CardContent>
       </Card>
     );
@@ -31,9 +34,14 @@ function LineupCard({
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="editorial-title type-card-title text-foreground">{side.teamName}</p>
+            <p className="flex items-center gap-2.5 editorial-title type-card-title text-foreground">
+              <TeamCrest teamId={side.teamId} name={side.teamName} size="sm" />
+              {side.teamName}
+            </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              {side.formation ? `Formation ${side.formation}` : "Formation pending"}
+              {side.formation
+                ? `Formation ${side.formation}`
+                : "Formation pending"}
             </p>
           </div>
           <FormStrip results={form} compact />
@@ -43,7 +51,11 @@ function LineupCard({
           <p className="broadcast-label text-gold">Projected XI</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {side.players.slice(0, 11).map((player) => (
-              <Badge key={`${player.name}-${player.playerId ?? "unknown"}`} variant="group" className="h-auto rounded-sm px-3 py-1">
+              <Badge
+                key={`${player.name}-${player.playerId ?? "unknown"}`}
+                variant="group"
+                className="h-auto rounded-sm px-3 py-1"
+              >
                 {player.name}
               </Badge>
             ))}
@@ -55,7 +67,11 @@ function LineupCard({
             <p className="broadcast-label text-red">Unavailable</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {side.unavailable.map((player) => (
-                <Badge key={`${player.name}-${player.playerId ?? "out"}`} variant="code" className="bg-red/10 text-red">
+                <Badge
+                  key={`${player.name}-${player.playerId ?? "out"}`}
+                  variant="code"
+                  className="bg-red/10 text-red"
+                >
                   {player.name}
                 </Badge>
               ))}
@@ -82,7 +98,8 @@ export function MatchInsightPanel({
             MATCH INTEL
           </SubsectionTitle>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            BSD enrichment is not available for this fixture yet. The match shell still uses the confirmed World Cup schedule.
+            BSD enrichment is not available for this fixture yet. The match
+            shell still uses the confirmed World Cup schedule.
           </p>
         </CardContent>
       </Card>
@@ -100,23 +117,52 @@ export function MatchInsightPanel({
             <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
               <p className="broadcast-label text-gold">Prediction</p>
               <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                <p>Home: <span className="font-semibold text-foreground">{probabilityLabel(insight.prediction?.homeWinProbability ?? null)}</span></p>
-                <p>Draw: <span className="font-semibold text-foreground">{probabilityLabel(insight.prediction?.drawProbability ?? null)}</span></p>
-                <p>Away: <span className="font-semibold text-foreground">{probabilityLabel(insight.prediction?.awayWinProbability ?? null)}</span></p>
+                <p>
+                  Home:{" "}
+                  <span className="font-semibold text-foreground">
+                    {probabilityLabel(
+                      insight.prediction?.homeWinProbability ?? null,
+                    )}
+                  </span>
+                </p>
+                <p>
+                  Draw:{" "}
+                  <span className="font-semibold text-foreground">
+                    {probabilityLabel(
+                      insight.prediction?.drawProbability ?? null,
+                    )}
+                  </span>
+                </p>
+                <p>
+                  Away:{" "}
+                  <span className="font-semibold text-foreground">
+                    {probabilityLabel(
+                      insight.prediction?.awayWinProbability ?? null,
+                    )}
+                  </span>
+                </p>
               </div>
             </div>
             <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
               <p className="broadcast-label text-gold">Venue</p>
-              <p className="mt-3 text-lg text-foreground">{insight.venueName ?? venueFallback}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{insight.weatherDescription ?? "Weather pending"}</p>
+              <p className="mt-3 text-lg text-foreground">
+                {insight.venueName ?? venueFallback}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {insight.weatherDescription ?? "Weather pending"}
+              </p>
             </div>
             <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
               <p className="broadcast-label text-gold">Travel context</p>
               <p className="mt-3 text-lg text-foreground">
-                {insight.travelDistanceKm != null ? `${Math.round(insight.travelDistanceKm)} km` : "Not published"}
+                {insight.travelDistanceKm != null
+                  ? `${Math.round(insight.travelDistanceKm)} km`
+                  : "Not published"}
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
-                {insight.temperatureC != null ? `${insight.temperatureC}°C expected` : "Temperature pending"}
+                {insight.temperatureC != null
+                  ? `${insight.temperatureC}°C expected`
+                  : "Temperature pending"}
               </p>
             </div>
           </div>
@@ -124,14 +170,20 @@ export function MatchInsightPanel({
           {insight.aiPreview ? (
             <div className="mt-6 rounded-2xl border border-gold/20 bg-gold/6 p-5">
               <p className="broadcast-label text-gold">Pre-match framing</p>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/90">{insight.aiPreview}</p>
+              <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+                {insight.aiPreview}
+              </p>
             </div>
           ) : null}
 
           {insight.funFacts.length ? (
             <div className="mt-6 flex flex-wrap gap-2">
               {insight.funFacts.slice(0, 4).map((fact) => (
-                <Badge key={fact} variant="meta" className="h-auto rounded-sm px-3 py-2 text-left leading-relaxed">
+                <Badge
+                  key={fact}
+                  variant="meta"
+                  className="h-auto rounded-sm px-3 py-2 text-left leading-relaxed"
+                >
                   {fact}
                 </Badge>
               ))}
@@ -141,8 +193,14 @@ export function MatchInsightPanel({
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <LineupCard side={insight.lineups.home} form={insight.teamInsights.home?.recentForm ?? []} />
-        <LineupCard side={insight.lineups.away} form={insight.teamInsights.away?.recentForm ?? []} />
+        <LineupCard
+          side={insight.lineups.home}
+          form={insight.teamInsights.home?.recentForm ?? []}
+        />
+        <LineupCard
+          side={insight.lineups.away}
+          form={insight.teamInsights.away?.recentForm ?? []}
+        />
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -152,11 +210,31 @@ export function MatchInsightPanel({
               Recent scoring
             </SubsectionTitle>
             <div className="mt-4 text-sm text-muted-foreground">
-              <p>
-                {insight.homeTeam}: <span className="font-semibold text-foreground">{insight.teamInsights.home?.goalsForRecent ?? "—"}</span>
+              <p className="flex items-center gap-2">
+                <TeamCrest
+                  teamId={insight.homeTeamId}
+                  name={insight.homeTeam}
+                  size="xs"
+                />
+                <span>
+                  {insight.homeTeam}:{" "}
+                  <span className="font-semibold text-foreground">
+                    {insight.teamInsights.home?.goalsForRecent ?? "—"}
+                  </span>
+                </span>
               </p>
-              <p className="mt-2">
-                {insight.awayTeam}: <span className="font-semibold text-foreground">{insight.teamInsights.away?.goalsForRecent ?? "—"}</span>
+              <p className="mt-2 flex items-center gap-2">
+                <TeamCrest
+                  teamId={insight.awayTeamId}
+                  name={insight.awayTeam}
+                  size="xs"
+                />
+                <span>
+                  {insight.awayTeam}:{" "}
+                  <span className="font-semibold text-foreground">
+                    {insight.teamInsights.away?.goalsForRecent ?? "—"}
+                  </span>
+                </span>
               </p>
             </div>
           </CardContent>
@@ -167,11 +245,31 @@ export function MatchInsightPanel({
               Streaks
             </SubsectionTitle>
             <div className="mt-4 text-sm text-muted-foreground">
-              <p>
-                {insight.homeTeam}: <span className="font-semibold text-foreground">{insight.teamInsights.home?.unbeatenStreak ?? 0} unbeaten</span>
+              <p className="flex items-center gap-2">
+                <TeamCrest
+                  teamId={insight.homeTeamId}
+                  name={insight.homeTeam}
+                  size="xs"
+                />
+                <span>
+                  {insight.homeTeam}:{" "}
+                  <span className="font-semibold text-foreground">
+                    {insight.teamInsights.home?.unbeatenStreak ?? 0} unbeaten
+                  </span>
+                </span>
               </p>
-              <p className="mt-2">
-                {insight.awayTeam}: <span className="font-semibold text-foreground">{insight.teamInsights.away?.unbeatenStreak ?? 0} unbeaten</span>
+              <p className="mt-2 flex items-center gap-2">
+                <TeamCrest
+                  teamId={insight.awayTeamId}
+                  name={insight.awayTeam}
+                  size="xs"
+                />
+                <span>
+                  {insight.awayTeam}:{" "}
+                  <span className="font-semibold text-foreground">
+                    {insight.teamInsights.away?.unbeatenStreak ?? 0} unbeaten
+                  </span>
+                </span>
               </p>
             </div>
           </CardContent>
@@ -186,7 +284,10 @@ export function MatchInsightPanel({
             </p>
             {insight.prediction?.predictedResult ? (
               <p className="mt-3 text-sm text-foreground">
-                Likeliest result: <span className="font-semibold">{insight.prediction.predictedResult}</span>
+                Likeliest result:{" "}
+                <span className="font-semibold">
+                  {insight.prediction.predictedResult}
+                </span>
               </p>
             ) : null}
           </CardContent>

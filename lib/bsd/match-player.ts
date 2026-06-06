@@ -1,34 +1,31 @@
-import { BSD_POSITION_GROUPS } from '@/lib/bsd/constants';
-import type { BsdPlayerListItem, ConvexPlayerSnapshot } from '@/lib/bsd/enrichment-types';
-
-function normalizeName(value: string) {
-  return value
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
+import { BSD_POSITION_GROUPS } from "@/lib/bsd/constants";
+import type {
+  BsdPlayerListItem,
+  TeamPlayerSeed,
+} from "@/lib/bsd/enrichment-types";
+import { normalizeTeamName } from "@/lib/teams/normalize-name";
 
 function tokens(value: string) {
-  return normalizeName(value).split(' ').filter(Boolean);
+  return normalizeTeamName(value).split(" ").filter(Boolean);
 }
 
 function scoreNameMatch(targetName: string, candidateNames: string[]) {
-  const target = normalizeName(targetName);
+  const target = normalizeTeamName(targetName);
   let best = 0;
 
   for (const candidateName of candidateNames) {
-    const name = normalizeName(candidateName);
+    const name = normalizeTeamName(candidateName);
     if (!name) continue;
 
     if (name === target) best = Math.max(best, 100);
-    else if (name.includes(target) || target.includes(name)) best = Math.max(best, 85);
+    else if (name.includes(target) || target.includes(name))
+      best = Math.max(best, 85);
 
     const targetTokens = tokens(targetName);
     const nameTokens = tokens(candidateName);
-    const overlap = targetTokens.filter((token) => nameTokens.includes(token)).length;
+    const overlap = targetTokens.filter((token) =>
+      nameTokens.includes(token),
+    ).length;
     const ratio = overlap / Math.max(targetTokens.length, nameTokens.length, 1);
     best = Math.max(best, Math.round(ratio * 90));
   }
@@ -66,7 +63,7 @@ type PlayerCandidateContext = {
 };
 
 export function scorePlayerCandidate(
-  player: ConvexPlayerSnapshot,
+  player: TeamPlayerSeed,
   candidate: BsdPlayerListItem,
   context: PlayerCandidateContext = {},
 ) {
@@ -102,14 +99,18 @@ export function scorePlayerCandidate(
 }
 
 export function pickBestPlayerMatch(
-  player: ConvexPlayerSnapshot | string,
+  player: TeamPlayerSeed | string,
   candidates: BsdPlayerListItem[],
   minScore = 55,
   context: PlayerCandidateContext = {},
 ) {
   const snapshot =
-    typeof player === 'string'
-      ? ({ name: player, jerseyNumber: null, positionGroup: 'MF' } as ConvexPlayerSnapshot)
+    typeof player === "string"
+      ? ({
+          name: player,
+          jerseyNumber: null,
+          positionGroup: "MF",
+        } as TeamPlayerSeed)
       : player;
 
   let best: { player: BsdPlayerListItem; score: number } | null = null;

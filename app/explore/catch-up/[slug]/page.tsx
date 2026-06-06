@@ -7,7 +7,11 @@ import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { CATCH_UP_TOPICS, getCatchUpImage, getCatchUpTopic } from "@/lib/discovery";
+import {
+  CATCH_UP_TOPICS,
+  getCatchUpImage,
+  getCatchUpTopic,
+} from "@/lib/discovery";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,7 +21,9 @@ export function generateStaticParams() {
   return CATCH_UP_TOPICS.map((topic) => ({ slug: topic.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const topic = getCatchUpTopic(slug);
   if (!topic) return { title: "Catch Up - Footy Arena" };
@@ -54,7 +60,7 @@ export default async function CatchUpPage({ params }: PageProps) {
         </PageHero>
 
         <article className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-10">
-            <DetailList className="divide-y divide-line-soft">
+          <DetailList className="divide-y divide-line-soft">
             {topic.bullets.map((bullet) => (
               <DetailListItem
                 key={bullet}
@@ -67,7 +73,7 @@ export default async function CatchUpPage({ params }: PageProps) {
                 {bullet}
               </DetailListItem>
             ))}
-            </DetailList>
+          </DetailList>
         </article>
       </ContentContainer>
 

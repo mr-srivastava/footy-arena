@@ -38,7 +38,8 @@ export function explorePlayersQueryOptions(
 
   return queryOptions({
     queryKey: queryKeys.explorePlayers(slugs, includePerformance),
-    queryFn: ({ signal }) => fetchExplorePlayersWithSignal(slugs, includePerformance, signal),
+    queryFn: ({ signal }) =>
+      fetchExplorePlayersWithSignal(slugs, includePerformance, signal),
     enabled: slugs.length > 0,
     initialData,
     initialDataUpdatedAt: initialData ? 0 : undefined,

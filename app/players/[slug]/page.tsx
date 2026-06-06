@@ -18,7 +18,9 @@ export function generateStaticParams() {
   return getAllPlayers().map((player) => ({ slug: player.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const player = await loadExplorePlayerShellBySlug(slug);
 
@@ -30,8 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${displayName} - Footy Arena`,
-    description:
-      player.editorial?.whyExcited ?? exploreCardSubtitle(player),
+    description: player.editorial?.whyExcited ?? exploreCardSubtitle(player),
   };
 }
 

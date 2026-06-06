@@ -30,7 +30,9 @@ type CountryTimelineItem = {
 };
 
 export function CountryCardGrid({ children }: CountryCardGridProps) {
-  return <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>;
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>
+  );
 }
 
 export function CountryCard({
@@ -44,9 +46,7 @@ export function CountryCard({
 }: CountryCardProps) {
   const accentClass = accent === "pitch" ? "text-pitch-bright" : "text-gold";
   const content = (
-    <article
-      className="group relative flex min-h-[34rem] h-full flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover md:p-7"
-    >
+    <article className="group relative flex min-h-[34rem] h-full flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover md:p-7">
       <MediaImage
         src={getNationImage(nation)}
         alt={imageAlt}
@@ -54,7 +54,12 @@ export function CountryCard({
         sizes="(max-width: 768px) 100vw, 33vw"
       />
       <div className="relative z-10 flex items-center justify-between">
-        <p className={cn("broadcast-label rounded-full border border-white/15 bg-black/25 px-3 py-2 backdrop-blur-md", accentClass)}>
+        <p
+          className={cn(
+            "broadcast-label rounded-full border border-white/15 bg-black/25 px-3 py-2 backdrop-blur-md",
+            accentClass,
+          )}
+        >
           {eyebrow}
         </p>
         {href ? (
@@ -108,11 +113,7 @@ export function CountryPlayerLinks({
   );
 }
 
-export function CountryTimeline({
-  items,
-}: {
-  items: CountryTimelineItem[];
-}) {
+export function CountryTimeline({ items }: { items: CountryTimelineItem[] }) {
   return (
     <DetailList className="mt-1 text-sm" as="dl">
       {items.map((item) => (

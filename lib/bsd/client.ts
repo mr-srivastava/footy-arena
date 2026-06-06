@@ -36,7 +36,10 @@ export async function bsdFetch<T>(
     throw new BsdApiError("Path not allowed", 400);
   }
 
-  const url = new URL(pathname.endsWith("/") ? pathname : `${pathname}/`, BSD_BASE_URL);
+  const url = new URL(
+    pathname.endsWith("/") ? pathname : `${pathname}/`,
+    BSD_BASE_URL,
+  );
   const query = normalized.includes("?") ? normalized.split("?")[1] : null;
   if (query) url.search = query;
 

@@ -23,10 +23,7 @@ export function FixtureFilters({
   }
 
   const filtered = date !== "all" || stage !== "all";
-  const dateOptions = [
-    { value: "all", label: "Every match day" },
-    ...dates,
-  ];
+  const dateOptions = [{ value: "all", label: "Every match day" }, ...dates];
   const stageOptions = [
     { value: "all", label: "Every stage" },
     { value: "group", label: "Group stage" },
@@ -53,7 +50,11 @@ export function FixtureFilters({
         onValueChange={(value) => update("stage", value)}
       />
       {filtered ? (
-        <button type="button" onClick={() => router.replace(pathname, { scroll: false })} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-line-soft px-4 text-sm text-muted hover:text-foreground">
+        <button
+          type="button"
+          onClick={() => router.replace(pathname, { scroll: false })}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-line-soft px-4 text-sm text-muted hover:text-foreground"
+        >
           <X className="size-4" /> Clear
         </button>
       ) : null}

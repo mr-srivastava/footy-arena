@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentContainer } from "@/components/content-container";
+import { FixtureMatchupTitle } from "@/components/fixture-matchup-title";
 import { MatchInsightPanel } from "@/components/match-insight-panel";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
@@ -8,8 +9,12 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { loadMatchInsight } from "@/lib/bsd/insights";
-import { formatKickoff, getFixtureById, getWorldCupFixtures } from "@/lib/openfootball/fixtures";
-import { getWorldCupTeams } from "@/lib/openfootball/teams";
+import {
+  formatKickoff,
+  getFixtureById,
+  getWorldCupFixtures,
+} from "@/lib/openfootball/fixtures";
+import { getWorldCupTeams, resolveTeamByName } from "@/lib/openfootball/teams";
 
 type PageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -20,7 +25,9 @@ export async function generateStaticParams() {
   return fixtures.map((fixture) => ({ fixtureId: fixture.id }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { fixtureId } = await params;
   const { fixtures } = await getWorldCupFixtures();
   const fixture = getFixtureById(fixtures, fixtureId);
@@ -48,6 +55,8 @@ export default async function FixtureDetailPage({ params }: PageProps) {
   }
 
   const insight = await loadMatchInsight(fixture, byName);
+  const homeTeam = resolveTeamByName(fixture.team1, byName);
+  const awayTeam = resolveTeamByName(fixture.team2, byName);
 
   return (
     <PageShell>
@@ -60,10 +69,12 @@ export default async function FixtureDetailPage({ params }: PageProps) {
           backLabel="All fixtures"
           eyebrow={fixture.stageLabel}
           title={
-            <>
-              {fixture.team1.toUpperCase()} <span className="text-pitch-bright">VS</span>{" "}
-              {fixture.team2.toUpperCase()}
-            </>
+            <FixtureMatchupTitle
+              team1={fixture.team1}
+              team2={fixture.team2}
+              team1Id={insight?.homeTeamId ?? homeTeam?.bsdTeamId}
+              team2Id={insight?.awayTeamId ?? awayTeam?.bsdTeamId}
+            />
           }
           meta={
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted">

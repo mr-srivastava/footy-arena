@@ -10,10 +10,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { EntityRow } from "@/components/entity-row";
 import History from "@/components/home/home-history";
-import {
-  HomeHero,
-  HomeHeroSkeleton,
-} from "@/components/home/home-hero";
+import { HomeHero, HomeHeroSkeleton } from "@/components/home/home-hero";
 import {
   HomeOpeningFixtures,
   HomeOpeningFixturesSkeleton,
@@ -48,7 +45,6 @@ export default function Home() {
           <HomeHero />
         </Suspense>
 
-
         {startJourney ? (
           <PageSection id="discover" variant="editorial">
             <SectionHeading
@@ -73,7 +69,13 @@ export default function Home() {
                   href={featuredJourneyCard.href}
                   className="group block min-h-80"
                 >
-                  <Card variant="artifact" shape="artifact" padding="none" interactive className="relative min-h-[30rem] p-6 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/35 group-hover:shadow-card-hover md:p-8">
+                  <Card
+                    variant="artifact"
+                    shape="artifact"
+                    padding="none"
+                    interactive
+                    className="relative min-h-[30rem] p-6 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/35 group-hover:shadow-card-hover md:p-8"
+                  >
                     <MediaImage
                       src={getHomepageCardImage(featuredJourneyCard.href)}
                       alt={`${featuredJourneyCard.title} atmosphere`}
@@ -116,7 +118,7 @@ export default function Home() {
                       href={card.href}
                       leading={
                         <span className="font-display text-3xl text-pitch-bright/70">
-                        0{index + 2}
+                          0{index + 2}
                         </span>
                       }
                       title={card.title.toUpperCase()}
@@ -184,8 +186,8 @@ export default function Home() {
               className="mb-8 md:mb-10"
             >
               <p className="max-w-sm text-sm leading-relaxed text-muted">
-                From the Azteca&apos;s roar to SoFi&apos;s spectacle - world-class
-                stadiums across the continent.
+                From the Azteca&apos;s roar to SoFi&apos;s spectacle -
+                world-class stadiums across the continent.
               </p>
             </SectionHeading>
             <div className="grid gap-8 md:grid-cols-[0.75fr_1.25fr]">
@@ -201,33 +203,37 @@ export default function Home() {
               </div>
               <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                 {["USA", "MEX", "CAN"].map((country) => (
-                  <div key={country} className={country === "USA" ? "sm:row-span-2" : ""}>
+                  <div
+                    key={country}
+                    className={country === "USA" ? "sm:row-span-2" : ""}
+                  >
                     <div className="mb-3 flex items-center justify-between border-b border-line-strong pb-2">
                       <Badge variant="country">{country}</Badge>
                       <span className="text-xs text-muted-foreground">
                         {
-                          HOST_CITY_VENUES.filter((city) => city.country === country)
-                            .length
+                          HOST_CITY_VENUES.filter(
+                            (city) => city.country === country,
+                          ).length
                         }{" "}
                         cities
                       </span>
                     </div>
                     <ul className="flex flex-col gap-3">
-                      {HOST_CITY_VENUES.filter((city) => city.country === country).map(
-                        (city) => (
-                          <li
-                            key={city.city}
-                            className="grid grid-cols-[1fr_auto] gap-3 text-sm"
-                          >
-                            <span className="font-medium text-foreground">
-                              {city.city}
-                            </span>
-                            <span className="text-right text-xs text-muted-foreground">
-                              {city.venue}
-                            </span>
-                          </li>
-                        ),
-                      )}
+                      {HOST_CITY_VENUES.filter(
+                        (city) => city.country === country,
+                      ).map((city) => (
+                        <li
+                          key={city.city}
+                          className="grid grid-cols-[1fr_auto] gap-3 text-sm"
+                        >
+                          <span className="font-medium text-foreground">
+                            {city.city}
+                          </span>
+                          <span className="text-right text-xs text-muted-foreground">
+                            {city.venue}
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 ))}
@@ -241,14 +247,21 @@ export default function Home() {
               title="BEYOND THE STADIUM"
               icon={MapPin}
             >
-              <Link href="/cities" className="group flex items-center gap-2 text-sm font-semibold text-gold">
+              <Link
+                href="/cities"
+                className="group flex items-center gap-2 text-sm font-semibold text-gold"
+              >
                 Explore all cities
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </SectionHeading>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {CITY_JOURNAL.slice(0, 4).map((city, index) => (
-                <CityJournalCard key={city.slug} city={city} featured={index === 0} />
+                <CityJournalCard
+                  key={city.slug}
+                  city={city}
+                  featured={index === 0}
+                />
               ))}
             </div>
           </div>

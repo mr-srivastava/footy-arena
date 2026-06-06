@@ -9,7 +9,11 @@ import { Button } from "@/components/ui/button";
 
 export function SiteHeader({ className = "" }: { className?: string }) {
   const { scrollY } = useScroll();
-  const width = useTransform(scrollY, [0, 120], ["100%", "min(72rem, calc(100% - 2rem))"]);
+  const width = useTransform(
+    scrollY,
+    [0, 120],
+    ["100%", "min(72rem, calc(100% - 2rem))"],
+  );
   const top = useTransform(scrollY, [0, 120], [0, 12]);
   const radius = useTransform(scrollY, [0, 120], [0, 999]);
 

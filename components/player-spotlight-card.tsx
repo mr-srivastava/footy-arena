@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { TeamCrest } from "@/components/team-crest";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +21,7 @@ type PlayerSpotlightCardProps = {
   href: string;
   displayName: string;
   nation: string;
+  nationTeamId?: number | null;
   position: string;
   watermark: string;
   image?: PlayerSpotlightImage;
@@ -30,19 +32,20 @@ type PlayerSpotlightCardProps = {
 
 function PlayerMetaBadges({
   nation,
+  nationTeamId,
   position,
 }: {
   nation: string;
+  nationTeamId?: number | null;
   position: string;
 }) {
   return (
     <div className="mt-3 flex flex-wrap items-center gap-1.5">
-      <Badge variant="meta">
+      <Badge variant="meta" className="gap-1.5">
+        <TeamCrest teamId={nationTeamId} name={nation} size="xs" />
         {nation}
       </Badge>
-      <Badge variant="playerMeta">
-        {position}
-      </Badge>
+      <Badge variant="playerMeta">{position}</Badge>
     </div>
   );
 }
@@ -87,6 +90,7 @@ export function PlayerSpotlightCard({
   href,
   displayName,
   nation,
+  nationTeamId,
   position,
   watermark,
   image,
@@ -113,17 +117,21 @@ export function PlayerSpotlightCard({
           {watermark}
         </div>
         <div className="relative z-10 flex items-start justify-between gap-4">
-          <PlayerMetaBadges nation={nation} position={position} />
+          <PlayerMetaBadges
+            nation={nation}
+            nationTeamId={nationTeamId}
+            position={position}
+          />
           <ArrowUpRight className="mt-1 size-5 text-white transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
         </div>
         <div className="relative z-10">
-          {archetype ? <p className="broadcast-label text-gold">{archetype}</p> : null}
+          {archetype ? (
+            <p className="broadcast-label text-gold">{archetype}</p>
+          ) : null}
           <h3 className="editorial-title type-card-title mt-3 text-white transition-colors group-hover:text-gold">
             {displayName}
           </h3>
-          <p className="type-copy mt-4 line-clamp-2 text-white/70">
-            {summary}
-          </p>
+          <p className="type-copy mt-4 line-clamp-2 text-white/70">{summary}</p>
           <p className="type-meta mt-5 truncate border-t border-white/10 pt-4 font-semibold text-gold">
             {footer}
           </p>
@@ -154,8 +162,8 @@ export function PlayerSpotlightCardSkeleton() {
           <Skeleton className="h-4 w-32 rounded-sm" />
           <Skeleton className="mt-3 h-12 w-3/4 rounded-sm" />
           <div className="mt-4 flex flex-col gap-2">
-          <Skeleton className="h-3 w-full rounded-sm" />
-          <Skeleton className="h-3 w-5/6 rounded-sm" />
+            <Skeleton className="h-3 w-full rounded-sm" />
+            <Skeleton className="h-3 w-5/6 rounded-sm" />
           </div>
           <Skeleton className="mt-5 h-3 w-36 rounded-sm" />
         </div>

@@ -9,7 +9,10 @@ import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
-import { getFixtureStageCounts, getWorldCupFixtures } from "@/lib/openfootball/fixtures";
+import {
+  getFixtureStageCounts,
+  getWorldCupFixtures,
+} from "@/lib/openfootball/fixtures";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -95,7 +98,12 @@ export default async function FixturesPage({ searchParams }: PageProps) {
           }
         />
 
-        <FixtureFilters dates={byDate.map((day) => ({ value: day.date, label: day.dateLabel }))} />
+        <FixtureFilters
+          dates={byDate.map((day) => ({
+            value: day.date,
+            label: day.dateLabel,
+          }))}
+        />
 
         <div className="flex flex-col gap-14">
           {visibleDays.map((day, dayIndex) => (
@@ -132,8 +140,12 @@ export default async function FixturesPage({ searchParams }: PageProps) {
           ))}
           {visibleDays.length === 0 ? (
             <div className="rounded-2xl border border-line-strong bg-artifact-muted px-6 py-14 text-center">
-              <p className="editorial-title type-panel-title">No fixtures in this view</p>
-              <p className="mt-3 text-sm text-muted">Clear the filters to return to the full tournament schedule.</p>
+              <p className="editorial-title type-panel-title">
+                No fixtures in this view
+              </p>
+              <p className="mt-3 text-sm text-muted">
+                Clear the filters to return to the full tournament schedule.
+              </p>
             </div>
           ) : null}
         </div>

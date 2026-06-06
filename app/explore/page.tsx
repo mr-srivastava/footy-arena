@@ -60,8 +60,14 @@ export default function ExplorePage() {
           />
           <div className="grid auto-rows-[minmax(18rem,auto)] gap-4 md:grid-cols-2 lg:grid-cols-3">
             {startJourney.cards.map((card, index) => (
-              <div key={card.href} className={index === 0 ? "md:col-span-2 lg:row-span-2" : ""}>
-                <DiscoveryCard {...card} image={getHomepageCardImage(card.href)} />
+              <div
+                key={card.href}
+                className={index === 0 ? "md:col-span-2 lg:row-span-2" : ""}
+              >
+                <DiscoveryCard
+                  {...card}
+                  image={getHomepageCardImage(card.href)}
+                />
               </div>
             ))}
           </div>
@@ -87,7 +93,7 @@ export default function ExplorePage() {
           <SectionHeading eyebrow="Editorial picks" title="FEATURED PLAYERS" />
           <ExplorePlayersGrid
             slugs={featuredPlayerSlugs}
-            emptyMessage="Featured players will appear here once World Cup squads are loaded in Convex."
+            emptyMessage="Featured players will appear here once World Cup squads are available from BSD."
           />
         </PageSection>
 

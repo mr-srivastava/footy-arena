@@ -2,7 +2,11 @@ import { DetailList, DetailListItem } from "@/components/detail-list";
 import { Card, CardContent } from "@/components/ui/card";
 import type { MatchStoryTemplate } from "@/lib/discovery/types";
 
-export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }) {
+export function StoryTemplateCard({
+  template,
+}: {
+  template: MatchStoryTemplate;
+}) {
   return (
     <Card
       variant="artifact"
@@ -15,15 +19,11 @@ export function StoryTemplateCard({ template }: { template: MatchStoryTemplate }
         aria-hidden
       />
       <CardContent className="relative p-5">
-        <p className="type-label text-gold">
-          Match lens
-        </p>
+        <p className="type-label text-gold">Match lens</p>
         <h3 className="editorial-title type-card-title mt-5 text-foreground">
           {template.title}
         </h3>
-        <p className="type-copy mt-4">
-          {template.narrative}
-        </p>
+        <p className="type-copy mt-4">{template.narrative}</p>
         <DetailList className="mt-5">
           {template.watchFor.map((item) => (
             <DetailListItem

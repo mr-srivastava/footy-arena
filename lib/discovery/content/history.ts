@@ -116,7 +116,8 @@ export const WORLD_CUP_HISTORY_ERAS: HistoryEra[] = [
   {
     year: "1990-2006",
     title: "Drama at the Edge of the World",
-    headline: "Penalty shootouts. Tears. Zidane headbutted a man in a World Cup final.",
+    headline:
+      "Penalty shootouts. Tears. Zidane headbutted a man in a World Cup final.",
     narrative:
       "Football discovered that the most devastating moments don't come from goals - they come from misses. Roberto Baggio stepped up for Italy's decisive penalty in 1994, looked to the sky, and fired it over. The shootout became sport's cruelest theatre. Meanwhile France, a country of immigrants and contradictions, won on home soil in 1998 with a squad that looked like the world. Brazil's Ronaldo came back from a mysterious illness to lead them to glory in 2002. And Zidane - the most elegant player of his generation - ended his career by headbutting a man in a World Cup final. It was completely insane. Nobody looked away.",
     image:

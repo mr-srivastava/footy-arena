@@ -19,16 +19,14 @@ export const METRIC_TRANSLATIONS: MetricTranslation[] = [
     metric: "Progressive Carries",
     slug: "progressive-carries",
     friendlyLabel: "Ball Progression",
-    explanation:
-      "Tracks how often players move the ball into dangerous areas.",
+    explanation: "Tracks how often players move the ball into dangerous areas.",
     casualTranslation: "Pushes attacks forward personally.",
   },
   {
     metric: "Pressures",
     slug: "pressures",
     friendlyLabel: "Defensive Pressure",
-    explanation:
-      "Tracks how aggressively players challenge opponents.",
+    explanation: "Tracks how aggressively players challenge opponents.",
     casualTranslation: "Constantly disrupts opposition buildup.",
   },
 ];

@@ -134,7 +134,9 @@ export function PageHero(props: PageHeroProps) {
                 {meta ? <div className="mt-2">{meta}</div> : null}
               </div>
             </div>
-            {actions ? <div className="shrink-0 self-start">{actions}</div> : null}
+            {actions ? (
+              <div className="shrink-0 self-start">{actions}</div>
+            ) : null}
           </div>
         )}
       </div>

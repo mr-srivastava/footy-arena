@@ -17,6 +17,7 @@ const FIFA_TO_ISO2: Record<string, string> = {
   COD: "CD",
   ECU: "EC",
   EGY: "EG",
+  ESP: "ES",
   ENG: "GB",
   FRA: "FR",
   GER: "DE",

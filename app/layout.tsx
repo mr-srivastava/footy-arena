@@ -42,7 +42,12 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={cn("h-full", bebas.variable, archivo.variable, editorial.variable)}
+      className={cn(
+        "h-full",
+        bebas.variable,
+        archivo.variable,
+        editorial.variable,
+      )}
     >
       <body className="min-h-full font-[family-name:var(--font-archivo)] antialiased">
         <QueryProvider>{children}</QueryProvider>

@@ -1,9 +1,14 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { EntityIconFrame, EntityRow } from "@/components/entity-row";
-import { TeamFlag } from "@/components/team-flag";
+import { TeamEmblem } from "@/components/team-emblem";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import type { TournamentGroup } from "@/lib/openfootball/types";
 
 export function GroupCard({ group }: { group: TournamentGroup }) {
@@ -35,9 +40,7 @@ export function GroupCard({ group }: { group: TournamentGroup }) {
         </div>
         <CardHeader className="relative flex flex-row items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
           <div>
-            <p className="type-label text-muted-foreground">
-              Draw board
-            </p>
+            <p className="type-label text-muted-foreground">Draw board</p>
             <h3 className="editorial-title type-card-title mt-2 text-foreground">
               {group.label}
             </h3>
@@ -53,7 +56,12 @@ export function GroupCard({ group }: { group: TournamentGroup }) {
               key={team.fifa_code}
               leading={
                 <EntityIconFrame className="size-9">
-                  <TeamFlag flag={team.flag_icon} name={team.displayName} size="sm" />
+                  <TeamEmblem
+                    bsdTeamId={team.bsdTeamId}
+                    flag={team.flag_icon}
+                    name={team.displayName}
+                    size="sm"
+                  />
                 </EntityIconFrame>
               }
               title={team.displayName}

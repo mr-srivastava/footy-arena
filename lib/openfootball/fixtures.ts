@@ -10,7 +10,8 @@ import type {
 const WC2026_URL =
   "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
 
-const PLACEHOLDER_TEAM = /^(?:[12][A-L]|[WL]\d+|L\d+|3[A-L](?:\/[A-L])+(?:\/[A-L])*)$/;
+const PLACEHOLDER_TEAM =
+  /^(?:[12][A-L]|[WL]\d+|L\d+|3[A-L](?:\/[A-L])+(?:\/[A-L])*)$/;
 
 function getStage(match: OpenFootballMatch): FixtureStage {
   if (match.group) return "group";
@@ -87,6 +88,36 @@ function formatKickoff(time: string): string {
   return time.replace("UTC", "UTC ");
 }
 
+/**
+ * Converts an OpenFootball fixture date/time to a UTC ISO-8601 string.
+ * Handles "HH:MM UTC", "HH:MM UTC±N", and bare "HH:MM" (treated as UTC).
+ */
+export function fixtureKickoffToIso(
+  fixture: Pick<Fixture, "date" | "time">,
+): string {
+  const match = fixture.time.match(
+    /^(\d{1,2}):(\d{2})(?:\s*UTC(?:([+-]\d+))?)?$/i,
+  );
+  if (!match) {
+    const bare = fixture.time.match(/^(\d{1,2}):(\d{2})/);
+    if (bare) {
+      const hours = bare[1]!.padStart(2, "0");
+      const minutes = bare[2]!;
+      return `${fixture.date}T${hours}:${minutes}:00.000Z`;
+    }
+    throw new Error(`Invalid fixture time: ${fixture.time}`);
+  }
+
+  const hours = Number.parseInt(match[1]!, 10);
+  const minutes = Number.parseInt(match[2]!, 10);
+  const offsetHours = match[3] ? Number.parseInt(match[3], 10) : 0;
+  const utcHours = hours - offsetHours;
+
+  const kickoff = new Date(`${fixture.date}T00:00:00.000Z`);
+  kickoff.setUTCHours(utcHours, minutes, 0, 0);
+  return kickoff.toISOString();
+}
+
 function parseWorldCup(data: unknown): OpenFootballWorldCup {
   if (!data || typeof data !== "object") {
     throw new Error("Invalid world cup data: expected an object");
@@ -122,43 +153,45 @@ export function formatPlaceholderTeam(code: string): string {
   return code;
 }
 
-export const getWorldCupFixtures = cache(async (): Promise<{
-  tournament: string;
-  fixtures: Fixture[];
-  byDate: FixturesByDate[];
-}> => {
-  const response = await fetch(WC2026_URL, {
-    next: { revalidate: 86_400 },
-  });
+export const getWorldCupFixtures = cache(
+  async (): Promise<{
+    tournament: string;
+    fixtures: Fixture[];
+    byDate: FixturesByDate[];
+  }> => {
+    const response = await fetch(WC2026_URL, {
+      next: { revalidate: 86_400 },
+    });
 
-  if (!response.ok) {
-    throw new Error(`Failed to load fixtures (${response.status})`);
-  }
+    if (!response.ok) {
+      throw new Error(`Failed to load fixtures (${response.status})`);
+    }
 
-  const data = parseWorldCup(await response.json());
-  const fixtures = data.matches.map(toFixture);
+    const data = parseWorldCup(await response.json());
+    const fixtures = data.matches.map(toFixture);
 
-  const dateMap = new Map<string, Fixture[]>();
-  for (const fixture of fixtures) {
-    const existing = dateMap.get(fixture.date) ?? [];
-    existing.push(fixture);
-    dateMap.set(fixture.date, existing);
-  }
+    const dateMap = new Map<string, Fixture[]>();
+    for (const fixture of fixtures) {
+      const existing = dateMap.get(fixture.date) ?? [];
+      existing.push(fixture);
+      dateMap.set(fixture.date, existing);
+    }
 
-  const byDate: FixturesByDate[] = [...dateMap.entries()]
-    .toSorted(([a], [b]) => a.localeCompare(b))
-    .map(([date, matches]) => ({
-      date,
-      dateLabel: formatDateLabel(date),
-      matches: matches.toSorted((a, b) => a.time.localeCompare(b.time)),
-    }));
+    const byDate: FixturesByDate[] = [...dateMap.entries()]
+      .toSorted(([a], [b]) => a.localeCompare(b))
+      .map(([date, matches]) => ({
+        date,
+        dateLabel: formatDateLabel(date),
+        matches: matches.toSorted((a, b) => a.time.localeCompare(b.time)),
+      }));
 
-  return {
-    tournament: data.name,
-    fixtures,
-    byDate,
-  };
-});
+    return {
+      tournament: data.name,
+      fixtures,
+      byDate,
+    };
+  },
+);
 
 export function getOpeningDayFixtures(
   fixtures: Fixture[],
@@ -170,7 +203,9 @@ export function getOpeningDayFixtures(
 }
 
 export function getFixtureStageCounts(fixtures: Fixture[]) {
-  const groupMatches = fixtures.filter((fixture) => fixture.stage === "group").length;
+  const groupMatches = fixtures.filter(
+    (fixture) => fixture.stage === "group",
+  ).length;
 
   return {
     total: fixtures.length,

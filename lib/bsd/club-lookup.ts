@@ -1,13 +1,13 @@
-import { bsdFetch } from '@/lib/bsd/client';
+import { bsdFetch } from "@/lib/bsd/client";
 import type {
   BsdLeaguesListResponse,
   BsdPlayerListItem,
   BsdPlayersListResponse,
   BsdTeamListItem,
   BsdTeamsListResponse,
-  ConvexPlayerSnapshot,
-} from '@/lib/bsd/enrichment-types';
-import { pickBestPlayerMatch, scoreTextMatch } from '@/lib/bsd/match-player';
+  TeamPlayerSeed,
+} from "@/lib/bsd/enrichment-types";
+import { pickBestPlayerMatch, scoreTextMatch } from "@/lib/bsd/match-player";
 
 function getOrSet<K, V>(
   cache: Map<K, Promise<V>>,
@@ -37,31 +37,31 @@ export function createClubLookupCaches(): ClubLookupCaches {
 
 async function fetchLeaguesByCountry(country: string) {
   const query = new URLSearchParams();
-  query.set('country', country.toLowerCase());
+  query.set("country", country.toLowerCase());
 
   return bsdFetch<BsdLeaguesListResponse>(`leagues?${query.toString()}`);
 }
 
-async function fetchTeamsByLeagueAndName(
-  leagueId: number,
-  name: string,
-) {
+async function fetchTeamsByLeagueAndName(leagueId: number, name: string) {
   const query = new URLSearchParams();
-  query.set('league_id', String(leagueId));
-  query.set('name', name);
+  query.set("league_id", String(leagueId));
+  query.set("name", name);
 
   return bsdFetch<BsdTeamsListResponse>(`teams?${query.toString()}`);
 }
 
 async function fetchPlayersByNameAndTeam(name: string, teamId: number) {
   const query = new URLSearchParams();
-  query.set('name', name);
-  query.set('team_id', String(teamId));
+  query.set("name", name);
+  query.set("team_id", String(teamId));
 
   return bsdFetch<BsdPlayersListResponse>(`players?${query.toString()}`);
 }
 
-function pickBestLeague(leagues: BsdLeaguesListResponse['results'], clubLeague: string) {
+function pickBestLeague(
+  leagues: BsdLeaguesListResponse["results"],
+  clubLeague: string,
+) {
   let best: { league: (typeof leagues)[number]; score: number } | null = null;
 
   for (const league of leagues) {
@@ -99,11 +99,13 @@ export type ClubPlayerLookupResult = {
 };
 
 export async function resolveClubPlayerDetails(
-  player: ConvexPlayerSnapshot,
+  player: TeamPlayerSeed,
   caches: ClubLookupCaches,
 ): Promise<ClubPlayerLookupResult> {
-  const leagues = await getOrSet(caches.leaguesByCountry, player.clubCountry, () =>
-    fetchLeaguesByCountry(player.clubCountry),
+  const leagues = await getOrSet(
+    caches.leaguesByCountry,
+    player.clubCountry,
+    () => fetchLeaguesByCountry(player.clubCountry),
   );
   const leagueMatch = pickBestLeague(leagues.results, player.league);
 

@@ -4,10 +4,14 @@ import { loadExplorePlayersBySlugs } from "@/lib/explore/load-players";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const slugsParam = url.searchParams.get("slugs");
-  const includePerformance = url.searchParams.get("includePerformance") === "true";
+  const includePerformance =
+    url.searchParams.get("includePerformance") === "true";
 
   if (!slugsParam) {
-    return NextResponse.json({ detail: "Missing slugs query parameter" }, { status: 400 });
+    return NextResponse.json(
+      { detail: "Missing slugs query parameter" },
+      { status: 400 },
+    );
   }
 
   const slugs = slugsParam
@@ -20,7 +24,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const players = await loadExplorePlayersBySlugs(slugs, { includePerformance });
+    const players = await loadExplorePlayersBySlugs(slugs, {
+      includePerformance,
+    });
     return NextResponse.json({ players });
   } catch (error) {
     const detail =

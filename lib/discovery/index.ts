@@ -72,9 +72,7 @@ export function getPlayersBySlugs(slugs: string[]): PlayerProfile[] {
     .filter((player): player is PlayerProfile => player !== undefined);
 }
 
-export function getTeamNarrative(
-  fifaCode: string,
-): TeamNarrative | undefined {
+export function getTeamNarrative(fifaCode: string): TeamNarrative | undefined {
   return narrativesByCode.get(fifaCode.toUpperCase());
 }
 
@@ -94,9 +92,7 @@ export function getDiscoveryCollection(
   return collectionsBySlug.get(slug);
 }
 
-export function getCategoryPlayerSlugs(
-  slug: DiscoveryCategorySlug,
-): string[] {
+export function getCategoryPlayerSlugs(slug: DiscoveryCategorySlug): string[] {
   switch (slug) {
     case "next-generation":
       return NEXT_GENERATION_SLUGS;

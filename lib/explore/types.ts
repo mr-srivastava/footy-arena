@@ -17,6 +17,8 @@ export type ExplorePlayerCard = {
   shortName?: string;
   nation: string;
   countrySlug: string;
+  nationBsdTeamId?: number | null;
+  clubTeamId?: number | null;
   fifaCode: string;
   position: string;
   detailedPosition: string;

@@ -1,5 +1,5 @@
 import { EntityIconFrame, EntityRow } from "@/components/entity-row";
-import { TeamFlag } from "@/components/team-flag";
+import { TeamEmblem } from "@/components/team-emblem";
 import type { Team } from "@/lib/openfootball/types";
 
 export function TeamCard({ team }: { team: Team }) {
@@ -8,7 +8,12 @@ export function TeamCard({ team }: { team: Team }) {
       href={`/teams/${team.slug}`}
       leading={
         <EntityIconFrame>
-          <TeamFlag flag={team.flag_icon} name={team.displayName} size="md" />
+          <TeamEmblem
+            bsdTeamId={team.bsdTeamId}
+            flag={team.flag_icon}
+            name={team.displayName}
+            size="md"
+          />
         </EntityIconFrame>
       }
       title={team.displayName.toUpperCase()}

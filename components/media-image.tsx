@@ -58,10 +58,7 @@ export function MediaImage({
       ) : null}
       {overlay === "portrait" ? (
         <>
-          <div
-            className="media-portrait-light absolute inset-0"
-            aria-hidden
-          />
+          <div className="media-portrait-light absolute inset-0" aria-hidden />
           <div
             className="absolute inset-0 bg-gradient-to-t from-navy via-navy/35 to-navy/10"
             aria-hidden

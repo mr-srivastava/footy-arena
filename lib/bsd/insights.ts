@@ -1,5 +1,3 @@
-import { fetchMutation, fetchQuery } from "convex/nextjs";
-import { api } from "@/convex/_generated/api";
 import type {
   BsdMatchConfidence,
   FixtureBsdMapping,
@@ -11,11 +9,21 @@ import type {
   PlayerAppearanceSummary,
   PlayerNationalTeamRecord,
   PlayerPerformance,
-  TeamHistoryEntry,
   TeamInsight,
 } from "@/lib/bsd/enrichment-types";
 import { bsdFetch, hasBsdToken } from "@/lib/bsd/client";
-import { BSD_WORLD_CUP_LEAGUE_ID } from "@/lib/bsd/constants";
+import { BSD_WORLD_CUP_2026_LEAGUE_ID } from "@/lib/bsd/constants";
+import {
+  formatRecord,
+  goalsAgainstTeam,
+  goalsForTeam,
+  loadTeamAnalytics,
+  streakLength,
+  type TeamAnalyticsPayload,
+} from "@/lib/bsd/team-analytics";
+import { worldCupEditorialForFifaCode } from "@/lib/teams/world-cup-history";
+import { normalizeTeamName } from "@/lib/teams/normalize-name";
+import { fixtureKickoffToIso } from "@/lib/openfootball/fixtures";
 import type { Fixture, Team } from "@/lib/openfootball/types";
 
 type BsdPaginated<T> = {
@@ -29,8 +37,8 @@ type BsdEventListItem = {
   id: number;
   home_team_id?: number | null;
   away_team_id?: number | null;
-  home_team?: string;
-  away_team?: string;
+  home_team?: string | { name?: string };
+  away_team?: string | { name?: string };
   event_date?: string;
   status?: string | null;
   round_number?: number | null;
@@ -50,18 +58,11 @@ type BsdEventDetail = BsdEventListItem & {
 
 type BsdPlayerStatsRow = {
   event_id?: number | null;
-  event_date?: string;
   team_id?: number | null;
-  team_name?: string | null;
-  opponent_team_name?: string | null;
-  is_home?: boolean | null;
-  minutes?: number | null;
   minutes_played?: number | null;
   rating?: number | null;
   goals?: number | null;
-  assists?: number | null;
-  team_score?: number | null;
-  opponent_score?: number | null;
+  goal_assist?: number | null;
 };
 
 type BsdCareerResponse = {
@@ -122,81 +123,112 @@ type BsdLineupsResponse = {
   } | null;
 };
 
-function normalizeName(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-}
-
-function kickoffToIso(fixture: Fixture) {
-  return `${fixture.date}T${fixture.time.replace(" UTC", "")}:00Z`;
-}
-
 function safeNumber(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 function normalizeProbability(value: number | null | undefined) {
   if (value == null) return null;
-  return value > 1 ? Number((value / 100).toFixed(4)) : Number(value.toFixed(4));
+  return value > 1
+    ? Number((value / 100).toFixed(4))
+    : Number(value.toFixed(4));
 }
 
-function resultForScores(goalsFor: number | null, goalsAgainst: number | null): FormResult | null {
+function resultForScores(
+  goalsFor: number | null,
+  goalsAgainst: number | null,
+): FormResult | null {
   if (goalsFor == null || goalsAgainst == null) return null;
   if (goalsFor > goalsAgainst) return "W";
   if (goalsFor < goalsAgainst) return "L";
   return "D";
 }
 
-function inferStage(entry: TeamHistoryEntry) {
-  if (entry.matches >= 7) return "Final";
-  if (entry.matches === 6) return entry.losses === 0 ? "Final" : "Semi-final";
-  if (entry.matches === 5) return "Quarter-final";
-  if (entry.matches === 4) return "Round of 16";
-  return "Group stage";
+function eventTeamLabel(
+  team: string | { name?: string } | null | undefined,
+): string | null {
+  if (typeof team === "string") return team;
+  if (team && typeof team === "object" && typeof team.name === "string") {
+    return team.name;
+  }
+  return null;
 }
 
-function formatRecord(results: FormResult[]) {
-  const wins = results.filter((result) => result === "W").length;
-  const draws = results.filter((result) => result === "D").length;
-  const losses = results.filter((result) => result === "L").length;
-  return `${wins}-${draws}-${losses}`;
-}
+async function loadEventsByIds(
+  eventIds: number[],
+): Promise<Map<number, BsdEventListItem>> {
+  const uniqueIds = [...new Set(eventIds)];
+  const entries = await Promise.all(
+    uniqueIds.map(async (id) => {
+      try {
+        const event = await bsdFetch<BsdEventListItem>(`events/${id}`);
+        return [id, event] as const;
+      } catch {
+        return null;
+      }
+    }),
+  );
 
-function bestFinishFromHistory(history: TeamHistoryEntry[]) {
-  const priority = ["Final", "Semi-final", "Quarter-final", "Round of 16", "Group stage"];
-  return (
-    history
-      .map((entry) => entry.stage)
-      .sort((a, b) => priority.indexOf(a) - priority.indexOf(b))[0] ?? "Group stage"
+  return new Map(
+    entries.filter(
+      (entry): entry is readonly [number, BsdEventListItem] => entry != null,
+    ),
   );
 }
 
-function streakLength(results: FormResult[], mode: "unbeaten" | "winless") {
-  let streak = 0;
-  for (const result of results) {
-    const qualifies = mode === "unbeaten" ? result !== "L" : result !== "W";
-    if (!qualifies) break;
-    streak += 1;
-  }
-  return streak;
-}
-
-function mapAppearance(row: BsdPlayerStatsRow): PlayerAppearanceSummary {
-  const minutes = row.minutes ?? row.minutes_played ?? null;
+function mapAppearance(
+  row: BsdPlayerStatsRow,
+  event?: BsdEventListItem | null,
+): PlayerAppearanceSummary {
+  const minutes = row.minutes_played ?? null;
   const rating = safeNumber(row.rating);
   const goals = row.goals ?? 0;
-  const assists = row.assists ?? 0;
+  const assists = row.goal_assist ?? 0;
+
+  let opponentName: string | null = null;
+  let opponentTeamId: number | null = null;
+  let teamName: string | null = null;
+  let isHome: boolean | null = null;
+  let result: FormResult | null = null;
+  let eventDate = "";
+
+  if (event) {
+    eventDate = event.event_date ?? "";
+    const teamId = row.team_id ?? null;
+    const homeTeamId = event.home_team_id ?? null;
+    const awayTeamId = event.away_team_id ?? null;
+    const homeTeam = eventTeamLabel(event.home_team);
+    const awayTeam = eventTeamLabel(event.away_team);
+
+    if (teamId != null && homeTeamId != null && teamId === homeTeamId) {
+      isHome = true;
+      teamName = homeTeam;
+      opponentName = awayTeam;
+      opponentTeamId = awayTeamId;
+      result = resultForScores(
+        event.home_score ?? null,
+        event.away_score ?? null,
+      );
+    } else if (teamId != null && awayTeamId != null && teamId === awayTeamId) {
+      isHome = false;
+      teamName = awayTeam;
+      opponentName = homeTeam;
+      opponentTeamId = homeTeamId;
+      result = resultForScores(
+        event.away_score ?? null,
+        event.home_score ?? null,
+      );
+    }
+  }
 
   return {
     eventId: row.event_id ?? null,
-    eventDate: row.event_date ?? "",
-    teamName: row.team_name ?? null,
-    opponentName: row.opponent_team_name ?? null,
-    isHome: row.is_home ?? null,
-    result: resultForScores(row.team_score ?? null, row.opponent_score ?? null),
+    eventDate,
+    teamName,
+    opponentName,
+    opponentTeamId,
+    isHome,
+    result,
     minutes,
     rating,
     goals,
@@ -227,8 +259,12 @@ function mapLineupSide(
   fallbackName: string,
 ): MatchLineupSide | null {
   if (!input) return null;
-  const players = (input.players ?? []).map(mapLineupPlayer).filter(Boolean) as MatchLineupPlayer[];
-  const substitutes = (input.substitutes ?? []).map(mapLineupPlayer).filter(Boolean) as MatchLineupPlayer[];
+  const players = (input.players ?? [])
+    .map(mapLineupPlayer)
+    .filter(Boolean) as MatchLineupPlayer[];
+  const substitutes = (input.substitutes ?? [])
+    .map(mapLineupPlayer)
+    .filter(Boolean) as MatchLineupPlayer[];
   const unavailable = (input.unavailable_players ?? [])
     .map(mapLineupPlayer)
     .filter(Boolean) as MatchLineupPlayer[];
@@ -243,12 +279,6 @@ function mapLineupSide(
   };
 }
 
-async function fetchTeamFixtures(teamId: number) {
-  return bsdFetch<BsdPaginated<BsdEventListItem>>(
-    `teams/${teamId}/fixtures?league_id=${BSD_WORLD_CUP_LEAGUE_ID}&status=finished&date_from=1930-01-01T00:00:00Z&date_to=2030-12-31T23:59:59Z&limit=200`,
-  );
-}
-
 export async function loadPlayerPerformance(
   bsdPlayerId: number,
   options?: {
@@ -261,20 +291,36 @@ export async function loadPlayerPerformance(
 
   try {
     const [stats, career, nationalTeam] = await Promise.all([
-      bsdFetch<BsdPaginated<BsdPlayerStatsRow>>(`players/${bsdPlayerId}/stats?limit=5`),
+      bsdFetch<BsdPaginated<BsdPlayerStatsRow>>(
+        `players/${bsdPlayerId}/stats?limit=5`,
+      ),
       bsdFetch<BsdCareerResponse>(`players/${bsdPlayerId}/career`),
       bsdFetch<BsdNationalTeamResponse>(`players/${bsdPlayerId}/national-team`),
     ]);
 
-    const recentAppearances = stats.results.map(mapAppearance);
+    const eventIds = stats.results
+      .map((row) => row.event_id)
+      .filter((id): id is number => id != null);
+    const eventsById = await loadEventsByIds(eventIds);
+    const recentAppearances = stats.results.map((row) =>
+      mapAppearance(
+        row,
+        row.event_id != null ? eventsById.get(row.event_id) : null,
+      ),
+    );
     const ratings = recentAppearances
       .map((appearance) => appearance.rating)
       .filter((rating): rating is number => rating != null);
     const formRating = ratings.length
-      ? Number((ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(2))
+      ? Number(
+          (
+            ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+          ).toFixed(2),
+        )
       : null;
     const seasonAverageRating =
-      career.seasons.find((season) => season.avg_rating != null)?.avg_rating ?? null;
+      career.seasons.find((season) => season.avg_rating != null)?.avg_rating ??
+      null;
     const nationalTeamRecord: PlayerNationalTeamRecord = {
       nationalTeamId: nationalTeam.national_team_id,
       caps: nationalTeam.caps,
@@ -297,94 +343,106 @@ export async function loadPlayerPerformance(
   }
 }
 
-export async function loadTeamInsight(team: Team): Promise<TeamInsight | null> {
-  if (!hasBsdToken()) return null;
+export type TeamEditorialInsight = Pick<
+  TeamInsight,
+  "worldCupAppearances" | "bestFinish" | "history"
+>;
 
-  try {
-    const nationalTeams = await bsdFetch<BsdPaginated<{ id: number; short_name: string; name: string }>>(
-      `teams?in_competition=true&league_id=${BSD_WORLD_CUP_LEAGUE_ID}&limit=200`,
-    );
-    const bsdTeam = nationalTeams.results.find((entry) => {
-      const candidates = [entry.short_name, entry.name]
-        .filter(Boolean)
-        .map((value) => normalizeName(value));
-      return candidates.includes(normalizeName(team.displayName)) || candidates.includes(normalizeName(team.fifa_code));
-    });
+export function loadTeamEditorialInsight(
+  team: Team,
+): TeamEditorialInsight | null {
+  const editorial = worldCupEditorialForFifaCode(team.fifa_code);
+  if (!editorial) return null;
 
-    if (!bsdTeam) return null;
+  return {
+    worldCupAppearances: editorial.worldCupAppearances,
+    bestFinish: editorial.bestFinish,
+    history: editorial.history,
+  };
+}
 
-    const fixtures = (await fetchTeamFixtures(bsdTeam.id)).results
-      .filter((event) => event.home_score != null && event.away_score != null)
-      .sort((a, b) => (b.event_date ?? "").localeCompare(a.event_date ?? ""));
-
-    const recent = fixtures.slice(0, 5);
-    const recentForm = recent
-      .map((event) => {
-        const isHome = event.home_team_id === bsdTeam.id;
-        const goalsFor = isHome ? event.home_score ?? null : event.away_score ?? null;
-        const goalsAgainst = isHome ? event.away_score ?? null : event.home_score ?? null;
-        return resultForScores(goalsFor, goalsAgainst);
-      })
-      .filter((value): value is FormResult => value != null);
-
-    const recentGoalsFor = recent.reduce((sum, event) => {
-      const isHome = event.home_team_id === bsdTeam.id;
-      return sum + (isHome ? event.home_score ?? 0 : event.away_score ?? 0);
-    }, 0);
-    const recentGoalsAgainst = recent.reduce((sum, event) => {
-      const isHome = event.home_team_id === bsdTeam.id;
-      return sum + (isHome ? event.away_score ?? 0 : event.home_score ?? 0);
-    }, 0);
-
-    const historyByYear = new Map<string, TeamHistoryEntry>();
-    for (const event of fixtures) {
-      const year = (event.event_date ?? "").slice(0, 4);
-      if (!year) continue;
-      const isHome = event.home_team_id === bsdTeam.id;
-      const goalsFor = isHome ? event.home_score ?? 0 : event.away_score ?? 0;
-      const goalsAgainst = isHome ? event.away_score ?? 0 : event.home_score ?? 0;
-      const result = resultForScores(goalsFor, goalsAgainst);
-      const current = historyByYear.get(year) ?? {
-        year,
-        matches: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goalsFor: 0,
-        goalsAgainst: 0,
-        goalDifference: 0,
-        stage: "Group stage",
-      };
-      current.matches += 1;
-      current.goalsFor += goalsFor;
-      current.goalsAgainst += goalsAgainst;
-      current.goalDifference = current.goalsFor - current.goalsAgainst;
-      if (result === "W") current.wins += 1;
-      if (result === "D") current.draws += 1;
-      if (result === "L") current.losses += 1;
-      historyByYear.set(year, current);
-    }
-
-    const history = [...historyByYear.values()]
-      .map((entry) => ({ ...entry, stage: inferStage(entry) }))
-      .sort((a, b) => Number(b.year) - Number(a.year));
-
+export function buildTeamFormInsight(
+  team: Team,
+  analytics: TeamAnalyticsPayload | null,
+): Pick<
+  TeamInsight,
+  | "recentForm"
+  | "recentRecord"
+  | "unbeatenStreak"
+  | "winlessStreak"
+  | "goalsForRecent"
+  | "goalsAgainstRecent"
+> {
+  if (!team.bsdTeamId || !analytics?.analytics) {
     return {
-      teamId: bsdTeam.id,
-      teamName: team.displayName,
-      recentForm,
-      recentRecord: formatRecord(recentForm),
-      unbeatenStreak: streakLength(recentForm, "unbeaten"),
-      winlessStreak: streakLength(recentForm, "winless"),
-      goalsForRecent: recentGoalsFor,
-      goalsAgainstRecent: recentGoalsAgainst,
-      worldCupAppearances: history.length,
-      bestFinish: bestFinishFromHistory(history),
-      history,
+      recentForm: [],
+      recentRecord: formatRecord([]),
+      unbeatenStreak: 0,
+      winlessStreak: 0,
+      goalsForRecent: 0,
+      goalsAgainstRecent: 0,
     };
-  } catch {
-    return null;
   }
+
+  const recentForm = analytics.analytics.recentForm;
+  const recentFixtures = analytics.analytics.byCompetition
+    .flatMap((competition) => competition.fixtures)
+    .filter(
+      (fixture) => fixture.home_score != null && fixture.away_score != null,
+    )
+    .toSorted((a, b) => b.event_date.localeCompare(a.event_date))
+    .slice(0, 5);
+
+  const goalsForRecent = recentFixtures.reduce(
+    (sum, fixture) => sum + goalsForTeam(fixture, team.bsdTeamId!),
+    0,
+  );
+  const goalsAgainstRecent = recentFixtures.reduce(
+    (sum, fixture) => sum + goalsAgainstTeam(fixture, team.bsdTeamId!),
+    0,
+  );
+
+  return {
+    recentForm,
+    recentRecord: formatRecord(recentForm),
+    unbeatenStreak: streakLength(recentForm, "unbeaten"),
+    winlessStreak: streakLength(recentForm, "winless"),
+    goalsForRecent,
+    goalsAgainstRecent,
+  };
+}
+
+export function mergeTeamInsight(
+  team: Team,
+  editorial: TeamEditorialInsight,
+  form: ReturnType<typeof buildTeamFormInsight>,
+): TeamInsight {
+  return {
+    teamId: team.bsdTeamId ?? null,
+    teamName: team.displayName,
+    ...editorial,
+    ...form,
+  };
+}
+
+export async function loadTeamInsight(
+  team: Team,
+  analytics?: TeamAnalyticsPayload | null,
+): Promise<TeamInsight | null> {
+  const editorial = loadTeamEditorialInsight(team);
+  if (!editorial) return null;
+
+  let resolvedAnalytics = analytics;
+  if (resolvedAnalytics === undefined && hasBsdToken() && team.bsdTeamId) {
+    try {
+      resolvedAnalytics = await loadTeamAnalytics(team);
+    } catch {
+      resolvedAnalytics = null;
+    }
+  }
+
+  const form = buildTeamFormInsight(team, resolvedAnalytics ?? null);
+  return mergeTeamInsight(team, editorial, form);
 }
 
 export async function resolveFixtureMapping(
@@ -393,41 +451,39 @@ export async function resolveFixtureMapping(
 ): Promise<FixtureBsdMapping | null> {
   if (!hasBsdToken()) return null;
 
-  const cached = await fetchQuery(api.fixtureMappings.getByFixtureId, {
-    fixtureId: fixture.id,
-  });
-  if (cached) {
-    return {
-      fixtureId: cached.fixtureId,
-      bsdEventId: cached.bsdEventId,
-      confidence: cached.confidence as BsdMatchConfidence,
-      homeTeamId: cached.homeTeamId ?? null,
-      awayTeamId: cached.awayTeamId ?? null,
-      lastResolvedAt: cached.lastResolvedAt,
-    };
-  }
-
-  const home = byName.get(fixture.team1.toLowerCase());
-  const away = byName.get(fixture.team2.toLowerCase());
+  const home = byName.get(normalizeTeamName(fixture.team1));
+  const away = byName.get(normalizeTeamName(fixture.team2));
   if (!home || !away) return null;
 
-  const start = new Date(kickoffToIso(fixture)).getTime();
+  const start = new Date(fixtureKickoffToIso(fixture)).getTime();
   const dateFrom = new Date(start - 12 * 60 * 60 * 1000).toISOString();
   const dateTo = new Date(start + 12 * 60 * 60 * 1000).toISOString();
   const candidates = await bsdFetch<BsdPaginated<BsdEventListItem>>(
-    `events?league_id=${BSD_WORLD_CUP_LEAGUE_ID}&date_from=${encodeURIComponent(dateFrom)}&date_to=${encodeURIComponent(dateTo)}&limit=50`,
+    `events?league=${BSD_WORLD_CUP_2026_LEAGUE_ID}&date_from=${encodeURIComponent(dateFrom)}&date_to=${encodeURIComponent(dateTo)}&limit=50`,
   );
 
   const scored = candidates.results
     .map((event) => {
       const names = [
-        normalizeName(event.home_team ?? ""),
-        normalizeName(event.away_team ?? ""),
+        normalizeTeamName(eventTeamLabel(event.home_team) ?? ""),
+        normalizeTeamName(eventTeamLabel(event.away_team) ?? ""),
       ];
-      const targetNames = [normalizeName(home.displayName), normalizeName(away.displayName)];
-      const matchingNames = targetNames.filter((name) => names.includes(name)).length;
-      const dateDelta = Math.abs(new Date(event.event_date ?? "").getTime() - start);
-      const timeScore = dateDelta <= 30 * 60 * 1000 ? 20 : dateDelta <= 2 * 60 * 60 * 1000 ? 10 : 0;
+      const targetNames = [
+        normalizeTeamName(home.displayName),
+        normalizeTeamName(away.displayName),
+      ];
+      const matchingNames = targetNames.filter((name) =>
+        names.includes(name),
+      ).length;
+      const dateDelta = Math.abs(
+        new Date(event.event_date ?? "").getTime() - start,
+      );
+      const timeScore =
+        dateDelta <= 30 * 60 * 1000
+          ? 20
+          : dateDelta <= 2 * 60 * 60 * 1000
+            ? 10
+            : 0;
       const score = matchingNames * 40 + timeScore;
       return { event, score };
     })
@@ -446,18 +502,16 @@ export async function resolveFixtureMapping(
     awayTeamId: best.event.away_team_id ?? null,
     lastResolvedAt: new Date().toISOString(),
   };
-
-  await fetchMutation(api.fixtureMappings.upsert, {
-    ...mapping,
-    homeTeamId: mapping.homeTeamId ?? undefined,
-    awayTeamId: mapping.awayTeamId ?? undefined,
-  });
   return mapping;
 }
 
-async function fetchPrediction(eventId: number): Promise<MatchPrediction | null> {
+async function fetchPrediction(
+  eventId: number,
+): Promise<MatchPrediction | null> {
   try {
-    const prediction = await bsdFetch<BsdPredictionResponse>(`events/${eventId}/prediction`);
+    const prediction = await bsdFetch<BsdPredictionResponse>(
+      `events/${eventId}/prediction`,
+    );
     return {
       homeWinProbability: normalizeProbability(prediction.home_win_prob),
       drawProbability: normalizeProbability(prediction.draw_prob),
@@ -481,24 +535,51 @@ export async function loadMatchInsight(
 
   const [event, metadata, lineups, prediction] = await Promise.all([
     bsdFetch<BsdEventDetail>(`events/${mapping.bsdEventId}`),
-    bsdFetch<BsdMetadataResponse>(`events/${mapping.bsdEventId}/metadata`).catch(() => null),
-    bsdFetch<BsdLineupsResponse>(`events/${mapping.bsdEventId}/lineups`).catch(() => null),
+    bsdFetch<BsdMetadataResponse>(
+      `events/${mapping.bsdEventId}/metadata`,
+    ).catch(() => null),
+    bsdFetch<BsdLineupsResponse>(`events/${mapping.bsdEventId}/lineups`).catch(
+      () => null,
+    ),
     fetchPrediction(mapping.bsdEventId),
   ]);
 
-  const homeTeam = byName.get(fixture.team1.toLowerCase()) ?? null;
-  const awayTeam = byName.get(fixture.team2.toLowerCase()) ?? null;
-  const [homeInsight, awayInsight] = await Promise.all([
-    homeTeam ? loadTeamInsight(homeTeam) : Promise.resolve(null),
-    awayTeam ? loadTeamInsight(awayTeam) : Promise.resolve(null),
+  const homeTeam = byName.get(normalizeTeamName(fixture.team1)) ?? null;
+  const awayTeam = byName.get(normalizeTeamName(fixture.team2)) ?? null;
+
+  const [homeAnalytics, awayAnalytics] = await Promise.all([
+    homeTeam ? loadTeamAnalytics(homeTeam) : Promise.resolve(null),
+    awayTeam ? loadTeamAnalytics(awayTeam) : Promise.resolve(null),
   ]);
+
+  const homeEditorial = homeTeam ? loadTeamEditorialInsight(homeTeam) : null;
+  const awayEditorial = awayTeam ? loadTeamEditorialInsight(awayTeam) : null;
+
+  const homeInsight =
+    homeTeam && homeEditorial
+      ? mergeTeamInsight(
+          homeTeam,
+          homeEditorial,
+          buildTeamFormInsight(homeTeam, homeAnalytics),
+        )
+      : null;
+  const awayInsight =
+    awayTeam && awayEditorial
+      ? mergeTeamInsight(
+          awayTeam,
+          awayEditorial,
+          buildTeamFormInsight(awayTeam, awayAnalytics),
+        )
+      : null;
 
   return {
     eventId: mapping.bsdEventId,
     fixtureId: fixture.id,
-    homeTeam: event.home_team ?? fixture.team1,
-    awayTeam: event.away_team ?? fixture.team2,
-    eventDate: event.event_date ?? kickoffToIso(fixture),
+    homeTeam: eventTeamLabel(event.home_team) ?? fixture.team1,
+    awayTeam: eventTeamLabel(event.away_team) ?? fixture.team2,
+    homeTeamId: mapping.homeTeamId ?? event.home_team_id ?? null,
+    awayTeamId: mapping.awayTeamId ?? event.away_team_id ?? null,
+    eventDate: event.event_date ?? fixtureKickoffToIso(fixture),
     status: event.status ?? null,
     venueId: event.venue_id ?? null,
     venueName: event.venue_name ?? fixture.ground,

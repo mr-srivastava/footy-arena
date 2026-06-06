@@ -100,7 +100,7 @@ export type NormalizedPlayer = {
   } | null;
 };
 
-export type ConvexPlayerSnapshot = {
+export type TeamPlayerSeed = {
   id: string;
   name: string;
   jerseyNumber: number | null;
@@ -113,17 +113,20 @@ export type ConvexPlayerSnapshot = {
   clubCountry: string;
   positionGroup: string;
   isCaptain: boolean;
+  countryId?: string;
+  previousWorldCupsCount?: number;
+  previousWorldCupsList?: string[];
 };
 
-export type ConvexCountrySnapshot = {
+export type TeamIdentity = {
   slug: string;
   displayName: string;
   fifaCode: string;
   groupLetter: string;
 };
 
-export type BsdMatchStrategy = 'club' | 'national' | 'consensus';
-export type BsdMatchConfidence = 'high' | 'medium' | 'low';
+export type BsdMatchStrategy = "club" | "national" | "consensus";
+export type BsdMatchConfidence = "high" | "medium" | "low";
 
 export type BsdPlayerMatchMeta = {
   bsdPlayerId: number | null;
@@ -145,6 +148,7 @@ export type PlayerAppearanceSummary = {
   eventDate: string;
   teamName: string | null;
   opponentName: string | null;
+  opponentTeamId: number | null;
   isHome: boolean | null;
   result: FormResult | null;
   minutes: number | null;
@@ -235,6 +239,8 @@ export type MatchInsight = {
   fixtureId: string;
   homeTeam: string;
   awayTeam: string;
+  homeTeamId: number | null;
+  awayTeamId: number | null;
   eventDate: string;
   status: string | null;
   venueId: number | null;

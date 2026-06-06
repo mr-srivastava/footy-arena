@@ -15,6 +15,7 @@ export function EnrichedPlayerCard({ player }: { player: ExplorePlayerCard }) {
       href={player.playerHref}
       displayName={displayName}
       nation={player.nation}
+      nationTeamId={player.nationBsdTeamId}
       position={player.position}
       watermark={player.fifaCode}
       image={

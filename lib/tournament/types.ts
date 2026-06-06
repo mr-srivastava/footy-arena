@@ -1,10 +1,10 @@
 import type {
   BsdPlayerMatchMeta,
-  ConvexCountrySnapshot,
+  TeamIdentity,
   NormalizedPlayer,
 } from "@/lib/bsd/enrichment-types";
 
-export type PlayerPosition = 'GK' | 'DF' | 'MF' | 'FW';
+export type PlayerPosition = "GK" | "DF" | "MF" | "FW";
 
 export type SquadPlayer = {
   name: string;
@@ -12,6 +12,7 @@ export type SquadPlayer = {
   profileSlug: string;
   position: PlayerPosition;
   club?: string;
+  clubTeamId?: number | null;
   number?: number;
   age?: number;
   detailedPosition?: string;
@@ -27,12 +28,16 @@ export type SquadPlayer = {
 export type SquadManager = {
   name: string;
   nationality?: string;
+  preferredFormation?: string;
+  tacticalProfile?: string;
+  careerRecord?: string;
+  winPct?: number;
 };
 
 export type TeamSquad = {
   manager?: SquadManager;
   players: SquadPlayer[];
-  status: 'announced' | 'pending';
+  status: "announced" | "pending";
 };
 
 type EnrichedSquadPlayer = {
@@ -41,10 +46,10 @@ type EnrichedSquadPlayer = {
 };
 
 export type TeamSquadPayload = {
-  country: ConvexCountrySnapshot;
-  status: TeamSquad['status'];
+  country: TeamIdentity;
+  status: TeamSquad["status"];
   manager?: SquadManager;
-  source: 'bsd' | 'convex';
+  source: "bsd" | "fallback";
   players: EnrichedSquadPlayer[];
   summary: {
     total: number;

@@ -29,7 +29,12 @@ export function CollectionCard({
             <Layers className="size-4" aria-hidden />
           </span>
           <div className="flex items-center gap-3">
-            <Badge variant="muted" className="border-white/15 bg-black/25 text-white/75 backdrop-blur-md">{playerCount} players</Badge>
+            <Badge
+              variant="muted"
+              className="border-white/15 bg-black/25 text-white/75 backdrop-blur-md"
+            >
+              {playerCount} players
+            </Badge>
             <ArrowUpRight className="size-5 text-white transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
           </div>
         </div>

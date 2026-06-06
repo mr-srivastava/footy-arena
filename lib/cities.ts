@@ -13,38 +13,49 @@ export type HostCity = {
   arrival: string;
 };
 
-const cityDetails: Record<string, Omit<HostCity, "city" | "country" | "venue">> = {
+const cityDetails: Record<
+  string,
+  Omit<HostCity, "city" | "country" | "venue">
+> = {
   "new-york-new-jersey": {
     slug: "new-york-new-jersey",
     countryName: "United States",
     image: DISCOVERY_STOCK.stadiumLights,
     dek: "The final stage, framed by the scale and restless confidence of the world’s most international city.",
-    atmosphere: "A global crowd, late-night energy, and the tournament’s most ceremonial closing chapter.",
-    arrival: "Build the day around regional rail and allow time for the stadium district.",
+    atmosphere:
+      "A global crowd, late-night energy, and the tournament’s most ceremonial closing chapter.",
+    arrival:
+      "Build the day around regional rail and allow time for the stadium district.",
   },
   "los-angeles": {
     slug: "los-angeles",
     countryName: "United States",
     image: DISCOVERY_STOCK.modernArena,
     dek: "A cinematic football weekend where the Pacific, design culture, and a new-generation stadium meet.",
-    atmosphere: "Big-event polish with supporter cultures drawn from across the Americas.",
-    arrival: "Stay flexible: the city rewards neighborhood planning more than a single central base.",
+    atmosphere:
+      "Big-event polish with supporter cultures drawn from across the Americas.",
+    arrival:
+      "Stay flexible: the city rewards neighborhood planning more than a single central base.",
   },
   "mexico-city": {
     slug: "mexico-city",
     countryName: "Mexico",
     image: DISCOVERY_STOCK.stadiumCrowd,
     dek: "The tournament begins in football’s cathedral, high above sea level and deep inside its history.",
-    atmosphere: "Ceremonial, loud, and inseparable from the mythology of the Azteca.",
-    arrival: "Plan for altitude, arrive early, and make the stadium journey part of the occasion.",
+    atmosphere:
+      "Ceremonial, loud, and inseparable from the mythology of the Azteca.",
+    arrival:
+      "Plan for altitude, arrive early, and make the stadium journey part of the occasion.",
   },
-  "vancouver": {
+  vancouver: {
     slug: "vancouver",
     countryName: "Canada",
     image: DISCOVERY_STOCK.pitchLines,
     dek: "Mountain light, compact urban life, and a roofed downtown venue make for an unusually elegant host.",
-    atmosphere: "Relaxed outside the ground, intensely international once the turnstiles open.",
-    arrival: "The central stadium makes walking and transit the natural match-day rhythm.",
+    atmosphere:
+      "Relaxed outside the ground, intensely international once the turnstiles open.",
+    arrival:
+      "The central stadium makes walking and transit the natural match-day rhythm.",
   },
 };
 

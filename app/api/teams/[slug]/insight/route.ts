@@ -1,9 +1,7 @@
-import { fetchQuery } from "convex/nextjs";
 import { NextResponse } from "next/server";
-import { api } from "@/convex/_generated/api";
 import { BsdApiError } from "@/lib/bsd/client";
-import { loadTeamInsight } from "@/lib/bsd/insights";
-import { toTeam } from "@/lib/teams/map";
+import { loadTeamAnalytics } from "@/lib/bsd/team-analytics";
+import { getWorldCupTeams } from "@/lib/openfootball/teams";
 
 type RouteContext = {
   params: Promise<{ slug: string }>;
@@ -13,22 +11,24 @@ export async function GET(_request: Request, context: RouteContext) {
   const { slug } = await context.params;
 
   try {
-    const country = await fetchQuery(api.countries.getBySlug, {
-      slug: slug.toLowerCase(),
-    });
-
-    if (!country) {
+    const { teams } = await getWorldCupTeams();
+    const team = teams.find((entry) => entry.slug === slug.toLowerCase());
+    if (!team) {
       return NextResponse.json({ detail: "Team not found" }, { status: 404 });
     }
 
-    const insight = await loadTeamInsight(toTeam(country));
-    return NextResponse.json({ insight });
+    const payload = await loadTeamAnalytics(team);
+    return NextResponse.json({ payload });
   } catch (error) {
     if (error instanceof BsdApiError) {
-      return NextResponse.json({ detail: error.message }, { status: error.status });
+      return NextResponse.json(
+        { detail: error.message },
+        { status: error.status },
+      );
     }
 
-    const detail = error instanceof Error ? error.message : "Failed to load team insight";
+    const detail =
+      error instanceof Error ? error.message : "Failed to load team insight";
     return NextResponse.json({ detail }, { status: 500 });
   }
 }

@@ -92,8 +92,7 @@ export const RISING_UNDERDOGS: RisingUnderdogEntry[] = [
   {
     nation: "Japan",
     fifaCode: "JPN",
-    whyTheyMatter:
-      "One of the smartest tactical teams outside Europe's elite.",
+    whyTheyMatter: "One of the smartest tactical teams outside Europe's elite.",
     keyIdentity: "Discipline and relentless work rate.",
     breakoutPlayerSlugs: ["kaoru-mitoma", "takefusa-kubo"],
     whyCasualFansShouldWatch: "Capable of upsetting major football powers.",

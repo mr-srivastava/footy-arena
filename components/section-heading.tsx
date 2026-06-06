@@ -51,11 +51,7 @@ export function SectionHeading({
           {title}
         </Heading>
         {subtitle ? (
-          <p
-            className={`type-lead mt-5 ${
-              centered ? "mx-auto" : ""
-            }`.trim()}
-          >
+          <p className={`type-lead mt-5 ${centered ? "mx-auto" : ""}`.trim()}>
             {subtitle}
           </p>
         ) : null}

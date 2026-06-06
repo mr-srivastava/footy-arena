@@ -8,11 +8,16 @@ type MatchInsightResponse = {
 };
 
 async function fetchMatchInsight(fixtureId: string) {
-  const data = await fetchJson<MatchInsightResponse>(`/api/fixtures/${encodeURIComponent(fixtureId)}`);
+  const data = await fetchJson<MatchInsightResponse>(
+    `/api/fixtures/${encodeURIComponent(fixtureId)}`,
+  );
   return data.insight;
 }
 
-export function matchInsightQueryOptions(fixtureId: string, initialData?: MatchInsight | null) {
+export function matchInsightQueryOptions(
+  fixtureId: string,
+  initialData?: MatchInsight | null,
+) {
   return queryOptions({
     queryKey: queryKeys.matchInsight(fixtureId),
     queryFn: () => fetchMatchInsight(fixtureId),

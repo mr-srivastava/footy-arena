@@ -23,10 +23,14 @@ type ExplorePlayersGridProps = {
 
 export function ExplorePlayersGrid({
   slugs,
-  emptyMessage = "Players will appear here once matching squad records are available in Convex.",
+  emptyMessage = "Players will appear here once matching squad records are available from BSD.",
   className = "lazy-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3",
 }: ExplorePlayersGridProps) {
-  const { data: players = [], isPending, isError } = useQuery(explorePlayersQueryOptions(slugs));
+  const {
+    data: players = [],
+    isPending,
+    isError,
+  } = useQuery(explorePlayersQueryOptions(slugs));
 
   if (slugs.length === 0) {
     return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;

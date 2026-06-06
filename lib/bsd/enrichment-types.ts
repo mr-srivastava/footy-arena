@@ -221,6 +221,7 @@ export type MatchPrediction = {
 export type MatchLineupPlayer = {
   playerId: number | null;
   name: string;
+  number: number | null;
   position: string | null;
   rating: number | null;
 };

@@ -13,8 +13,8 @@ export function TeamDirectory({ teams }: { teams: Team[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const [query, setQuery] = useState(searchParams.get("query") ?? "");
-  const [group, setGroup] = useState(searchParams.get("group") ?? "all");
-  const [confed, setConfed] = useState(searchParams.get("confed") ?? "all");
+  const group = searchParams.get("group") ?? "all";
+  const confed = searchParams.get("confed") ?? "all";
   const deferredQuery = useDeferredValue(query);
   const confeds = useMemo(
     () => [...new Set(teams.map((team) => team.confed))].toSorted(),
@@ -76,19 +76,13 @@ export function TeamDirectory({ teams }: { teams: Team[] }) {
           ariaLabel="Filter teams by group"
           value={group}
           options={groupOptions}
-          onValueChange={(value) => {
-            setGroup(value);
-            update({ group: value });
-          }}
+          onValueChange={(value) => update({ group: value })}
         />
         <SelectField
           ariaLabel="Filter teams by confederation"
           value={confed}
           options={confedOptions}
-          onValueChange={(value) => {
-            setConfed(value);
-            update({ confed: value });
-          }}
+          onValueChange={(value) => update({ confed: value })}
         />
       </div>
       <p className="mb-5 text-sm text-muted">{filtered.length} nations</p>

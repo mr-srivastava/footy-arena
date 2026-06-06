@@ -5,6 +5,7 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { FormStrip } from "@/components/form-strip";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { DetailList, DetailListItem } from "@/components/detail-list";
 import { TeamCrest } from "@/components/team-crest";
 import { StatCard } from "@/components/stat-card";
 import type { TeamEditorialInsight } from "@/lib/bsd/insights";
+import type { TeamHistoryEntry } from "@/lib/bsd/enrichment-types";
 import type {
   TeamAnalyticsPayload,
   FormResult,
@@ -29,6 +31,127 @@ function formBadgeClass(result: FormResult) {
     return "border-pitch-bright/30 bg-pitch-bright/12 text-pitch-bright";
   if (result === "D") return "border-gold/30 bg-gold/10 text-gold";
   return "border-red/30 bg-red/10 text-red";
+}
+
+function abbreviateStage(stage: string) {
+  const labels: Record<string, string> = {
+    Winners: "Winners",
+    "Runners-up": "Runners-up",
+    "Third place": "3rd",
+    "Fourth place": "4th",
+    "Semi-finals": "SF",
+    "Quarter-finals": "QF",
+    "Round of 16": "R16",
+    "Group stage": "Groups",
+    "Second group stage": "2nd grp",
+  };
+  return labels[stage] ?? stage;
+}
+
+function stageTone(stage: string) {
+  if (stage === "Winners") {
+    return {
+      tile: "border-gold/45 bg-gold/10 shadow-gold-glow",
+      year: "text-gold",
+      label: "text-gold",
+    };
+  }
+  if (stage === "Runners-up" || stage === "Third place") {
+    return {
+      tile: "border-gold/25 bg-gold/6",
+      year: "text-gold",
+      label: "text-foreground/85",
+    };
+  }
+  if (
+    stage === "Semi-finals" ||
+    stage === "Quarter-finals" ||
+    stage === "Round of 16"
+  ) {
+    return {
+      tile: "border-pitch-bright/28 bg-pitch-bright/8",
+      year: "text-pitch-bright",
+      label: "text-foreground/80",
+    };
+  }
+  return {
+    tile: "border-line-strong bg-black/15",
+    year: "text-foreground",
+    label: "text-muted-foreground",
+  };
+}
+
+function TeamTournamentHistory({ history }: { history: TeamHistoryEntry[] }) {
+  return (
+    <Card variant="artifact" shape="artifact" className="surface-gold-glow">
+      <CardContent className="p-6 md:p-7">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <SubsectionTitle level="panel" icon={Trophy}>
+            TOURNAMENT HISTORY
+          </SubsectionTitle>
+          <p className="type-micro font-semibold uppercase tracking-[var(--tracking-label)] text-muted-foreground">
+            {history.length} {history.length === 1 ? "campaign" : "campaigns"}
+          </p>
+        </div>
+
+        <div className="relative mt-6 min-w-0">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-[2.125rem] z-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-artifact via-artifact/80 to-transparent"
+            aria-hidden
+          />
+          <ol
+            className="history-carousel-track relative z-[1] flex min-w-0 gap-2.5 overflow-x-auto overscroll-x-contain pb-1 pr-6 sm:gap-3"
+            aria-label="World Cup appearances by year"
+          >
+            {history.map((entry) => {
+              const tone = stageTone(entry.stage);
+              const campaignSummary =
+                entry.matches > 0
+                  ? `${entry.stage}, ${entry.matches} matches, ${entry.wins} wins, ${entry.draws} draws, ${entry.losses} losses, ${entry.goalsFor} goals for, ${entry.goalsAgainst} goals against, goal difference ${entry.goalDifference >= 0 ? "+" : ""}${entry.goalDifference}`
+                  : entry.stage;
+
+              return (
+                <li
+                  key={entry.year}
+                  className="history-carousel-slide-item shrink-0 snap-start"
+                >
+                  <div
+                    aria-label={`${entry.year}: ${campaignSummary}`}
+                    title={campaignSummary}
+                    className={cn(
+                      "flex h-[5.5rem] w-[4.75rem] flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center sm:h-[5.75rem] sm:w-[5.25rem]",
+                      tone.tile,
+                    )}
+                  >
+                    <p
+                      className={cn(
+                        "type-broadcast text-[1.5rem] leading-none sm:text-[1.65rem]",
+                        tone.year,
+                      )}
+                    >
+                      {entry.year}
+                    </p>
+                    <p
+                      className={cn(
+                        "type-micro line-clamp-2 font-semibold uppercase leading-snug tracking-[0.08em]",
+                        tone.label,
+                      )}
+                    >
+                      {abbreviateStage(entry.stage)}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 function latestResultsFromAnalytics(
@@ -67,11 +190,11 @@ export function TeamFormBrief({
             TOURNAMENT BRIEF
           </SubsectionTitle>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="space-after-panel-title grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
             {hasForm ? (
               <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
                 <p className="broadcast-label text-gold">Recent form</p>
-                <div className="mt-3 flex flex-wrap items-center gap-4">
+                <div className="space-after-label flex flex-wrap items-center gap-x-4 gap-y-3">
                   <FormStrip results={stats.recentForm} />
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-foreground">
@@ -84,7 +207,7 @@ export function TeamFormBrief({
             ) : (
               <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
                 <p className="broadcast-label text-gold">Recent form</p>
-                <p className="mt-3 text-sm text-muted-foreground">
+                <p className="space-after-label text-sm text-muted-foreground">
                   Form data will appear once recent match results are available.
                 </p>
               </div>
@@ -94,13 +217,13 @@ export function TeamFormBrief({
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
                   <p className="broadcast-label text-gold">Best finish</p>
-                  <p className="mt-3 font-display text-4xl leading-none text-pitch-bright md:text-5xl">
+                  <p className="space-after-label font-display text-4xl leading-none text-pitch-bright md:text-5xl">
                     {editorial.bestFinish}
                   </p>
                 </div>
                 <div className="rounded-2xl border border-line-strong bg-black/15 p-5">
                   <p className="broadcast-label text-gold">Appearances</p>
-                  <p className="mt-3 font-display text-4xl leading-none text-pitch-bright md:text-5xl">
+                  <p className="space-after-label font-display text-4xl leading-none text-pitch-bright md:text-5xl">
                     {editorial.worldCupAppearances}
                   </p>
                 </div>
@@ -147,47 +270,7 @@ export function TeamFormBrief({
       </Card>
 
       {hasEditorial && editorial.history.length > 0 ? (
-        <Card variant="artifact" shape="artifact">
-          <CardContent className="p-6 md:p-7">
-            <SubsectionTitle level="panel" icon={Trophy}>
-              TOURNAMENT HISTORY
-            </SubsectionTitle>
-            <DetailList className="mt-5">
-              {editorial.history.map((entry) => (
-                <DetailListItem
-                  key={entry.year}
-                  className="grid gap-3 py-4 md:grid-cols-[auto_1fr_auto] md:items-center"
-                >
-                  <div>
-                    <p className="font-display text-3xl text-gold">
-                      {entry.year}
-                    </p>
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                      {entry.stage}
-                    </p>
-                  </div>
-                  {entry.matches > 0 ? (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        {entry.matches} matches · {entry.wins}W {entry.draws}D{" "}
-                        {entry.losses}L · {entry.goalsFor}:{entry.goalsAgainst}{" "}
-                        goals
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">
-                        GD {entry.goalDifference >= 0 ? "+" : ""}
-                        {entry.goalDifference}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground md:col-span-2">
-                      {entry.stage}
-                    </p>
-                  )}
-                </DetailListItem>
-              ))}
-            </DetailList>
-          </CardContent>
-        </Card>
+        <TeamTournamentHistory history={editorial.history} />
       ) : null}
     </section>
   );
@@ -197,10 +280,12 @@ export function TeamRecentResults({
   analytics,
   teamId,
   limit = 8,
+  className,
 }: {
   analytics: TeamAnalyticsPayload | null;
   teamId: number;
   limit?: number;
+  className?: string;
 }) {
   if (!analytics?.analytics || teamId === 0) {
     return null;
@@ -215,7 +300,7 @@ export function TeamRecentResults({
   }
 
   return (
-    <section className="mt-10">
+    <section className={cn("mt-10", className)}>
       <div className="mb-6">
         <SubsectionTitle level="panel" icon={CalendarDays}>
           RECENT RESULTS

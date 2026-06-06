@@ -12,6 +12,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { TeamEmblem } from "@/components/team-emblem";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
+import { TeamPageTabs } from "@/components/team-page-tabs";
 import {
   TeamCompetitionBreakdown,
   TeamFormBrief,
@@ -133,49 +134,68 @@ export default async function TeamPage({ params }: PageProps) {
           }
         />
 
-        {narrative ? (
-          <div className="mb-10">
-            <TeamNarrativePanel narrative={narrative} keyPlayers={keyPlayers} />
-          </div>
-        ) : null}
-
-        <TeamFormBrief editorial={editorialInsight} analytics={teamAnalytics} />
-
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
-          <SquadPanelWithQuery
-            slug={code.toLowerCase()}
-            initialSquad={initialSquad}
-            managerAnalytics={teamAnalytics?.manager}
-          />
-
-          <section>
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <SubsectionTitle level="panel" icon={CalendarDays}>
-                  WORLD CUP FIXTURES
-                </SubsectionTitle>
-                <p className="mt-1 text-sm text-muted">
-                  FIFA World Cup 2026 schedule
-                </p>
+        <TeamPageTabs
+          overview={
+            <>
+              {narrative ? (
+                <div className="mb-10">
+                  <TeamNarrativePanel
+                    narrative={narrative}
+                    keyPlayers={keyPlayers}
+                  />
+                </div>
+              ) : null}
+              <TeamFormBrief
+                editorial={editorialInsight}
+                analytics={teamAnalytics}
+              />
+            </>
+          }
+          squad={
+            <SquadPanelWithQuery
+              slug={code.toLowerCase()}
+              initialSquad={initialSquad}
+              managerAnalytics={teamAnalytics?.manager}
+              teamName={team.displayName}
+            />
+          }
+          fixtures={
+            <section>
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div>
+                  <SubsectionTitle level="panel" icon={CalendarDays}>
+                    WORLD CUP FIXTURES
+                  </SubsectionTitle>
+                  <p className="mt-1 text-sm text-muted">
+                    FIFA World Cup 2026 schedule
+                  </p>
+                </div>
+                <span className="text-sm text-muted">
+                  {teamFixtures.length}{" "}
+                  {teamFixtures.length === 1 ? "match" : "matches"}
+                </span>
               </div>
-              <span className="text-sm text-muted">
-                {teamFixtures.length}{" "}
-                {teamFixtures.length === 1 ? "match" : "matches"}
-              </span>
-            </div>
 
-            {teamFixtures.length > 0 ? (
-              <FixtureList fixtures={teamFixtures} byName={byName} />
-            ) : (
-              <p className="text-sm text-muted">
-                No fixtures found for this team yet.
-              </p>
-            )}
-
-            <TeamRecentResults analytics={teamAnalytics} teamId={teamId} />
-            <TeamCompetitionBreakdown analytics={teamAnalytics} />
-          </section>
-        </div>
+              {teamFixtures.length > 0 ? (
+                <FixtureList fixtures={teamFixtures} byName={byName} />
+              ) : (
+                <p className="text-sm text-muted">
+                  No fixtures found for this team yet.
+                </p>
+              )}
+            </section>
+          }
+          form={
+            <>
+              <TeamRecentResults
+                analytics={teamAnalytics}
+                teamId={teamId}
+                className="mt-0"
+              />
+              <TeamCompetitionBreakdown analytics={teamAnalytics} />
+            </>
+          }
+        />
       </ContentContainer>
 
       <SiteFooter />

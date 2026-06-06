@@ -108,6 +108,12 @@
   --tracking-board: 0.22em;
   --tracking-broadcast: 0.045em;
 
+  /* Layout spacing */
+  --space-inline-icon: 0.5rem;
+  --space-label: 0.75rem;
+  --space-panel: 1.5rem;
+  --space-section: 2.5rem;
+
   /* Noise tile for grain overlays */
   --grain-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -139,10 +145,11 @@
   --shadow-gold-glow: var(--shadow-gold-glow);
   --color-teal: var(--teal);
   --color-muted: var(--muted);
-  --font-display: var(--font-bebas);
-  --font-body: var(--font-archivo);
-  --font-heading: var(--font-editorial);
-  --font-sans: var(--font-archivo);
+  --font-display: var(--font-racing);
+  --font-body: var(--font-montserrat);
+  --font-heading: var(--font-montserrat);
+  --font-sans: var(--font-montserrat);
+  --font-editorial: var(--font-montserrat);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -176,7 +183,7 @@ html {
 }
 
 body {
-  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
   font-size: var(--type-body);
   line-height: var(--leading-copy);
   text-rendering: optimizeLegibility;
@@ -221,7 +228,7 @@ body {
 }
 
 .editorial-title {
-  font-family: var(--font-editorial), Georgia, serif;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
   font-weight: 600;
   letter-spacing: var(--tracking-editorial);
   text-wrap: balance;
@@ -277,18 +284,18 @@ body {
 .type-label {
   font-size: var(--type-label);
   font-weight: 650;
-  line-height: 1.2;
+  line-height: 1.35;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .type-micro {
   font-size: var(--type-micro);
-  line-height: 1.2;
+  line-height: 1.35;
 }
 
 .type-broadcast {
-  font-family: var(--font-bebas), Impact, sans-serif;
+  font-family: var(--font-racing), Impact, sans-serif;
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: var(--tracking-broadcast);
@@ -448,9 +455,24 @@ body {
 .broadcast-label {
   font-size: var(--type-label);
   font-weight: 650;
-  line-height: 1.2;
+  line-height: 1.35;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+}
+
+.space-after-panel-title {
+  margin-top: var(--space-panel);
+}
+
+.space-after-label {
+  margin-top: var(--space-label);
+}
+
+.inline-icon-row {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: var(--space-inline-icon);
 }
 
 .content-auto {
@@ -749,6 +771,8 @@ body {
 
 /* -- History carousel (horizontal scroll) -- */
 .history-carousel-track {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;

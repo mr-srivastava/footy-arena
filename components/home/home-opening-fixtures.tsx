@@ -21,10 +21,10 @@ function FixtureCardSkeleton() {
             <Skeleton className="mt-2 h-3 w-16 rounded-sm" />
           </div>
         </div>
-        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-7">
-          <Skeleton className="h-8 w-full rounded-sm" />
+        <div className="relative flex flex-col items-center gap-5 px-5 py-7">
+          <Skeleton className="h-8 w-3/4 rounded-sm" />
           <Skeleton className="size-12 rounded-full" />
-          <Skeleton className="h-8 w-full rounded-sm" />
+          <Skeleton className="h-8 w-3/4 rounded-sm" />
         </div>
         <div className="relative flex items-start gap-2 border-t border-line-soft bg-background/25 px-5 py-3">
           <Skeleton className="mt-0.5 size-3.5 shrink-0 rounded-sm" />

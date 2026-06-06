@@ -1,5 +1,6 @@
 import { CloudSun, Goal, Sparkles, Users } from "lucide-react";
 import type { MatchInsight, MatchLineupSide } from "@/lib/bsd/enrichment-types";
+import { MatchLineupPitch } from "@/components/match-lineup-pitch";
 import { FormStrip } from "@/components/form-strip";
 import { TeamCrest } from "@/components/team-crest";
 import { SubsectionTitle } from "@/components/subsection-title";
@@ -10,7 +11,7 @@ function probabilityLabel(value: number | null) {
   return value == null ? "—" : `${Math.round(value * 100)}%`;
 }
 
-function LineupCard({
+function LineupSideMeta({
   side,
   form,
 }: {
@@ -19,41 +20,44 @@ function LineupCard({
 }) {
   if (!side) {
     return (
-      <Card variant="artifact" shape="artifact">
-        <CardContent className="p-5">
-          <p className="editorial-title type-card-title text-foreground">
-            Lineup pending
-          </p>
-        </CardContent>
-      </Card>
+      <p className="text-sm text-muted-foreground">
+        Lineup pending for this side.
+      </p>
     );
   }
 
   return (
-    <Card variant="artifact" shape="artifact" className="h-full">
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="flex items-center gap-2.5 editorial-title type-card-title text-foreground">
-              <TeamCrest teamId={side.teamId} name={side.teamName} size="sm" />
-              {side.teamName}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {side.formation
-                ? `Formation ${side.formation}`
-                : "Formation pending"}
-            </p>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="inline-icon-row gap-2.5 editorial-title type-card-title text-foreground">
+            <TeamCrest
+              teamId={side.teamId}
+              name={side.teamName}
+              size="sm"
+              className="mt-1 shrink-0"
+            />
+            <span className="min-w-0 text-balance">{side.teamName}</span>
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {side.formation
+              ? `Formation ${side.formation}`
+              : "Formation pending"}
+          </p>
+        </div>
+        <div className="shrink-0">
           <FormStrip results={form} compact />
         </div>
+      </div>
 
-        <div className="mt-5">
-          <p className="broadcast-label text-gold">Projected XI</p>
+      {side.substitutes.length ? (
+        <div>
+          <p className="broadcast-label text-gold">Bench</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {side.players.slice(0, 11).map((player) => (
+            {side.substitutes.map((player) => (
               <Badge
-                key={`${player.name}-${player.playerId ?? "unknown"}`}
-                variant="group"
+                key={`${player.name}-${player.playerId ?? "sub"}`}
+                variant="meta"
                 className="h-auto rounded-sm px-3 py-1"
               >
                 {player.name}
@@ -61,25 +65,25 @@ function LineupCard({
             ))}
           </div>
         </div>
+      ) : null}
 
-        {side.unavailable.length ? (
-          <div className="mt-5">
-            <p className="broadcast-label text-red">Unavailable</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {side.unavailable.map((player) => (
-                <Badge
-                  key={`${player.name}-${player.playerId ?? "out"}`}
-                  variant="code"
-                  className="bg-red/10 text-red"
-                >
-                  {player.name}
-                </Badge>
-              ))}
-            </div>
+      {side.unavailable.length ? (
+        <div>
+          <p className="broadcast-label text-red">Unavailable</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {side.unavailable.map((player) => (
+              <Badge
+                key={`${player.name}-${player.playerId ?? "out"}`}
+                variant="code"
+                className="bg-red/10 text-red"
+              >
+                {player.name}
+              </Badge>
+            ))}
           </div>
-        ) : null}
-      </CardContent>
-    </Card>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -192,16 +196,29 @@ export function MatchInsightPanel({
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <LineupCard
-          side={insight.lineups.home}
-          form={insight.teamInsights.home?.recentForm ?? []}
-        />
-        <LineupCard
-          side={insight.lineups.away}
-          form={insight.teamInsights.away?.recentForm ?? []}
-        />
-      </div>
+      <Card variant="artifact" shape="artifact">
+        <CardContent className="p-5 md:p-6">
+          <SubsectionTitle level="label" icon={Users}>
+            Projected lineups
+          </SubsectionTitle>
+          <div className="mt-5">
+            <MatchLineupPitch
+              home={insight.lineups.home}
+              away={insight.lineups.away}
+            />
+          </div>
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <LineupSideMeta
+              side={insight.lineups.home}
+              form={insight.teamInsights.home?.recentForm ?? []}
+            />
+            <LineupSideMeta
+              side={insight.lineups.away}
+              form={insight.teamInsights.away?.recentForm ?? []}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-3">
         <Card variant="artifact" shape="artifact">

@@ -245,6 +245,10 @@ function mapLineupPlayer(input: unknown): MatchLineupPlayer | null {
   return {
     playerId: safeNumber(value.player_id),
     name,
+    number:
+      safeNumber(value.shirt_number) ??
+      safeNumber(value.jersey_number) ??
+      safeNumber(value.number),
     position: typeof value.position === "string" ? value.position : null,
     rating: safeNumber(value.ai_score) ?? safeNumber(value.rating),
   };

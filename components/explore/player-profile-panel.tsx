@@ -183,9 +183,14 @@ function ClubContext({ player }: { player: ExplorePlayerCard }) {
   return (
     <section className="surface-sage-glow rounded-2xl border border-line-strong p-6 shadow-card md:p-8">
       <SubsectionTitle level="label">At the club</SubsectionTitle>
-      <p className="mt-4 flex items-center gap-3 editorial-title type-card-title text-foreground">
-        <TeamCrest teamId={player.clubTeamId} name={player.club} size="md" />
-        {player.club}
+      <p className="mt-4 inline-icon-row gap-3 editorial-title type-card-title text-foreground">
+        <TeamCrest
+          teamId={player.clubTeamId}
+          name={player.club}
+          size="md"
+          className="mt-1 shrink-0"
+        />
+        <span className="min-w-0 text-balance">{player.club}</span>
       </p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {[player.league, player.clubCountry].filter(Boolean).join(" · ")}

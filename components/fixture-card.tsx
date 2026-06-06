@@ -16,47 +16,39 @@ function TeamName({
   name,
   href,
   teamId,
-  align = "left",
 }: {
   name: string;
   href?: string;
   teamId?: number | null;
-  align?: "left" | "right";
 }) {
   const placeholder = isPlaceholderTeam(name);
   const label = placeholder ? formatPlaceholderTeam(name) : name;
-  const className = cn(
-    "type-broadcast block text-balance text-2xl transition-colors md:text-3xl",
-    align === "right" ? "text-right" : "text-left",
+  const nameClassName = cn(
+    "min-w-0 text-balance text-center",
     placeholder
       ? "font-body text-sm font-medium normal-case leading-snug tracking-normal text-muted-foreground italic md:text-base"
-      : "text-foreground",
+      : "type-broadcast text-xl leading-snug text-foreground md:text-2xl",
   );
+
+  const stackClassName =
+    "flex w-full min-w-0 flex-col items-center gap-2 text-center";
 
   const content = (
     <>
-      <TeamCrest teamId={teamId} name={name} size="md" />
-      <span className="min-w-0">{label}</span>
+      <TeamCrest teamId={teamId} name={name} size="md" className="shrink-0" />
+      <span className={nameClassName}>{label}</span>
     </>
-  );
-
-  const rowClassName = cn(
-    "flex items-center gap-2.5",
-    align === "right" ? "flex-row-reverse" : "flex-row",
   );
 
   if (href && !placeholder) {
     return (
-      <Link
-        href={href}
-        className={cn(className, rowClassName, "hover:text-gold")}
-      >
+      <Link href={href} className={cn(stackClassName, "hover:text-gold")}>
         {content}
       </Link>
     );
   }
 
-  return <span className={cn(className, rowClassName)}>{content}</span>;
+  return <span className={stackClassName}>{content}</span>;
 }
 
 const stageAccent: Record<string, CardAccent> = {
@@ -142,28 +134,15 @@ export function FixtureCard({
           </div>
         </div>
 
-        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-9">
-          <div className="min-w-0">
-            <TeamName name={homeName} href={team1Href} teamId={team1Id} />
-          </div>
+        <div className="relative flex flex-col items-center gap-5 px-6 py-8">
+          <TeamName name={homeName} href={team1Href} teamId={team1Id} />
           <div
-            className="type-broadcast relative flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-background/80 text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
+            className="type-broadcast flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-background/80 text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
             aria-hidden
           >
             VS
           </div>
-          <div className="min-w-0">
-            <TeamName
-              name={awayName}
-              href={team2Href}
-              teamId={team2Id}
-              align="right"
-            />
-          </div>
-          <div
-            className="absolute left-1/2 top-1/2 -z-10 h-px w-full -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-border to-transparent"
-            aria-hidden
-          />
+          <TeamName name={awayName} href={team2Href} teamId={team2Id} />
         </div>
 
         <div className="type-meta relative flex items-start gap-2 border-t border-line-soft bg-white/[0.025] px-6 py-4">

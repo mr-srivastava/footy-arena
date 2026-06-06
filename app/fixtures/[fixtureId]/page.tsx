@@ -61,8 +61,10 @@ export default async function FixtureDetailPage({ params }: PageProps) {
   const insight = await loadMatchInsight(fixture, byName);
   const homeTeam = resolveTeamByName(fixture.team1, byName);
   const awayTeam = resolveTeamByName(fixture.team2, byName);
-  const homeLabel = homeTeam?.displayName ?? resolveTeamDisplayName(fixture.team1);
-  const awayLabel = awayTeam?.displayName ?? resolveTeamDisplayName(fixture.team2);
+  const homeLabel =
+    homeTeam?.displayName ?? resolveTeamDisplayName(fixture.team1);
+  const awayLabel =
+    awayTeam?.displayName ?? resolveTeamDisplayName(fixture.team2);
 
   return (
     <PageShell>

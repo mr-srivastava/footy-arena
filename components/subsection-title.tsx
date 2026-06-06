@@ -1,8 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-
-const panelClass =
-  "editorial-title type-panel-title flex items-center gap-3 text-foreground";
+import { cn } from "@/lib/utils";
 
 const labelToneClass = {
   muted: "text-muted",
@@ -25,17 +23,25 @@ export function SubsectionTitle({
 }) {
   if (level === "panel") {
     return (
-      <h2 className={`${panelClass} ${className}`.trim()}>
+      <h2
+        className={cn(
+          "editorial-title type-panel-title inline-icon-row items-start gap-3 text-foreground",
+          className,
+        )}
+      >
         {Icon ? (
-          <Icon className="h-6 w-6 text-pitch-bright" aria-hidden />
+          <Icon
+            className="mt-1 size-6 shrink-0 text-pitch-bright"
+            aria-hidden
+          />
         ) : null}
-        {children}
+        <span className="min-w-0 text-balance">{children}</span>
       </h2>
     );
   }
 
   return (
-    <h3 className={`type-label ${labelToneClass[tone]} ${className}`.trim()}>
+    <h3 className={cn("type-label", labelToneClass[tone], className)}>
       {children}
     </h3>
   );

@@ -1,13 +1,13 @@
 import { ClipboardList, UserRound } from "lucide-react";
-import Image from "next/image";
 import { DetailList, DetailListItem } from "@/components/detail-list";
+import { PlayerPortrait } from "@/components/player-portrait";
 import { EntityIconFrame, EntityRow } from "@/components/entity-row";
 import { RevealSection } from "@/components/motion/reveal-section";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { TeamCrest } from "@/components/team-crest";
-import { formatPlayerMetaLine, playerImageUrl } from "@/lib/bsd/format";
+import { formatPlayerMetaLine } from "@/lib/bsd/format";
 import type { TeamManagerSummary } from "@/lib/bsd/team-analytics";
 import { squadPlayerListKey } from "@/lib/tournament/map-squad";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
@@ -56,33 +56,6 @@ function mergeManagerProfile(
     careerRecord,
     winPct: analyticsManager?.win_pct ?? squadManager?.winPct,
   };
-}
-
-function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
-  const displayName = player.shortName ?? player.name;
-
-  if (player.bsdPlayerId) {
-    return (
-      <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-line-strong bg-navy-light/60">
-        <Image
-          src={playerImageUrl(player.bsdPlayerId)}
-          alt={displayName}
-          fill
-          className="object-contain p-1"
-          sizes="40px"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface-glass"
-      aria-hidden
-    >
-      <UserRound className="h-4 w-4 text-muted-foreground" />
-    </div>
-  );
 }
 
 function HeadCoachCard({ manager }: { manager: SquadManager }) {
@@ -158,14 +131,14 @@ export function SquadPanel({
           </SubsectionTitle>
 
           {hasPlayers ? (
-            <div className="mt-6 flex flex-col gap-7">
+            <div className="space-after-panel-title flex flex-col gap-7">
               {playersByPosition.map(({ position, label, players }) =>
                 players.length > 0 ? (
                   <div key={position}>
                     <SubsectionTitle level="label" tone="gold">
                       {label}
                     </SubsectionTitle>
-                    <DetailList className="mt-3">
+                    <DetailList className="space-after-label">
                       {players.map((player, index) => (
                         <DetailListItem
                           key={squadPlayerListKey(player, index)}
@@ -173,17 +146,26 @@ export function SquadPanel({
                         >
                           <EntityRow
                             href={`/players/${player.profileSlug}`}
-                            leading={<SquadPlayerAvatar player={player} />}
+                            leading={
+                              <PlayerPortrait
+                                playerId={player.bsdPlayerId}
+                                name={player.shortName ?? player.name}
+                                variant="list"
+                              />
+                            }
                             title={player.shortName ?? player.name}
                             titleClassName="editorial-title text-2xl normal-case tracking-normal"
                             meta={
-                              <span className="flex items-center gap-2">
+                              <span className="inline-icon-row flex-wrap items-center gap-x-2 gap-y-1">
                                 <TeamCrest
                                   teamId={player.clubTeamId}
                                   name={player.club}
                                   size="xs"
+                                  className="mt-0.5"
                                 />
-                                {squadPlayerMeta(player)}
+                                <span className="min-w-0 text-pretty">
+                                  {squadPlayerMeta(player)}
+                                </span>
                               </span>
                             }
                             trailing={

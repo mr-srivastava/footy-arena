@@ -30,16 +30,10 @@ type TournamentStat = {
   icon: keyof typeof STAT_ICONS;
 };
 
-function CountUp({ value }: { value: number }) {
-  const prefersReducedMotion = useReducedMotion();
-  const [count, setCount] = useState(prefersReducedMotion ? value : 0);
+function AnimatedCountUp({ value }: { value: number }) {
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setCount(value);
-      return;
-    }
-
     const duration = 900;
     const start = performance.now();
     let frame = 0;
@@ -55,9 +49,15 @@ function CountUp({ value }: { value: number }) {
 
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [value, prefersReducedMotion]);
+  }, [value]);
 
   return <>{count}</>;
+}
+
+function CountUp({ value }: { value: number }) {
+  const prefersReducedMotion = useReducedMotion();
+  if (prefersReducedMotion) return <>{value}</>;
+  return <AnimatedCountUp value={value} />;
 }
 
 export function TournamentBoard({ stats }: { stats: TournamentStat[] }) {
@@ -81,26 +81,26 @@ export function TournamentBoard({ stats }: { stats: TournamentStat[] }) {
         {stats.map((stat, index) => {
           const Icon = STAT_ICONS[stat.icon];
           return (
-          <motion.div
-            key={stat.label}
-            className="p-3 md:p-5"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: prefersReducedMotion ? 0 : 0.12 + index * 0.07,
-              duration: 0.55,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            <Icon
-              className="mb-3 h-3.5 w-3.5 text-pitch-bright/75 md:mb-8 md:h-4 md:w-4"
-              aria-hidden
-            />
-            <p className="font-display text-3xl leading-none text-pitch-bright md:text-5xl">
-              <CountUp value={stat.value} />
-            </p>
-            <p className="type-stat-label mt-2">{stat.label}</p>
-          </motion.div>
+            <motion.div
+              key={stat.label}
+              className="p-3 md:p-5"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: prefersReducedMotion ? 0 : 0.12 + index * 0.07,
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <Icon
+                className="mb-3 h-3.5 w-3.5 text-pitch-bright/75 md:mb-8 md:h-4 md:w-4"
+                aria-hidden
+              />
+              <p className="font-display text-3xl leading-none text-pitch-bright md:text-5xl">
+                <CountUp value={stat.value} />
+              </p>
+              <p className="type-stat-label mt-2">{stat.label}</p>
+            </motion.div>
           );
         })}
       </CardContent>

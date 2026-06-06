@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { SquadPanel } from "@/components/squad-panel";
+import { TeamPotentialLineupPitch } from "@/components/team-lineup-pitch";
 import { DetailList, DetailListItem } from "@/components/detail-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,10 +74,12 @@ export function SquadPanelWithQuery({
   slug,
   initialSquad,
   managerAnalytics,
+  teamName,
 }: {
   slug: string;
   initialSquad: TeamSquad;
   managerAnalytics?: TeamManagerSummary | null;
+  teamName?: string;
 }) {
   const {
     data: squad = initialSquad,
@@ -89,7 +92,20 @@ export function SquadPanelWithQuery({
   }
 
   return (
-    <div className={isFetching ? "opacity-80 transition-opacity" : undefined}>
+    <div
+      className={
+        isFetching
+          ? "flex flex-col gap-6 opacity-80 transition-opacity"
+          : "flex flex-col gap-6"
+      }
+    >
+      {teamName ? (
+        <TeamPotentialLineupPitch
+          squad={squad}
+          teamName={teamName}
+          managerAnalytics={managerAnalytics}
+        />
+      ) : null}
       <SquadPanel squad={squad} managerAnalytics={managerAnalytics} />
     </div>
   );

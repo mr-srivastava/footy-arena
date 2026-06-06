@@ -41,7 +41,7 @@ export function EntityRow({
         {meta ? (
           <div
             className={cn(
-              "type-label mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground",
+              "type-label mt-2 min-w-0 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-muted-foreground",
               metaClassName,
             )}
           >

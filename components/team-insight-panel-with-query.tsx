@@ -1,9 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import type { TeamEditorialInsight } from "@/lib/bsd/insights";
+import { MESSAGES } from "@/lib/copy/messages";
 import {
   TeamCompetitionBreakdown,
   TeamFormBrief,
@@ -13,7 +16,8 @@ import { teamInsightQueryOptions } from "@/lib/query/team-insight";
 
 function TeamFormBriefSkeleton({ hasEditorial }: { hasEditorial: boolean }) {
   return (
-    <section className="mb-10 flex flex-col gap-6">
+    <section className="mb-10 flex flex-col gap-6" aria-busy="true">
+      <span className="sr-only">{MESSAGES.loading}</span>
       <Card variant="artifact" shape="artifact" className="surface-sage-glow">
         <CardContent className="p-6 md:p-7">
           <Skeleton className="h-3 w-36 rounded-sm" />
@@ -43,6 +47,7 @@ function TeamFormBriefSkeleton({ hasEditorial }: { hasEditorial: boolean }) {
 function TeamFormTabSkeleton() {
   return (
     <>
+      <span className="sr-only">{MESSAGES.loading}</span>
       <section className="mt-0">
         <Skeleton className="mb-6 h-6 w-40 rounded-sm" />
         <div className="flex flex-col gap-3">
@@ -81,12 +86,27 @@ export function TeamFormTabWithQuery({
   slug: string;
   teamId: number;
 }) {
-  const { data: analytics, isPending } = useQuery(
-    teamInsightQueryOptions(slug),
-  );
+  const pathname = usePathname();
+  const {
+    data: analytics,
+    isPending,
+    isError,
+  } = useQuery(teamInsightQueryOptions(slug));
 
   if (isPending) {
     return <TeamFormTabSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {MESSAGES.formDataError}{" "}
+        <Link href={pathname} className="text-gold hover:text-foreground">
+          Open Overview
+        </Link>
+        .
+      </p>
+    );
   }
 
   return (

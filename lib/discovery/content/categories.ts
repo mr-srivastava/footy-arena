@@ -60,12 +60,14 @@ export const LOST_GLORIES: LostGloryEntry[] = [
     hopeForTheFuture: "Musiala and Wirtz could define the next era.",
   },
   {
-    nation: "Italy",
-    then: "One of football's greatest tournament nations.",
+    nation: "Uruguay",
+    fifaCode: "URU",
+    then: "Two-time world champions and perennial South American heavyweights.",
     whatChanged:
-      "Failure to consistently qualify for major tournaments exposed structural issues.",
-    currentStatus: "Searching for attacking identity and consistency.",
-    hopeForTheFuture: "Young technical midfielders and tactical evolution.",
+      "Aging core and increased competition across CONMEBOL have narrowed their margin for error.",
+    currentStatus: "Still tactically sharp, fighting to reclaim elite status.",
+    hopeForTheFuture:
+      "A blend of European-based experience and emerging South American talent.",
   },
   {
     nation: "Brazil",
@@ -98,12 +100,14 @@ export const RISING_UNDERDOGS: RisingUnderdogEntry[] = [
     whyCasualFansShouldWatch: "Capable of upsetting major football powers.",
   },
   {
-    nation: "Georgia",
+    nation: "Canada",
+    fifaCode: "CAN",
     whyTheyMatter:
-      "Emerging football nation driven by individual star quality.",
-    keyIdentity: "Fearless attacking football.",
-    breakoutPlayerSlugs: ["khvicha-kvaratskhelia"],
-    whyCasualFansShouldWatch: "Passionate underdog energy.",
+      "A co-host nation with a rapidly improving generation pushing beyond regional expectations.",
+    keyIdentity: "Pace, physicality, and growing tactical confidence.",
+    breakoutPlayerSlugs: ["alphonso-davies", "jonathan-david"],
+    whyCasualFansShouldWatch:
+      "Home support and a fearless style make every Canada match an event.",
   },
 ];
 

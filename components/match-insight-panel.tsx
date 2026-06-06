@@ -1,5 +1,6 @@
 import { CloudSun, Goal, Sparkles, Users } from "lucide-react";
 import type { MatchInsight, MatchLineupSide } from "@/lib/bsd/enrichment-types";
+import { MESSAGES } from "@/lib/copy/messages";
 import { MatchLineupPitch } from "@/components/match-lineup-pitch";
 import { FormStrip } from "@/components/form-strip";
 import { TeamCrest } from "@/components/team-crest";
@@ -102,8 +103,7 @@ export function MatchInsightPanel({
             MATCH INTEL
           </SubsectionTitle>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            BSD enrichment is not available for this fixture yet. The match
-            shell still uses the confirmed World Cup schedule.
+            {MESSAGES.matchInsightsPending}
           </p>
         </CardContent>
       </Card>
@@ -301,7 +301,7 @@ export function MatchInsightPanel({
             </p>
             {insight.prediction?.predictedResult ? (
               <p className="mt-3 text-sm text-foreground">
-                Likeliest result:{" "}
+                Projected result:{" "}
                 <span className="font-semibold">
                   {insight.prediction.predictedResult}
                 </span>

@@ -8,11 +8,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TeamManagerSummary } from "@/lib/bsd/team-analytics";
 import { teamSquadQueryOptions } from "@/lib/query/team-squad";
+import { MESSAGES } from "@/lib/copy/messages";
 import type { TeamSquad } from "@/lib/tournament/types";
 
 function SquadPanelSkeleton() {
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6" aria-busy="true">
+      <span className="sr-only">{MESSAGES.loading}</span>
       <Card
         variant="elevated"
         shape="artifact"

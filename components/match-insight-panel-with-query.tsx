@@ -4,11 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { MatchInsightPanel } from "@/components/match-insight-panel";
+import { MESSAGES } from "@/lib/copy/messages";
 import { matchInsightQueryOptions } from "@/lib/query/match-insight";
 
 function MatchInsightPanelSkeleton() {
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6" aria-busy="true">
+      <span className="sr-only">{MESSAGES.loading}</span>
       <Card variant="artifact" shape="artifact">
         <CardContent className="p-6 md:p-7">
           <Skeleton className="h-3 w-32 rounded-sm" />

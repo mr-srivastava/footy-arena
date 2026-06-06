@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { MESSAGES } from "@/lib/copy/messages";
 import { OPENFOOTBALL_REPO } from "@/lib/openfootball/constants";
 
 export function OpenFootballLink({
@@ -15,7 +16,7 @@ export function OpenFootballLink({
       rel="noopener noreferrer"
       className={className}
     >
-      openfootball
+      {MESSAGES.openFootballLink}
       {showIcon ? <ExternalLink className="h-3.5 w-3.5" aria-hidden /> : null}
     </a>
   );

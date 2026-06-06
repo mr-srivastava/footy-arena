@@ -14,6 +14,7 @@ import { DetailList, DetailListItem } from "@/components/detail-list";
 import { TeamCrest } from "@/components/team-crest";
 import { StatCard } from "@/components/stat-card";
 import type { TeamEditorialInsight } from "@/lib/bsd/insights";
+import { MESSAGES } from "@/lib/copy/messages";
 import type { TeamHistoryEntry } from "@/lib/bsd/enrichment-types";
 import type {
   TeamAnalyticsPayload,
@@ -296,7 +297,21 @@ export function TeamRecentResults({
     limit,
   );
   if (latestResults.length === 0) {
-    return null;
+    return (
+      <section className={cn("mt-10", className)}>
+        <div className="mb-6">
+          <SubsectionTitle level="panel" icon={CalendarDays}>
+            RECENT RESULTS
+          </SubsectionTitle>
+          <p className="mt-1 text-sm text-muted">
+            All competitions · finished matches
+          </p>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {MESSAGES.recentResultsEmpty}
+        </p>
+      </section>
+    );
   }
 
   return (

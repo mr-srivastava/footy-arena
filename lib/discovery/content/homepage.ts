@@ -30,7 +30,7 @@ export const HOMEPAGE_MODULES: HomepageModule[] = [
       },
       {
         title: "Football Cultures",
-        description: "How nations play - distinct identities and philosophies.",
+        description: "How nations play · distinct identities and philosophies.",
         href: "/explore/tactical-identities",
       },
     ],
@@ -104,7 +104,7 @@ export const CATCH_UP_TOPICS: CatchUpTopic[] = [
       "Club football became dominated by their teams - Barcelona, Real Madrid, and later PSG and Al-Nassr.",
       "International football finally saw both win major trophies - Argentina in 2021 and 2022, Portugal's Euro 2016.",
       "A new generation grew up watching them, learning skills and mentality that didn't exist before.",
-      "This World Cup may be the last chapter of that era - making every moment count.",
+      "This World Cup may mark a late chapter of that era — making every moment count.",
     ],
   },
   {

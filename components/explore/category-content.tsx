@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { ExplorePlayersGrid } from "@/components/explore/explore-players-grid";
 import { LostGloriesGrid } from "@/components/explore/lost-glories-grid";
 import { RisingUnderdogsGrid } from "@/components/explore/rising-underdogs-grid";
 import { TacticalIdentitiesGrid } from "@/components/explore/tactical-identities-grid";
+import { MESSAGES } from "@/lib/copy/messages";
 import type { DiscoveryCategorySlug } from "@/lib/discovery/types";
 import type { Team } from "@/lib/openfootball/types";
 
@@ -37,7 +39,13 @@ export function CategoryContent({
       ) : null}
 
       {!SPECIALIZED_CATEGORY_SLUGS.has(slug) && playerSlugs.length === 0 ? (
-        <p className="text-muted">Content coming soon for this category.</p>
+        <p className="text-muted">
+          {MESSAGES.categoryEmpty}{" "}
+          <Link href="/explore" className="text-gold hover:text-foreground">
+            Back to Explore
+          </Link>
+          .
+        </p>
       ) : null}
     </>
   );

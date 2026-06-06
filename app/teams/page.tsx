@@ -13,7 +13,7 @@ import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
 export const revalidate = 1800;
 
 export const metadata: Metadata = {
-  title: "Teams - Footy Arena",
+  title: "Teams · Footy Arena",
   description:
     "All 48 nations at FIFA World Cup 2026 - flags, groups, confederations, and squad info.",
 };
@@ -60,7 +60,7 @@ export default async function TeamsPage() {
               />
               <StatCard
                 value={linkedTeams}
-                label="Linked squads"
+                label="Live squads"
                 icon={Users}
                 accent="text-teal"
               />

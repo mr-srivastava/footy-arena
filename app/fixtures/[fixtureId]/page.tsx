@@ -31,14 +31,14 @@ export async function generateMetadata({
   const fixture = getFixtureById(fixtures, fixtureId);
 
   if (!fixture) {
-    return { title: "Match - Footy Arena" };
+    return { title: "Match · Footy Arena" };
   }
 
   const home = resolveTeamDisplayName(fixture.team1);
   const away = resolveTeamDisplayName(fixture.team2);
 
   return {
-    title: `${home} vs ${away} - Footy Arena`,
+    title: `${home} vs ${away} · Footy Arena`,
     description: `${fixture.stageLabel} match briefing for ${home} vs ${away}.`,
   };
 }

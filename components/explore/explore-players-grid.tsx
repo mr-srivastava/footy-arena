@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { EnrichedPlayerCard } from "@/components/explore/enriched-player-card";
 import { PlayerSpotlightCardSkeleton } from "@/components/player-spotlight-card";
+import { MESSAGES } from "@/lib/copy/messages";
 import { explorePlayersQueryOptions } from "@/lib/query/explore-players";
 
 function ExplorePlayersSkeleton({ count }: { count: number }) {
@@ -18,12 +19,14 @@ function ExplorePlayersSkeleton({ count }: { count: number }) {
 type ExplorePlayersGridProps = {
   slugs: string[];
   emptyMessage?: string;
+  errorMessage?: string;
   className?: string;
 };
 
 export function ExplorePlayersGrid({
   slugs,
-  emptyMessage = "Players will appear here once matching squad records are available from BSD.",
+  emptyMessage = MESSAGES.playersCollectionPending,
+  errorMessage = MESSAGES.playersLoadError,
   className = "lazy-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3",
 }: ExplorePlayersGridProps) {
   const {
@@ -38,13 +41,18 @@ export function ExplorePlayersGrid({
 
   if (isPending) {
     return (
-      <div className={className}>
+      <div className={className} aria-busy="true">
+        <span className="sr-only">{MESSAGES.loading}</span>
         <ExplorePlayersSkeleton count={Math.min(slugs.length, 6)} />
       </div>
     );
   }
 
-  if (isError || players.length === 0) {
+  if (isError) {
+    return <p className="text-sm text-muted-foreground">{errorMessage}</p>;
+  }
+
+  if (players.length === 0) {
     return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
   }
 

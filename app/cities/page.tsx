@@ -10,7 +10,7 @@ import { StatCard } from "@/components/stat-card";
 import { HOST_CITIES } from "@/lib/cities";
 
 export const metadata: Metadata = {
-  title: "Host Cities - Footy Arena",
+  title: "Host Cities · Footy Arena",
   description:
     "A field guide to the 16 cities hosting the FIFA World Cup 2026.",
 };

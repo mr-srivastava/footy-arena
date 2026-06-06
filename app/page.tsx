@@ -48,7 +48,7 @@ export default function Home() {
         {startJourney ? (
           <PageSection id="discover" variant="editorial">
             <SectionHeading
-              eyebrow="Discovery-first"
+              eyebrow="Where to start"
               title="START YOUR JOURNEY"
               icon={Compass}
             >

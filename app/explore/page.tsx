@@ -12,6 +12,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StoryTemplateCard } from "@/components/story-template-card";
+import { MESSAGES } from "@/lib/copy/messages";
 import {
   DISCOVERY_COLLECTIONS,
   EXPLORE_HERO_IMAGE,
@@ -23,7 +24,7 @@ import {
 } from "@/lib/discovery";
 
 export const metadata: Metadata = {
-  title: "Explore - Footy Arena",
+  title: "Explore · Footy Arena",
   description:
     "Discover World Cup 2026 through stories, players, collections, and curated narratives.",
 };
@@ -47,7 +48,7 @@ export default function ExplorePage() {
           }
           icon={Compass}
           titleClassName="md:text-7xl"
-          subtitle="Curated stories and live squad intelligence to help you discover the tournament."
+          subtitle="Curated stories and squad updates to help you discover the tournament."
           bannerImage={EXPLORE_HERO_IMAGE}
           bannerAlt="World Cup atmosphere"
         />
@@ -75,7 +76,7 @@ export default function ExplorePage() {
 
         <PageSection variant="dense">
           <SectionHeading
-            eyebrow="New to football?"
+            eyebrow="Catch Me Up"
             title={catchMeUp.title.toUpperCase()}
           />
           <div className="grid gap-3 sm:grid-cols-2">
@@ -93,7 +94,7 @@ export default function ExplorePage() {
           <SectionHeading eyebrow="Editorial picks" title="FEATURED PLAYERS" />
           <ExplorePlayersGrid
             slugs={featuredPlayerSlugs}
-            emptyMessage="Featured players will appear here once World Cup squads are available from BSD."
+            emptyMessage={MESSAGES.playersPending}
           />
         </PageSection>
 

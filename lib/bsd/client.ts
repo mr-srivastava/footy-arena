@@ -14,7 +14,7 @@ export function hasBsdToken() {
   return Boolean(process.env.BSD_API_TOKEN?.trim());
 }
 
-export function isAllowedBsdPath(path: string) {
+function isAllowedBsdPath(path: string) {
   const normalized = path.replace(/^\/+|\/+$/g, "");
   return BSD_ALLOWED_PATH_PREFIXES.some(
     (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
@@ -36,7 +36,10 @@ export async function bsdFetch<T>(
     throw new BsdApiError("Path not allowed", 400);
   }
 
-  const url = new URL(pathname.endsWith("/") ? pathname : `${pathname}/`, BSD_BASE_URL);
+  const url = new URL(
+    pathname.endsWith("/") ? pathname : `${pathname}/`,
+    BSD_BASE_URL,
+  );
   const query = normalized.includes("?") ? normalized.split("?")[1] : null;
   if (query) url.search = query;
 

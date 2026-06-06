@@ -1,4 +1,4 @@
-export type BsdPlayerAttributes = {
+type BsdPlayerAttributes = {
   position: string;
   tactical: number;
   attacking: number;
@@ -29,7 +29,7 @@ export type BsdPlayerListItem = {
   weaknesses?: string[];
 };
 
-export type BsdLeagueListItem = {
+type BsdLeagueListItem = {
   id: number;
   name: string;
   country: string;
@@ -100,7 +100,7 @@ export type NormalizedPlayer = {
   } | null;
 };
 
-export type ConvexPlayerSnapshot = {
+export type TeamPlayerSeed = {
   id: string;
   name: string;
   jerseyNumber: number | null;
@@ -113,17 +113,20 @@ export type ConvexPlayerSnapshot = {
   clubCountry: string;
   positionGroup: string;
   isCaptain: boolean;
+  countryId?: string;
+  previousWorldCupsCount?: number;
+  previousWorldCupsList?: string[];
 };
 
-export type ConvexCountrySnapshot = {
+export type TeamIdentity = {
   slug: string;
   displayName: string;
   fifaCode: string;
   groupLetter: string;
 };
 
-export type BsdMatchStrategy = 'club' | 'national' | 'consensus';
-export type BsdMatchConfidence = 'high' | 'medium' | 'low';
+export type BsdMatchStrategy = "club" | "national" | "consensus";
+export type BsdMatchConfidence = "high" | "medium" | "low";
 
 export type BsdPlayerMatchMeta = {
   bsdPlayerId: number | null;
@@ -136,4 +139,126 @@ export type BsdPlayerResolution = {
   team: BsdTeamListItem | null;
   bsdPlayer: BsdPlayerListItem | null;
   match: BsdPlayerMatchMeta;
+};
+
+export type FormResult = "W" | "D" | "L";
+
+export type PlayerAppearanceSummary = {
+  eventId: number | null;
+  eventDate: string;
+  teamName: string | null;
+  opponentName: string | null;
+  opponentTeamId: number | null;
+  isHome: boolean | null;
+  result: FormResult | null;
+  minutes: number | null;
+  rating: number | null;
+  goals: number;
+  assists: number;
+};
+
+export type PlayerNationalTeamRecord = {
+  nationalTeamId: number | null;
+  caps: number;
+  goals: number;
+  lastAppearance: string | null;
+};
+
+export type PlayerPerformance = {
+  playerId: number;
+  availability: string | null;
+  formRating: number | null;
+  seasonAverageRating: number | null;
+  recentAppearances: PlayerAppearanceSummary[];
+  nationalTeamRecord: PlayerNationalTeamRecord | null;
+  strengths: string[];
+  weaknesses: string[];
+};
+
+export type TeamHistoryEntry = {
+  year: string;
+  matches: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  stage: string;
+};
+
+export type TeamInsight = {
+  teamId: number | null;
+  teamName: string;
+  recentForm: FormResult[];
+  recentRecord: string;
+  unbeatenStreak: number;
+  winlessStreak: number;
+  goalsForRecent: number;
+  goalsAgainstRecent: number;
+  worldCupAppearances: number;
+  bestFinish: string;
+  history: TeamHistoryEntry[];
+};
+
+export type FixtureBsdMapping = {
+  fixtureId: string;
+  bsdEventId: number;
+  confidence: BsdMatchConfidence;
+  homeTeamId: number | null;
+  awayTeamId: number | null;
+  lastResolvedAt: string;
+};
+
+export type MatchPrediction = {
+  homeWinProbability: number | null;
+  drawProbability: number | null;
+  awayWinProbability: number | null;
+  predictedResult: "H" | "D" | "A" | null;
+  confidence: number | null;
+};
+
+export type MatchLineupPlayer = {
+  playerId: number | null;
+  name: string;
+  number: number | null;
+  position: string | null;
+  rating: number | null;
+};
+
+export type MatchLineupSide = {
+  teamId: number | null;
+  teamName: string;
+  formation: string | null;
+  players: MatchLineupPlayer[];
+  substitutes: MatchLineupPlayer[];
+  unavailable: MatchLineupPlayer[];
+};
+
+export type MatchInsight = {
+  eventId: number;
+  fixtureId: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamId: number | null;
+  awayTeamId: number | null;
+  eventDate: string;
+  status: string | null;
+  venueId: number | null;
+  venueName: string | null;
+  weatherDescription: string | null;
+  temperatureC: number | null;
+  travelDistanceKm: number | null;
+  aiPreview: string | null;
+  funFacts: string[];
+  lineupStatus: string | null;
+  prediction: MatchPrediction | null;
+  lineups: {
+    home: MatchLineupSide | null;
+    away: MatchLineupSide | null;
+  };
+  teamInsights: {
+    home: TeamInsight | null;
+    away: TeamInsight | null;
+  };
 };

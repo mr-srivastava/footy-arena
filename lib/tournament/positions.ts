@@ -1,6 +1,6 @@
 import type { PlayerPosition } from "./types";
 
-export const POSITION_TO_GROUP: Record<string, PlayerPosition> = {
+const POSITION_TO_GROUP: Record<string, PlayerPosition> = {
   Goalkeeper: "GK",
   Defender: "DF",
   Midfielder: "MF",

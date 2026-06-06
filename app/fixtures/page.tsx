@@ -2,14 +2,20 @@ import { Calendar, CalendarDays, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { ContentContainer } from "@/components/content-container";
 import { FixtureList } from "@/components/fixture-list";
+import { FixtureFilters } from "@/components/fixtures/fixture-filters";
 import { OpenFootballLink } from "@/components/openfootball-link";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
-import { getFixtureStageCounts, getWorldCupFixtures } from "@/lib/openfootball/fixtures";
+import {
+  getFixtureStageCounts,
+  getWorldCupFixtures,
+} from "@/lib/openfootball/fixtures";
 import { getWorldCupTeams } from "@/lib/openfootball/teams";
+
+export const revalidate = 1800;
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -27,12 +33,28 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function FixturesPage() {
+type PageProps = {
+  searchParams: Promise<{ date?: string; stage?: string }>;
+};
+
+export default async function FixturesPage({ searchParams }: PageProps) {
+  const filters = await searchParams;
   const [{ tournament, fixtures, byDate }, { byName }] = await Promise.all([
     getWorldCupFixtures(),
     getWorldCupTeams(),
   ]);
   const { groupMatches, knockoutMatches } = getFixtureStageCounts(fixtures);
+  const visibleDays = byDate
+    .filter((day) => !filters.date || day.date === filters.date)
+    .map((day) => ({
+      ...day,
+      matches: day.matches.filter((fixture) => {
+        if (!filters.stage) return true;
+        if (filters.stage === "knockout") return fixture.stage !== "group";
+        return fixture.stage === filters.stage;
+      }),
+    }))
+    .filter((day) => day.matches.length > 0);
 
   return (
     <PageShell>
@@ -78,13 +100,20 @@ export default async function FixturesPage() {
           }
         />
 
-        <div className="space-y-14">
-          {byDate.map((day, dayIndex) => (
+        <FixtureFilters
+          dates={byDate.map((day) => ({
+            value: day.date,
+            label: day.dateLabel,
+          }))}
+        />
+
+        <div className="flex flex-col gap-14">
+          {visibleDays.map((day, dayIndex) => (
             <section key={day.date} id={day.date}>
               <div className="sticky top-17 z-20 -mx-6 border-b border-pitch/15 bg-background/92 px-6 py-4 backdrop-blur-xl md:top-18">
                 <div className="flex items-center gap-4">
                   <span
-                    className="hidden font-display text-4xl leading-none text-white/8 sm:block"
+                    className="hidden font-display text-4xl leading-none text-watermark sm:block"
                     aria-hidden
                   >
                     {String(dayIndex + 1).padStart(2, "0")}
@@ -111,6 +140,16 @@ export default async function FixturesPage() {
               />
             </section>
           ))}
+          {visibleDays.length === 0 ? (
+            <div className="rounded-2xl border border-line-strong bg-artifact-muted px-6 py-14 text-center">
+              <p className="editorial-title type-panel-title">
+                No fixtures in this view
+              </p>
+              <p className="mt-3 text-sm text-muted">
+                Clear the filters to return to the full tournament schedule.
+              </p>
+            </div>
+          ) : null}
         </div>
       </ContentContainer>
 

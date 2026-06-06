@@ -1,124 +1,202 @@
 import { ClipboardList, UserRound } from "lucide-react";
-import Image from "next/image";
+import { DetailList, DetailListItem } from "@/components/detail-list";
+import { PlayerPortrait } from "@/components/player-portrait";
+import { EntityIconFrame, EntityRow } from "@/components/entity-row";
+import { RevealSection } from "@/components/motion/reveal-section";
 import { SubsectionTitle } from "@/components/subsection-title";
-import { formatMarketValueEur, playerImageUrl } from "@/lib/bsd/format";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { TeamCrest } from "@/components/team-crest";
+import { formatPlayerMetaLine } from "@/lib/bsd/format";
+import type { TeamManagerSummary } from "@/lib/bsd/team-analytics";
+import { squadPlayerListKey } from "@/lib/tournament/map-squad";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
-import type { SquadPlayer, TeamSquad } from "@/lib/tournament/types";
-import { artifactSurface } from "@/lib/utils";
+import type {
+  SquadManager,
+  SquadPlayer,
+  TeamSquad,
+} from "@/lib/tournament/types";
 
 function squadPlayerMeta(player: SquadPlayer) {
-  const marketValue = formatMarketValueEur(player.marketValueEur);
+  return formatPlayerMetaLine({
+    detailedPosition: player.detailedPosition,
+    club: player.club,
+    age: player.age,
+    heightCm: player.heightCm,
+    preferredFoot: player.preferredFoot,
+    marketValueEur: player.marketValueEur,
+    includeClubWhenPositionMissing: true,
+  });
+}
 
-  return [
-    player.detailedPosition ?? player.club,
-    player.club && player.detailedPosition ? player.club : null,
-    player.age ? `Age ${player.age}` : null,
-    player.heightCm ? `${player.heightCm} cm` : null,
-    player.preferredFoot ? `${player.preferredFoot} foot` : null,
-    marketValue,
+function availabilityLabel(value: string | null | undefined) {
+  if (!value || value === "available") return null;
+  return value.replace(/_/g, " ");
+}
+
+function mergeManagerProfile(
+  squadManager: SquadManager | undefined,
+  analyticsManager: TeamManagerSummary | null | undefined,
+): SquadManager | undefined {
+  const name = squadManager?.name ?? analyticsManager?.name;
+  if (!name) return undefined;
+
+  const nationality = squadManager?.nationality ?? analyticsManager?.country;
+  const careerRecord = analyticsManager
+    ? `${analyticsManager.wins}-${analyticsManager.draws}-${analyticsManager.losses}`
+    : squadManager?.careerRecord;
+
+  return {
+    name,
+    nationality,
+    preferredFormation:
+      analyticsManager?.preferred_formation ?? squadManager?.preferredFormation,
+    tacticalProfile:
+      analyticsManager?.tactical_profile ?? squadManager?.tacticalProfile,
+    careerRecord,
+    winPct: analyticsManager?.win_pct ?? squadManager?.winPct,
+  };
+}
+
+function HeadCoachCard({ manager }: { manager: SquadManager }) {
+  const tacticalLine = [
+    manager.preferredFormation,
+    manager.tacticalProfile ? manager.tacticalProfile.replace(/_/g, " ") : null,
   ]
     .filter(Boolean)
     .join(" · ");
-}
 
-function SquadPlayerAvatar({ player }: { player: SquadPlayer }) {
-  const displayName = player.shortName ?? player.name;
-
-  if (player.bsdPlayerId) {
-    return (
-      <div className="relative size-10 shrink-0 overflow-hidden rounded-sm border border-white/10 bg-navy-light/60">
-        <Image
-          src={playerImageUrl(player.bsdPlayerId)}
-          alt={displayName}
-          fill
-          className="object-contain p-1"
-          sizes="40px"
-        />
-      </div>
-    );
-  }
+  const statsLine = [
+    manager.careerRecord ? `Career ${manager.careerRecord}` : null,
+    manager.winPct != null ? `${manager.winPct}% win rate` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <div
-      className="flex size-10 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-white/5"
-      aria-hidden
-    >
-      <UserRound className="h-4 w-4 text-muted-foreground" />
-    </div>
+    <Card variant="elevated" shape="artifact" className="surface-gold-glow">
+      <CardContent className="p-6">
+        <SubsectionTitle level="label">Head coach</SubsectionTitle>
+        <div className="mt-3 flex items-center gap-4">
+          <EntityIconFrame className="border-gold/25 bg-gold/10">
+            <UserRound className="h-6 w-6 text-gold" aria-hidden />
+          </EntityIconFrame>
+          <div>
+            <p className="editorial-title type-card-title text-foreground">
+              {manager.name}
+            </p>
+            {manager.nationality ? (
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {manager.nationality}
+              </p>
+            ) : null}
+            {tacticalLine ? (
+              <p className="mt-1 text-sm capitalize text-muted-foreground">
+                {tacticalLine}
+              </p>
+            ) : null}
+            {statsLine ? (
+              <p className="mt-1 text-sm text-muted-foreground">{statsLine}</p>
+            ) : null}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
-export function SquadPanel({ squad }: { squad: TeamSquad }) {
+export function SquadPanel({
+  squad,
+  managerAnalytics,
+}: {
+  squad: TeamSquad;
+  managerAnalytics?: TeamManagerSummary | null;
+}) {
   const playersByPosition = groupPlayersByPosition(squad);
   const hasPlayers = squad.players.length > 0;
+  const coach = mergeManagerProfile(squad.manager, managerAnalytics);
 
   return (
-    <section className="flex flex-col gap-6">
-      {squad.manager ? (
-        <article className={artifactSurface("bg-artifact-muted p-5")}>
-            <SubsectionTitle level="label">Head coach</SubsectionTitle>
-            <div className="mt-3 flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-sm border border-gold/25 bg-gold/10">
-                <UserRound className="h-6 w-6 text-gold" aria-hidden />
-              </div>
-              <div>
-                <p className="font-display text-2xl tracking-wide text-foreground">
-                  {squad.manager.name.toUpperCase()}
-                </p>
-                {squad.manager.nationality ? (
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {squad.manager.nationality}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-        </article>
-      ) : null}
+    <RevealSection className="flex flex-col gap-6">
+      {coach ? <HeadCoachCard manager={coach} /> : null}
 
-      <article className={artifactSurface("bg-artifact-muted p-5")}>
+      <Card
+        variant="elevated"
+        shape="artifact"
+        className="bg-artifact-muted/90"
+      >
+        <CardContent className="p-6 md:p-7">
           <SubsectionTitle level="panel" icon={ClipboardList}>
             SQUAD
           </SubsectionTitle>
 
           {hasPlayers ? (
-            <div className="mt-6 flex flex-col gap-7">
+            <div className="space-after-panel-title flex flex-col gap-7">
               {playersByPosition.map(({ position, label, players }) =>
                 players.length > 0 ? (
                   <div key={position}>
                     <SubsectionTitle level="label" tone="gold">
                       {label}
                     </SubsectionTitle>
-                    <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
-                      {players.map((player) => (
-                        <li key={`${player.name}-${player.number ?? ""}`}>
-                          <div className="flex items-center justify-between gap-3 py-3">
-                            <div className="flex min-w-0 items-center gap-3">
-                              <SquadPlayerAvatar player={player} />
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-medium text-foreground">
-                                    {player.shortName ?? player.name}
-                                  </p>
-                                  {player.isCaptain ? (
-                                    <span className="rounded-sm bg-gold/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-gold">
-                                      C
-                                    </span>
-                                  ) : null}
-                                </div>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
+                    <DetailList className="space-after-label">
+                      {players.map((player, index) => (
+                        <DetailListItem
+                          key={squadPlayerListKey(player, index)}
+                          className="py-0"
+                        >
+                          <EntityRow
+                            href={`/players/${player.profileSlug}`}
+                            leading={
+                              <PlayerPortrait
+                                playerId={player.bsdPlayerId}
+                                name={player.shortName ?? player.name}
+                                variant="list"
+                              />
+                            }
+                            title={player.shortName ?? player.name}
+                            titleClassName="editorial-title text-2xl normal-case tracking-normal"
+                            meta={
+                              <span className="inline-icon-row flex-wrap items-center gap-x-2 gap-y-1">
+                                <TeamCrest
+                                  teamId={player.clubTeamId}
+                                  name={player.club}
+                                  size="xs"
+                                  className="mt-0.5"
+                                />
+                                <span className="min-w-0 text-pretty">
                                   {squadPlayerMeta(player)}
-                                </p>
-                              </div>
-                            </div>
-                            {player.number ? (
-                              <span className="rounded-sm bg-white/5 px-2 py-1 font-mono text-xs text-muted-foreground">
-                                {player.number}
+                                </span>
                               </span>
-                            ) : null}
-                          </div>
-                        </li>
+                            }
+                            trailing={
+                              <div className="flex items-center gap-2">
+                                {player.isCaptain ? (
+                                  <Badge
+                                    variant="code"
+                                    className="bg-gold/15 text-gold"
+                                  >
+                                    C
+                                  </Badge>
+                                ) : null}
+                                {availabilityLabel(player.availability) ? (
+                                  <Badge
+                                    variant="code"
+                                    className="bg-red/12 text-red"
+                                  >
+                                    {availabilityLabel(player.availability)}
+                                  </Badge>
+                                ) : null}
+                                {player.number ? (
+                                  <Badge variant="code">{player.number}</Badge>
+                                ) : null}
+                              </div>
+                            }
+                            showChevron={false}
+                            className="grid-cols-[auto_1fr_auto] gap-3 py-3"
+                          />
+                        </DetailListItem>
                       ))}
-                    </ul>
+                    </DetailList>
                   </div>
                 ) : null,
               )}
@@ -130,7 +208,8 @@ export function SquadPanel({ squad }: { squad: TeamSquad }) {
                 : "Squad and coaching staff to be confirmed closer to the tournament."}
             </p>
           )}
-      </article>
-    </section>
+        </CardContent>
+      </Card>
+    </RevealSection>
   );
 }

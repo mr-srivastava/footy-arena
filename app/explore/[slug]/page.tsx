@@ -24,7 +24,9 @@ export function generateStaticParams() {
   return getDiscoveryCategorySlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = getDiscoveryCategory(slug);
   if (!category) return { title: "Explore - Footy Arena" };
@@ -35,7 +37,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ExploreCategoryPage({ params }: PageProps) {
-  const [{ slug }, { byCode }] = await Promise.all([params, getWorldCupTeams()]);
+  const [{ slug }, { byCode }] = await Promise.all([
+    params,
+    getWorldCupTeams(),
+  ]);
   const category = getDiscoveryCategory(slug);
   if (!category) notFound();
 
@@ -62,9 +67,13 @@ export default async function ExploreCategoryPage({ params }: PageProps) {
           />
         </PageHero>
 
-        <CategoryContent slug={category.slug} playerSlugs={playerSlugs} byCode={byCode} />
+        <CategoryContent
+          slug={category.slug}
+          playerSlugs={playerSlugs}
+          byCode={byCode}
+        />
 
-        <div className="mt-16 border-t border-white/8 pt-10">
+        <div className="mt-16 border-t border-line-soft pt-10">
           <p className="text-sm text-muted">More to discover</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <DiscoveryCard

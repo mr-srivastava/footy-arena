@@ -5,9 +5,10 @@ export function TeamFlag({
 }: {
   flag: string;
   name: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
 }) {
   const sizeClass = {
+    xs: "text-base",
     sm: "text-xl",
     md: "text-3xl",
     lg: "text-4xl",

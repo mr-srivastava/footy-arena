@@ -12,13 +12,13 @@ import {
   NEXT_GENERATION_SLUGS,
   PLAYERS_TO_WATCH_SLUGS,
   RISING_UNDERDOGS,
-} from "./seed/categories";
-import { DISCOVERY_COLLECTIONS } from "./seed/collections";
-import { CATCH_UP_TOPICS, HOMEPAGE_MODULES } from "./seed/homepage";
-import { MATCH_STORY_TEMPLATES } from "./seed/match-templates";
-import { METRIC_TRANSLATIONS } from "./seed/metrics";
-import { PLAYERS } from "./seed/players";
-import { TEAM_NARRATIVES } from "./seed/teams";
+} from "./content/categories";
+import { DISCOVERY_COLLECTIONS } from "./content/collections";
+import { CATCH_UP_TOPICS, HOMEPAGE_MODULES } from "./content/homepage";
+import { MATCH_STORY_TEMPLATES } from "./content/match-templates";
+import { METRIC_TRANSLATIONS } from "./content/metrics";
+import { PLAYERS } from "./content/players";
+import { TEAM_NARRATIVES } from "./content/teams";
 
 const playersBySlug = new Map(PLAYERS.map((player) => [player.slug, player]));
 const narrativesByCode = new Map(
@@ -58,7 +58,7 @@ export function getAllPlayers(): PlayerProfile[] {
   return PLAYERS;
 }
 
-export function getFeaturedPlayers(): PlayerProfile[] {
+function getFeaturedPlayers(): PlayerProfile[] {
   return PLAYERS.filter((player) => player.featured);
 }
 
@@ -76,9 +76,7 @@ export function getPlayersBySlugs(slugs: string[]): PlayerProfile[] {
     .filter((player): player is PlayerProfile => player !== undefined);
 }
 
-export function getTeamNarrative(
-  fifaCode: string,
-): TeamNarrative | undefined {
+export function getTeamNarrative(fifaCode: string): TeamNarrative | undefined {
   return narrativesByCode.get(fifaCode.toUpperCase());
 }
 
@@ -98,9 +96,7 @@ export function getDiscoveryCollection(
   return collectionsBySlug.get(slug);
 }
 
-export function getCategoryPlayerSlugs(
-  slug: DiscoveryCategorySlug,
-): string[] {
+export function getCategoryPlayerSlugs(slug: DiscoveryCategorySlug): string[] {
   switch (slug) {
     case "next-generation":
       return NEXT_GENERATION_SLUGS;
@@ -127,4 +123,4 @@ export {
   getNationImage,
   getTeamNarrativeImage,
 } from "./images";
-export { getFotmobPlayerImageUrl, getPlayerImage } from "./player-images";
+export { getPlayerImage } from "./player-images";

@@ -1,4 +1,5 @@
 import {
+  Activity,
   Calendar,
   Footprints,
   MapPin,
@@ -10,32 +11,32 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import {
+  DetailList,
+  DetailListItem,
+  DetailListRow,
+} from "@/components/detail-list";
 import { StatCard } from "@/components/stat-card";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
+import { TeamCrest } from "@/components/team-crest";
 import { formatMarketValueEur } from "@/lib/bsd/format";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
-import { artifactSurface } from "@/lib/utils";
-
-function ProfileDetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <li className="flex items-baseline justify-between gap-4 py-3 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-medium text-foreground">{value}</span>
-    </li>
-  );
-}
 
 function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   const marketValue = formatMarketValueEur(player.marketValueEur);
   const stats = [
+    player.formRating != null
+      ? { label: "Form", value: player.formRating.toFixed(2), icon: Activity }
+      : null,
+    player.seasonAverageRating != null
+      ? {
+          label: "Season",
+          value: player.seasonAverageRating.toFixed(2),
+          icon: TrendingUp,
+        }
+      : null,
     player.jerseyNumber != null
       ? { label: "Shirt", value: String(player.jerseyNumber), icon: Shirt }
       : null,
@@ -53,6 +54,13 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
           icon: Trophy,
         }
       : null,
+    player.nationalTeamRecord
+      ? {
+          label: "Caps / Goals",
+          value: `${player.nationalTeamRecord.caps}/${player.nationalTeamRecord.goals}`,
+          icon: Trophy,
+        }
+      : null,
   ].filter(Boolean) as Array<{
     label: string;
     value: string;
@@ -64,30 +72,128 @@ function HeadlineStats({ player }: { player: ExplorePlayerCard }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-5 border-y border-white/8 py-5">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat) => (
         <StatCard
           key={stat.label}
           label={stat.label}
           value={stat.value}
           icon={stat.icon}
-          layout="inline"
+          layout="stacked"
         />
       ))}
     </div>
   );
 }
 
+function FormGuide({ player }: { player: ExplorePlayerCard }) {
+  if (!player.recentAppearances?.length) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-8">
+      <SubsectionTitle level="label" tone="gold">
+        Form guide
+      </SubsectionTitle>
+      <DetailList className="mt-4">
+        {player.recentAppearances.map((appearance, index) => {
+          const details = [
+            appearance.rating != null
+              ? `Rating ${appearance.rating.toFixed(1)}`
+              : null,
+            appearance.goals
+              ? `${appearance.goals} goal${appearance.goals === 1 ? "" : "s"}`
+              : null,
+            appearance.assists
+              ? `${appearance.assists} assist${appearance.assists === 1 ? "" : "s"}`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(" · ");
+
+          return (
+            <DetailListItem
+              key={`${appearance.eventId ?? "appearance"}-${index}`}
+              className="flex items-center justify-between gap-4 text-sm"
+            >
+              <span className="flex min-w-0 items-center gap-2.5 text-muted-foreground">
+                <TeamCrest
+                  teamId={appearance.opponentTeamId}
+                  name={appearance.opponentName ?? undefined}
+                  size="sm"
+                />
+                <span className="min-w-0 truncate">
+                  {appearance.opponentName ?? "Opponent TBC"}
+                  {details ? ` · ${details}` : ""}
+                </span>
+              </span>
+              <span className="shrink-0 font-medium text-foreground">
+                {appearance.result ?? "—"}
+              </span>
+            </DetailListItem>
+          );
+        })}
+      </DetailList>
+    </section>
+  );
+}
+
+function PerformanceDetail({ player }: { player: ExplorePlayerCard }) {
+  if (!(player.strengths?.length || player.weaknesses?.length)) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-8">
+      <SubsectionTitle level="label">Performance detail</SubsectionTitle>
+      {player.strengths?.length ? (
+        <div className="mt-4">
+          <p className="broadcast-label text-gold">Strengths</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {player.strengths.map((item) => (
+              <Badge
+                key={item}
+                variant="group"
+                className="h-auto rounded-sm px-3 py-1"
+              >
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {player.weaknesses?.length ? (
+        <div className="mt-5">
+          <p className="broadcast-label text-red">Watchouts</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {player.weaknesses.map((item) => (
+              <Badge key={item} variant="code" className="bg-red/10 text-red">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function ClubContext({ player }: { player: ExplorePlayerCard }) {
   return (
-    <section className="border-l border-pitch-bright/45 pl-4">
+    <section className="surface-sage-glow rounded-2xl border border-line-strong p-6 shadow-card md:p-8">
       <SubsectionTitle level="label">At the club</SubsectionTitle>
-      <p className="mt-2 font-display text-2xl tracking-wide text-foreground">
-        {player.club.toUpperCase()}
+      <p className="mt-4 inline-icon-row gap-3 editorial-title type-card-title text-foreground">
+        <TeamCrest
+          teamId={player.clubTeamId}
+          name={player.club}
+          size="md"
+          className="mt-1 shrink-0"
+        />
+        <span className="min-w-0 text-balance">{player.club}</span>
       </p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {player.league}
-        {player.clubCountry ? ` · ${player.clubCountry}` : ""}
+        {[player.league, player.clubCountry].filter(Boolean).join(" · ")}
       </p>
       <p className="mt-3 text-sm text-muted-foreground">
         {player.detailedPosition || player.position}
@@ -120,117 +226,112 @@ function SecondaryDetails({ player }: { player: ExplorePlayerCard }) {
       <SubsectionTitle level="label" tone="gold">
         More detail
       </SubsectionTitle>
-      <ul className="mt-3 divide-y divide-white/8 border-y border-white/8">
+      <DetailList className="mt-3">
         {rows.map(([label, value]) => (
-          <ProfileDetailRow key={label} label={label} value={value} />
+          <DetailListRow key={label} label={label} value={value} />
         ))}
-      </ul>
+      </DetailList>
     </section>
   );
 }
 
 export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
-  const hasEditorial = Boolean(
-    player.editorial?.whyExcited ||
-      player.editorial?.watchFor ||
-      player.editorial?.similarEnergy,
-  );
-
   return (
-    <article className={artifactSurface("p-6 md:p-8")}>
-      <div className="flex flex-col gap-8">
-        <HeadlineStats player={player} />
+    <div className="flex flex-col gap-12">
+      <HeadlineStats player={player} />
 
-        <ClubContext player={player} />
-
-        {!hasEditorial ? (
-          <section>
-            <SubsectionTitle level="panel" icon={Sparkles}>
-              IN THE SQUAD
-            </SubsectionTitle>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              {exploreCardSubtitle(player)}
-            </p>
-          </section>
-        ) : null}
-
-        {player.editorial?.whyExcited ? (
-          <section>
-            <SubsectionTitle level="panel" icon={Sparkles}>
-              WHY PEOPLE ARE EXCITED
-            </SubsectionTitle>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              {player.editorial.whyExcited}
-            </p>
-          </section>
-        ) : null}
-
-        {player.editorial?.watchFor ? (
-          <section className="border-l border-gold/35 pl-4">
-            <SubsectionTitle level="label" tone="accent">
-              Watch for
-            </SubsectionTitle>
-            <p className="mt-2 text-base leading-relaxed text-foreground/90">
-              {player.editorial.watchFor}
-            </p>
-          </section>
-        ) : null}
-
-        {player.editorial?.similarEnergy ? (
-          <section>
-            <SubsectionTitle level="label">Similar energy</SubsectionTitle>
-            <p className="mt-2 text-base italic leading-relaxed text-gold">
-              {player.editorial.similarEnergy}
-            </p>
-          </section>
-        ) : null}
-
-        <SecondaryDetails player={player} />
-
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          {player.isCaptain ? (
-            <Badge variant="group" className="h-auto gap-1.5 rounded-sm px-3 py-1">
-              <Shield className="h-3.5 w-3.5" aria-hidden />
-              Captain
-            </Badge>
+      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+        <article className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card md:p-9">
+          <p className="section-eyebrow">
+            <Sparkles className="size-4" />
+            Player file
+          </p>
+          <h2 className="editorial-title type-section-title mt-4">
+            {player.editorial?.whyExcited
+              ? "Why the tournament is watching"
+              : "In the squad"}
+          </h2>
+          <p className="mt-6 text-lg leading-relaxed text-muted">
+            {player.editorial?.whyExcited ?? exploreCardSubtitle(player)}
+          </p>
+          {player.editorial?.watchFor ? (
+            <div className="mt-8 border-l-2 border-gold pl-5">
+              <p className="broadcast-label text-gold">Watch for</p>
+              <p className="mt-3 text-lg leading-relaxed text-foreground/90">
+                {player.editorial.watchFor}
+              </p>
+            </div>
           ) : null}
-          {player.enriched ? (
-            <Badge variant="group" className="h-auto gap-1.5 rounded-sm px-3 py-1">
-              <Footprints className="h-3.5 w-3.5" aria-hidden />
-              Live squad data
-            </Badge>
+          {player.editorial?.similarEnergy ? (
+            <p className="mt-8 border-t border-line-soft pt-6 font-heading text-2xl italic text-gold">
+              “{player.editorial.similarEnergy}”
+            </p>
           ) : null}
-          <Link
-            href={player.teamHref}
-            className="inline-flex items-center gap-2 rounded-sm border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
-          >
-            <MapPin className="h-4 w-4" aria-hidden />
-            View {player.nation} at the World Cup
-          </Link>
+        </article>
+
+        <div className="flex flex-col gap-6">
+          <ClubContext player={player} />
+          <section className="rounded-2xl border border-line-strong bg-artifact-muted p-6 shadow-card">
+            <SecondaryDetails player={player} />
+          </section>
         </div>
       </div>
-    </article>
+
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <FormGuide player={player} />
+        <PerformanceDetail player={player} />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line-strong bg-artifact-muted p-5">
+        {player.isCaptain ? (
+          <Badge
+            variant="group"
+            className="h-auto gap-1.5 rounded-sm px-3 py-1"
+          >
+            <Shield className="h-3.5 w-3.5" aria-hidden />
+            Captain
+          </Badge>
+        ) : null}
+        {player.enriched ? (
+          <Badge
+            variant="group"
+            className="h-auto gap-1.5 rounded-sm px-3 py-1"
+          >
+            <Footprints className="h-3.5 w-3.5" aria-hidden />
+            Live squad data
+          </Badge>
+        ) : null}
+        <Link
+          href={player.teamHref}
+          className="inline-flex items-center gap-2 rounded-full border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
+        >
+          <MapPin className="h-4 w-4" aria-hidden />
+          View {player.nation} at the World Cup
+        </Link>
+      </div>
+    </div>
   );
 }
 
 export function PlayerHeroBadges({ player }: { player: ExplorePlayerCard }) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <span className="rounded-sm border border-white/10 bg-navy/85 px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
+      <Badge variant="meta" className="gap-1.5">
+        <TeamCrest
+          teamId={player.nationBsdTeamId}
+          name={player.nation}
+          size="xs"
+        />
         {player.nation}
-      </span>
-      <span className="rounded-sm border border-white/10 bg-navy/85 px-2.5 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-        {player.position}
-      </span>
+      </Badge>
+      <Badge variant="playerMeta">{player.position}</Badge>
       {player.isCaptain ? (
-        <span className="rounded-sm bg-gold/15 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-gold">
+        <Badge variant="code" className="bg-gold/15 text-gold">
           Captain
-        </span>
+        </Badge>
       ) : null}
       {player.jerseyNumber != null ? (
-        <span className="rounded-sm bg-white/5 px-2 py-1 font-mono text-xs text-muted-foreground">
-          #{player.jerseyNumber}
-        </span>
+        <Badge variant="code">#{player.jerseyNumber}</Badge>
       ) : null}
     </div>
   );

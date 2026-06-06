@@ -1,6 +1,12 @@
 "use client";
 
-import { CalendarDays, Compass, LayoutGrid, Users } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  Compass,
+  LayoutGrid,
+  Users,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,6 +16,7 @@ const navLinks: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/teams", label: "Teams", icon: Users },
   { href: "/groups", label: "Groups", icon: LayoutGrid },
   { href: "/fixtures", label: "Fixtures", icon: CalendarDays },
+  { href: "/cities", label: "Cities", icon: Building2 },
 ];
 
 function isNavActive(pathname: string, href: string): boolean {
@@ -20,15 +27,19 @@ function isNavActive(pathname: string, href: string): boolean {
 function navLinkClass(active: boolean, mobile: boolean) {
   if (mobile) {
     return active
-      ? "flex items-center gap-2 rounded-sm border border-gold/25 bg-gold/8 px-4 py-3 text-sm text-gold"
-      : "flex items-center gap-2 rounded-sm border border-transparent px-4 py-3 text-sm text-muted transition-colors hover:border-white/10 hover:bg-white/5 hover:text-foreground";
+      ? "flex items-center gap-2 rounded-xl border border-gold/25 bg-gold/8 px-4 py-3 text-sm text-gold"
+      : "flex items-center gap-2 rounded-xl border border-transparent px-4 py-3 text-sm text-muted transition-colors hover:border-line-strong hover:bg-surface-glass hover:text-foreground";
   }
   return active
-    ? "flex items-center gap-1.5 border-b border-gold/60 pb-1 text-gold"
-    : "flex items-center gap-1.5 border-b border-transparent pb-1 transition-colors hover:border-white/20 hover:text-gold";
+    ? "flex items-center gap-1.5 rounded-full bg-gold/10 px-3 py-2 text-gold"
+    : "flex items-center gap-1.5 rounded-full px-3 py-2 transition-colors hover:bg-surface-glass hover:text-foreground";
 }
 
-export function SiteNav({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
+export function SiteNav({
+  variant = "desktop",
+}: {
+  variant?: "desktop" | "mobile";
+}) {
   const pathname = usePathname();
   const mobile = variant === "mobile";
 

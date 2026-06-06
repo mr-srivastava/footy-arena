@@ -7,18 +7,17 @@ type TacticalIdentitiesGridProps = {
   byCode: Map<string, Team>;
 };
 
-export function TacticalIdentitiesGrid({ byCode }: TacticalIdentitiesGridProps) {
+export function TacticalIdentitiesGrid({
+  byCode,
+}: TacticalIdentitiesGridProps) {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       {TEAM_NARRATIVE_ENTRIES.map(({ narrative, keyPlayers }) => {
         const team = byCode.get(narrative.fifaCode);
 
         return (
-          <div key={narrative.fifaCode} className="space-y-4">
-            <TeamNarrativePanel
-              narrative={narrative}
-              keyPlayers={keyPlayers}
-            />
+          <div key={narrative.fifaCode} className="flex flex-col gap-4">
+            <TeamNarrativePanel narrative={narrative} keyPlayers={keyPlayers} />
             {team ? (
               <Link
                 href={`/teams/${team.slug}`}

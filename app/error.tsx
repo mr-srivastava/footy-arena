@@ -3,7 +3,6 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
-import { artifactSurface } from "@/lib/utils";
 
 export default function Error({
   error,
@@ -18,11 +17,14 @@ export default function Error({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6">
-      <div className="pointer-events-none absolute inset-0 hero-glow" aria-hidden />
-      <div className={artifactSurface("relative z-10 max-w-md p-8 text-center")}>
-        <AlertCircle className="mx-auto h-12 w-12 text-gold" aria-hidden />
-        <h1 className="mt-6 font-display text-4xl tracking-wide">
-          MATCH DATA UNAVAILABLE
+      <div
+        className="pointer-events-none absolute inset-0 hero-glow"
+        aria-hidden
+      />
+      <section className="relative z-10 max-w-xl rounded-2xl border border-line-strong bg-artifact-muted p-8 text-center shadow-board md:p-12">
+        <AlertCircle className="mx-auto size-12 text-gold" aria-hidden />
+        <h1 className="editorial-title type-section-title mt-6">
+          Match data unavailable
         </h1>
         <p className="mt-4 text-muted">
           We couldn&apos;t load fixture data right now. The schedule may be
@@ -32,19 +34,19 @@ export default function Error({
           <button
             type="button"
             onClick={reset}
-            className="btn-shine flex items-center gap-2 rounded-sm px-6 py-3 text-sm font-semibold text-white"
+            className="btn-shine flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white"
           >
-            <RefreshCw className="h-4 w-4" aria-hidden />
+            <RefreshCw className="size-4" aria-hidden />
             Try again
           </button>
           <Link
             href="/"
-            className="rounded-sm border border-white/10 px-6 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground"
+            className="rounded-full border border-line-strong px-6 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground"
           >
             Back to home
           </Link>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

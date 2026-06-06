@@ -1,4 +1,3 @@
-import { fetchQuery } from "convex/nextjs";
 import { Globe2, LayoutGrid, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { ContentContainer } from "@/components/content-container";
@@ -8,9 +7,10 @@ import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StatCard } from "@/components/stat-card";
-import { TeamCard } from "@/components/team-card";
-import { api } from "@/convex/_generated/api";
+import { TeamDirectory } from "@/components/teams/team-directory";
 import { GROUP_LETTERS, getWorldCupTeams } from "@/lib/openfootball/teams";
+
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: "Teams - Footy Arena",
@@ -19,10 +19,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TeamsPage() {
-  const [{ teams }, announcedManagers] = await Promise.all([
-    getWorldCupTeams(),
-    fetchQuery(api.squads.countAnnounced, {}),
-  ]);
+  const { teams } = await getWorldCupTeams();
+  const linkedTeams = teams.filter((team) => team.bsdTeamId != null).length;
   const confederations = new Set(teams.map((team) => team.confed)).size;
 
   return (
@@ -61,8 +59,8 @@ export default async function TeamsPage() {
                 icon={Globe2}
               />
               <StatCard
-                value={announcedManagers}
-                label="Managers listed"
+                value={linkedTeams}
+                label="Linked squads"
                 icon={Users}
                 accent="text-teal"
               />
@@ -70,11 +68,7 @@ export default async function TeamsPage() {
           }
         />
 
-        <div className="reveal-grid lazy-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
-            <TeamCard key={team.fifa_code} team={team} />
-          ))}
-        </div>
+        <TeamDirectory teams={teams} />
       </ContentContainer>
 
       <SiteFooter

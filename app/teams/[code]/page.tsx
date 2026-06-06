@@ -6,34 +6,37 @@ import { ContentContainer } from "@/components/content-container";
 import { FixtureList } from "@/components/fixture-list";
 import { PageHero } from "@/components/page-hero";
 import { PageShell } from "@/components/page-shell";
-import { SquadPanelWithQuery } from "@/components/squad-panel-with-query";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SubsectionTitle } from "@/components/subsection-title";
-import { TeamFlag } from "@/components/team-flag";
+import { TeamEmblem } from "@/components/team-emblem";
 import { TeamNarrativePanel } from "@/components/team-narrative-panel";
+import { TeamPageTabs } from "@/components/team-page-tabs";
+import {
+  TeamFormBriefWithQuery,
+  TeamFormTabWithQuery,
+} from "@/components/team-insight-panel-with-query";
+import { TeamSquadTabWithQuery } from "@/components/team-squad-tab-with-query";
 import { Button } from "@/components/ui/button";
-import { fetchQuery } from "convex/nextjs";
-import { api } from "@/convex/_generated/api";
+import { loadTeamEditorialInsight } from "@/lib/bsd/insights";
 import { getPlayersBySlugs, getTeamNarrative } from "@/lib/discovery";
 import { getWorldCupFixtures } from "@/lib/openfootball/fixtures";
-import {
-  getTeamFixtures,
-  getWorldCupTeams,
-} from "@/lib/openfootball/teams";
-import { mapConvexSquad } from "@/lib/tournament/map-squad";
+import { getTeamFixtures, getWorldCupTeams } from "@/lib/openfootball/teams";
+
+export const revalidate = 1800;
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{ code: string }>;
 };
 
-export async function generateStaticParams() {
-  const { teams } = await getWorldCupTeams();
-  return teams.map((team) => ({ code: team.slug }));
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const [{ code }, { byCode }] = await Promise.all([params, getWorldCupTeams()]);
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const [{ code }, { byCode }] = await Promise.all([
+    params,
+    getWorldCupTeams(),
+  ]);
   const team = [...byCode.values()].find((t) => t.slug === code.toLowerCase());
 
   if (!team) {
@@ -56,20 +59,14 @@ export default async function TeamPage({ params }: PageProps) {
   const team = [...byCode.values()].find((t) => t.slug === code.toLowerCase());
   if (!team) notFound();
 
-  const teamPageData = await fetchQuery(api.teams.getTeamPageData, {
-    slug: code.toLowerCase(),
-  });
-
-  const initialSquad = mapConvexSquad(
-    teamPageData?.squad ?? null,
-    teamPageData?.players ?? [],
-  );
-
+  const editorialInsight = loadTeamEditorialInsight(team);
   const narrative = getTeamNarrative(team.fifa_code);
   const keyPlayers = narrative
     ? getPlayersBySlugs(narrative.keyPlayerSlugs)
     : [];
   const teamFixtures = getTeamFixtures(fixtures, team);
+  const teamId = team.bsdTeamId ?? 0;
+  const slug = code.toLowerCase();
 
   return (
     <PageShell>
@@ -82,13 +79,14 @@ export default async function TeamPage({ params }: PageProps) {
           backLabel="All teams"
           eyebrow={team.groupLabel}
           leading={
-            <TeamFlag
+            <TeamEmblem
+              bsdTeamId={team.bsdTeamId}
               flag={team.flag_icon}
               name={team.displayName}
               size="xl"
             />
           }
-          title={team.displayName.toUpperCase()}
+          title={team.displayName}
           meta={
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
               <span className="font-mono uppercase tracking-wider">
@@ -117,35 +115,54 @@ export default async function TeamPage({ params }: PageProps) {
           }
         />
 
-        {narrative ? (
-          <div className="mb-10">
-            <TeamNarrativePanel narrative={narrative} keyPlayers={keyPlayers} />
-          </div>
-        ) : null}
+        <TeamPageTabs
+          overview={
+            <>
+              {narrative ? (
+                <div className="mb-10">
+                  <TeamNarrativePanel
+                    narrative={narrative}
+                    keyPlayers={keyPlayers}
+                  />
+                </div>
+              ) : null}
+              <TeamFormBriefWithQuery
+                slug={slug}
+                editorial={editorialInsight}
+              />
+            </>
+          }
+          squad={
+            <TeamSquadTabWithQuery slug={slug} teamName={team.displayName} />
+          }
+          fixtures={
+            <section>
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div>
+                  <SubsectionTitle level="panel" icon={CalendarDays}>
+                    WORLD CUP FIXTURES
+                  </SubsectionTitle>
+                  <p className="mt-1 text-sm text-muted">
+                    FIFA World Cup 2026 schedule
+                  </p>
+                </div>
+                <span className="text-sm text-muted">
+                  {teamFixtures.length}{" "}
+                  {teamFixtures.length === 1 ? "match" : "matches"}
+                </span>
+              </div>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
-          <SquadPanelWithQuery slug={code.toLowerCase()} initialSquad={initialSquad} />
-
-          <section>
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <SubsectionTitle level="panel" icon={CalendarDays}>
-                FIXTURES
-              </SubsectionTitle>
-              <span className="text-sm text-muted">
-                {teamFixtures.length}{" "}
-                {teamFixtures.length === 1 ? "match" : "matches"}
-              </span>
-            </div>
-
-            {teamFixtures.length > 0 ? (
-              <FixtureList fixtures={teamFixtures} byName={byName} />
-            ) : (
-              <p className="text-sm text-muted">
-                No fixtures found for this team yet.
-              </p>
-            )}
-          </section>
-        </div>
+              {teamFixtures.length > 0 ? (
+                <FixtureList fixtures={teamFixtures} byName={byName} />
+              ) : (
+                <p className="text-sm text-muted">
+                  No fixtures found for this team yet.
+                </p>
+              )}
+            </section>
+          }
+          form={<TeamFormTabWithQuery slug={slug} teamId={teamId} />}
+        />
       </ContentContainer>
 
       <SiteFooter />

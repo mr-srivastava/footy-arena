@@ -10,7 +10,6 @@ import {
   PlayerHeroBadges,
   PlayerProfilePanel,
 } from "@/components/explore/player-profile-panel";
-import { getPlayerImage } from "@/lib/discovery";
 import { exploreCardSubtitle } from "@/lib/explore/load-players";
 import type { ExplorePlayerCard } from "@/lib/explore/types";
 import { explorePlayersQueryOptions } from "@/lib/query/explore-players";
@@ -74,7 +73,7 @@ export function PlayerProfileView({
   const player = players?.[0] ?? initialPlayer;
 
   const displayName = player.shortName ?? player.name;
-  const imageSrc = player.imageUrl ?? getPlayerImage(player.slug);
+  const imageSrc = player.imageUrl;
   const headline = player.editorial?.archetype
     ? player.editorial.archetype
     : exploreCardSubtitle(player);

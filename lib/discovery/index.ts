@@ -123,4 +123,3 @@ export {
   getNationImage,
   getTeamNarrativeImage,
 } from "./images";
-export { getPlayerImage } from "./player-images";

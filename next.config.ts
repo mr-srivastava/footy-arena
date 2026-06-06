@@ -9,12 +9,6 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "images.fotmob.com",
-        pathname: "/image_resources/playerimages/**",
-        search: "",
-      },
-      {
-        protocol: "https",
         hostname: "sports.bzzoiro.com",
         pathname: "/img/**",
       },

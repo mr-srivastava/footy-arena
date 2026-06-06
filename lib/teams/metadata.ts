@@ -23,8 +23,16 @@ export function teamSlugFromName(name: string) {
   return normalizeTeamName(name).replace(/\s+/g, "-");
 }
 
+export function tryGetTeamMetadata(name: string) {
+  return metadataByName.get(normalizeTeamName(name));
+}
+
+export function resolveTeamDisplayName(name: string) {
+  return tryGetTeamMetadata(name)?.displayName ?? name;
+}
+
 export function getTeamMetadata(name: string) {
-  const metadata = metadataByName.get(normalizeTeamName(name));
+  const metadata = tryGetTeamMetadata(name);
   if (!metadata) {
     throw new Error(`Missing team metadata for ${name}`);
   }

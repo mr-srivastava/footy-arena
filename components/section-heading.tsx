@@ -2,6 +2,11 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 /**
+ * Typography casing:
+ * - Section titles: uppercase (broadcast/editorial display).
+ * - Team and player names: `editorial-title` in title case — never `.toUpperCase()`.
+ * - Stats and labels: `type-broadcast` / `type-label` / Bebas.
+ *
  * Title accents: emphasize words with `text-pitch-bright` on the span.
  * Navigation and CTAs use `text-gold`, not title accent colors.
  */

@@ -104,7 +104,7 @@ export default async function TeamPage({ params }: PageProps) {
               size="xl"
             />
           }
-          title={team.displayName.toUpperCase()}
+          title={team.displayName}
           meta={
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
               <span className="font-mono uppercase tracking-wider">

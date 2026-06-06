@@ -21,7 +21,7 @@ export function StatCard({
         variant="artifact"
         shape="artifact"
         interactive
-        className="surface-sage-glow relative min-h-40 transition-all duration-500 hover:-translate-y-1 hover:border-pitch-bright/30 hover:shadow-card-hover"
+        className="surface-sage-glow relative min-h-40 transition-colors duration-200 hover:border-pitch-bright/22"
       >
         <CardContent className="p-5">
           <Icon className="mb-5 size-4 text-pitch-bright/80" aria-hidden />
@@ -33,9 +33,7 @@ export function StatCard({
           >
             {value}
           </p>
-          <p className="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            {label}
-          </p>
+          <p className="type-stat-label mt-2">{label}</p>
         </CardContent>
       </Card>
     );
@@ -45,9 +43,7 @@ export function StatCard({
     <div className="min-w-36 flex-1 border-l border-pitch-bright/35 pl-4">
       <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="size-4 text-pitch-bright/70" aria-hidden />
-        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em]">
-          {label}
-        </p>
+        <p className="type-stat-label">{label}</p>
       </div>
       <p className={cn("mt-2 font-display text-4xl leading-none", accent)}>
         {value}

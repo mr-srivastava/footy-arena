@@ -17,7 +17,7 @@ export function DiscoveryCard({
   return (
     <Link
       href={href}
-      className="group relative block h-full min-h-80 overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover"
+      className="surface-panel-elevated group relative block h-full min-h-80 overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card"
     >
       {image ? (
         <MediaImage

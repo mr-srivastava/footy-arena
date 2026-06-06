@@ -26,7 +26,7 @@ export function GroupCard({ group }: { group: TournamentGroup }) {
         shape="artifact"
         padding="none"
         interactive
-        className="surface-gold-glow h-full min-h-[25rem] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/30 group-hover:shadow-card-hover"
+        className="surface-gold-glow surface-panel-elevated h-full min-h-[25rem]"
       >
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-gold/18 to-transparent"

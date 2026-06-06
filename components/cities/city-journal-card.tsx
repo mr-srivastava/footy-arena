@@ -13,7 +13,7 @@ export function CityJournalCard({
   return (
     <Link
       href={`/cities/${city.slug}`}
-      className={`group relative block overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card ${
+      className={`surface-panel-elevated group relative block overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card ${
         featured ? "min-h-[32rem] md:col-span-2" : "min-h-96"
       }`}
     >

@@ -1,6 +1,6 @@
-import { Calendar, Globe2, MapPin, Trophy, Users } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { ContentContainer } from "@/components/content-container";
+import { TournamentBoard } from "@/components/home/tournament-board";
 import { MediaImage } from "@/components/media-image";
 import {
   Card,
@@ -80,34 +80,29 @@ export function HomeHeroSkeleton() {
 export async function HomeHero() {
   const { matchCount } = await getHomeHeroData();
 
-  const stats: {
-    value: number;
-    label: string;
-    icon: LucideIcon;
-    ticker: string;
-  }[] = [
+  const stats = [
     {
       value: TOURNAMENT_NATIONS,
       label: "Nations",
-      icon: Users,
+      icon: "users" as const,
       ticker: `${TOURNAMENT_NATIONS} NATIONS`,
     },
     {
       value: matchCount,
       label: "Matches",
-      icon: Calendar,
+      icon: "calendar" as const,
       ticker: `${matchCount} MATCHES`,
     },
     {
       value: HOST_CITIES,
       label: "Host Cities",
-      icon: MapPin,
+      icon: "map-pin" as const,
       ticker: `${HOST_CITIES} CITIES`,
     },
     {
       value: HOST_COUNTRIES,
       label: "Countries",
-      icon: Globe2,
+      icon: "globe" as const,
       ticker: `${HOST_COUNTRIES} HOST COUNTRIES`,
     },
   ];
@@ -156,7 +151,7 @@ export async function HomeHero() {
                   className="absolute inset-y-0 left-0 w-1 bg-gold"
                   aria-hidden
                 />
-                <p className="flex items-center justify-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground lg:justify-start">
+                <p className="type-label flex items-center justify-center gap-1.5 tracking-[var(--tracking-board)] text-muted-foreground lg:justify-start">
                   <Calendar className="h-3.5 w-3.5" aria-hidden />
                   Tournament Dates
                 </p>
@@ -182,42 +177,7 @@ export async function HomeHero() {
               className="absolute -inset-x-8 top-1/2 hidden h-px bg-gradient-to-r from-transparent via-pitch-bright/30 to-transparent lg:block"
               aria-hidden
             />
-            <Card
-              variant="artifact"
-              shape="artifact"
-              padding="none"
-              className="relative border-white/12 bg-black/35 shadow-board backdrop-blur-xl"
-            >
-              <CardHeader className="flex flex-row items-center justify-between border-b border-line-soft px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                <span className="flex items-center gap-2 text-gold">
-                  <Trophy className="h-3.5 w-3.5" aria-hidden />
-                  Tournament Board
-                </span>
-                <span>North America</span>
-              </CardHeader>
-              <CardContent className="grid grid-cols-4 divide-x divide-line-soft p-0">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="p-3 md:p-5">
-                    <stat.icon
-                      className="mb-3 h-3.5 w-3.5 text-pitch-bright/75 md:mb-8 md:h-4 md:w-4"
-                      aria-hidden
-                    />
-                    <p className="font-display text-3xl leading-none text-pitch-bright md:text-5xl">
-                      {stat.value}
-                    </p>
-                    <p className="mt-2 text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground md:text-[0.68rem] md:tracking-[0.16em]">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </CardContent>
-              <CardFooter className="grid grid-cols-[1fr_auto] items-center border-line-soft px-4 py-3 text-xs text-muted-foreground">
-                <span>Expanded 48-team format</span>
-                <span className="font-display text-xl tracking-wide text-gold">
-                  2026
-                </span>
-              </CardFooter>
-            </Card>
+            <TournamentBoard stats={stats} />
           </div>
         </div>
       </ContentContainer>

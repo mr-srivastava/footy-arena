@@ -13,26 +13,25 @@ const badgeVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 [a]:hover:bg-destructive/20",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        ghost: "hover:bg-muted hover:text-muted-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         group:
           "border-pitch/25 bg-pitch/12 font-semibold tracking-wide text-pitch-bright [a]:hover:bg-pitch/20",
         knockout:
           "border-gold/20 bg-gold/12 font-semibold tracking-wide text-gold [a]:hover:bg-gold/20",
         country:
-          "rounded bg-surface-elevated/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground",
+          "type-micro rounded bg-surface-elevated/60 px-2 py-0.5 font-mono uppercase tracking-wider text-muted-foreground",
         muted:
           "bg-secondary font-normal text-muted-foreground [a]:hover:bg-secondary/80",
         glass:
-          "rounded-full border-line-strong bg-surface-glass px-2.5 py-1 font-semibold uppercase tracking-[0.16em] text-muted-foreground backdrop-blur-sm [a]:hover:border-gold/35 [a]:hover:text-gold",
-        code: "rounded-sm bg-surface-glass px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground [a]:hover:bg-secondary",
-        meta: "rounded-full border-line-strong bg-surface-glass px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold backdrop-blur-sm",
+          "type-label rounded-full border-line-strong bg-surface-glass px-2.5 py-1 text-muted-foreground backdrop-blur-sm [a]:hover:border-gold/35 [a]:hover:text-gold",
+        code: "type-micro rounded-sm bg-surface-glass px-2 py-1 font-mono font-semibold uppercase tracking-wider text-muted-foreground [a]:hover:bg-secondary",
+        meta: "type-label rounded-full border-line-strong bg-surface-glass px-2.5 py-1 text-gold backdrop-blur-sm",
         playerMeta:
-          "rounded-full border-line-strong bg-navy/85 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur-sm",
+          "type-micro rounded-full border-line-strong bg-navy/85 px-2.5 py-1 font-semibold uppercase tracking-[var(--tracking-label)] text-muted-foreground backdrop-blur-sm",
       },
     },
     defaultVariants: {

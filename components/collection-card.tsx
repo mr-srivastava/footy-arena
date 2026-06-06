@@ -15,7 +15,7 @@ export function CollectionCard({
   return (
     <Link
       href={`/explore/collections/${collection.slug}`}
-      className="group relative block min-h-96 overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover"
+      className="surface-panel-elevated group relative block min-h-96 overflow-hidden rounded-2xl border border-line-strong bg-artifact shadow-card"
     >
       <MediaImage
         src={getCollectionImage(collection.slug)}

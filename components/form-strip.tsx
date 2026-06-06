@@ -19,7 +19,7 @@ export function FormStrip({
         <span
           key={`${result}-${index}`}
           className={cn(
-            "inline-flex items-center justify-center rounded-full border text-[0.62rem] font-semibold uppercase tracking-[0.16em]",
+            "type-micro inline-flex items-center justify-center rounded-full border font-semibold uppercase tracking-[var(--tracking-stat)]",
             compact ? "h-6 w-6" : "h-7 w-7",
             result === "W" &&
               "border-pitch-bright/30 bg-pitch-bright/12 text-pitch-bright",

@@ -16,7 +16,7 @@ export function TeamCard({ team }: { team: Team }) {
           />
         </EntityIconFrame>
       }
-      title={team.displayName.toUpperCase()}
+      title={team.displayName}
       meta={
         <>
           <span className="text-pitch-bright/80">{team.fifa_code}</span>
@@ -26,7 +26,7 @@ export function TeamCard({ team }: { team: Team }) {
           <span>{team.confed}</span>
         </>
       }
-      className="border border-line-soft bg-artifact-muted/55 px-4 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/25 hover:bg-artifact"
+      className="border border-line-soft bg-artifact-muted/55 px-4 shadow-card transition-colors duration-200 hover:border-gold/25 hover:bg-artifact"
       titleClassName="editorial-title truncate text-3xl normal-case tracking-normal"
     />
   );

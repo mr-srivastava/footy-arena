@@ -1,4 +1,5 @@
 import { cache } from "react";
+import type { BsdTeamListItem } from "@/lib/bsd/enrichment-types";
 import { getWorldCupNationalTeams } from "@/lib/bsd/worldcup";
 import { getTeamMetadata, teamSlugFromName } from "@/lib/teams/metadata";
 import { normalizeTeamName } from "@/lib/teams/normalize-name";
@@ -6,32 +7,44 @@ import {
   GROUP_LETTERS,
   WC2026_NATIONS,
   type GroupLetter,
+  type Wc2026Nation,
 } from "@/lib/teams/wc2026-nations";
 import type { Fixture } from "./types";
 import type { Team, TournamentGroup } from "./types";
 
 export { GROUP_LETTERS, type GroupLetter };
 
+function teamLookupKeys(team: Team): string[] {
+  return [
+    team.name,
+    team.displayName,
+    team.fifa_code,
+    team.name_normalised,
+    ...(team.aliases ?? []),
+  ].filter((key): key is string => Boolean(key));
+}
+
 function buildByNameMap(teams: Team[]) {
   const byName = new Map<string, Team>();
 
   for (const team of teams) {
-    const keys = new Set([
-      team.name,
-      team.displayName,
-      team.fifa_code,
-      team.name_normalised,
-      ...(team.displayName === "USA" ? ["United States"] : []),
-    ]);
-
-    for (const key of keys) {
-      if (key) {
-        byName.set(normalizeTeamName(key), team);
-      }
+    for (const key of teamLookupKeys(team)) {
+      byName.set(normalizeTeamName(key), team);
     }
   }
 
   return byName;
+}
+
+function resolveBsdTeam(
+  nation: Wc2026Nation,
+  bsdByName: Map<string, BsdTeamListItem>,
+) {
+  for (const name of [nation.displayName, ...(nation.aliases ?? [])]) {
+    const match = bsdByName.get(normalizeTeamName(name));
+    if (match) return match;
+  }
+  return undefined;
 }
 
 export const getWorldCupTeams = cache(
@@ -53,7 +66,7 @@ export const getWorldCupTeams = cache(
 
     const teams = WC2026_NATIONS.map((nation) => {
       const metadata = getTeamMetadata(nation.displayName);
-      const bsdTeam = bsdByName.get(normalizeTeamName(nation.displayName));
+      const bsdTeam = resolveBsdTeam(nation, bsdByName);
 
       return {
         name: nation.displayName,
@@ -64,6 +77,7 @@ export const getWorldCupTeams = cache(
         group: nation.group,
         confed: metadata.confed,
         displayName: metadata.displayName,
+        aliases: metadata.aliases,
         slug: teamSlugFromName(metadata.displayName),
         groupLabel: `Group ${nation.group}`,
         bsdTeamId: bsdTeam?.id,
@@ -129,17 +143,13 @@ export function getGroupFixtures(
 }
 
 export function getTeamFixtures(fixtures: Fixture[], team: Team): Fixture[] {
-  const names = new Set(
-    [team.name, team.displayName, team.name_normalised]
-      .filter(Boolean)
-      .map((value) => value!.toLowerCase()),
-  );
+  const names = new Set(teamLookupKeys(team).map(normalizeTeamName));
 
   return fixtures
     .filter(
       (fixture) =>
-        names.has(fixture.team1.toLowerCase()) ||
-        names.has(fixture.team2.toLowerCase()),
+        names.has(normalizeTeamName(fixture.team1)) ||
+        names.has(normalizeTeamName(fixture.team2)),
     )
     .toSorted((a, b) => {
       const dateCompare = a.date.localeCompare(b.date);

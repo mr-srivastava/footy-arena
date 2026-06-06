@@ -2,12 +2,14 @@ import { ClipboardList, UserRound } from "lucide-react";
 import Image from "next/image";
 import { DetailList, DetailListItem } from "@/components/detail-list";
 import { EntityIconFrame, EntityRow } from "@/components/entity-row";
+import { RevealSection } from "@/components/motion/reveal-section";
 import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { TeamCrest } from "@/components/team-crest";
 import { formatPlayerMetaLine, playerImageUrl } from "@/lib/bsd/format";
 import type { TeamManagerSummary } from "@/lib/bsd/team-analytics";
+import { squadPlayerListKey } from "@/lib/tournament/map-squad";
 import { groupPlayersByPosition } from "@/lib/tournament/squads";
 import type {
   SquadManager,
@@ -142,7 +144,7 @@ export function SquadPanel({
   const coach = mergeManagerProfile(squad.manager, managerAnalytics);
 
   return (
-    <section className="flex flex-col gap-6">
+    <RevealSection className="flex flex-col gap-6">
       {coach ? <HeadCoachCard manager={coach} /> : null}
 
       <Card
@@ -164,9 +166,9 @@ export function SquadPanel({
                       {label}
                     </SubsectionTitle>
                     <DetailList className="mt-3">
-                      {players.map((player) => (
+                      {players.map((player, index) => (
                         <DetailListItem
-                          key={`${player.name}-${player.number ?? ""}`}
+                          key={squadPlayerListKey(player, index)}
                           className="py-0"
                         >
                           <EntityRow
@@ -226,6 +228,6 @@ export function SquadPanel({
           )}
         </CardContent>
       </Card>
-    </section>
+    </RevealSection>
   );
 }

@@ -49,6 +49,7 @@ export type Team = OpenFootballTeam & {
   displayName: string;
   slug: string;
   groupLabel: string;
+  aliases?: string[];
   bsdTeamId?: number;
 };
 

@@ -81,17 +81,23 @@ const stageTone: Record<string, string> = {
 
 export function FixtureCard({
   fixture,
+  team1Name,
+  team2Name,
   team1Href,
   team2Href,
   team1Id,
   team2Id,
 }: {
   fixture: Fixture;
+  team1Name?: string;
+  team2Name?: string;
   team1Href?: string;
   team2Href?: string;
   team1Id?: number | null;
   team2Id?: number | null;
 }) {
+  const homeName = team1Name ?? fixture.team1;
+  const awayName = team2Name ?? fixture.team2;
   const knockout = fixture.stage !== "group";
   const accent = stageAccent[fixture.stage] ?? "pitch";
   const tone = stageTone[fixture.stage] ?? stageTone.group;
@@ -103,7 +109,7 @@ export function FixtureCard({
       accent={accent}
       interactive
       padding="none"
-      className="surface-sage-glow group rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:shadow-card-hover"
+      className="surface-sage-glow group rounded-2xl transition-shadow duration-200 hover:shadow-card-hover"
     >
       <CardContent className="relative overflow-hidden p-0">
         <div
@@ -138,7 +144,7 @@ export function FixtureCard({
 
         <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-9">
           <div className="min-w-0">
-            <TeamName name={fixture.team1} href={team1Href} teamId={team1Id} />
+            <TeamName name={homeName} href={team1Href} teamId={team1Id} />
           </div>
           <div
             className="type-broadcast relative flex size-12 shrink-0 items-center justify-center rounded-full border border-line-strong bg-background/80 text-base text-muted-foreground shadow-artifact-inset transition-colors group-hover:border-gold/35 group-hover:text-gold"
@@ -148,7 +154,7 @@ export function FixtureCard({
           </div>
           <div className="min-w-0">
             <TeamName
-              name={fixture.team2}
+              name={awayName}
               href={team2Href}
               teamId={team2Id}
               align="right"

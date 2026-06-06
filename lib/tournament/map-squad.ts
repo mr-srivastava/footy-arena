@@ -45,6 +45,34 @@ function normalizedPlayerToSquadPlayer(player: NormalizedPlayer): SquadPlayer {
   };
 }
 
+function squadPlayerKey(player: SquadPlayer): string {
+  if (player.bsdPlayerId != null) {
+    return `id:${player.bsdPlayerId}`;
+  }
+
+  return `${player.profileSlug}:${player.number ?? "na"}:${player.club ?? "na"}`;
+}
+
+function dedupeSquadPlayers(players: SquadPlayer[]): SquadPlayer[] {
+  const seen = new Set<string>();
+  const unique: SquadPlayer[] = [];
+
+  for (const player of players) {
+    const key = squadPlayerKey(player);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(player);
+  }
+
+  return unique;
+}
+
+export function squadPlayerListKey(player: SquadPlayer, index: number): string {
+  return player.bsdPlayerId != null
+    ? `player-${player.bsdPlayerId}`
+    : `${squadPlayerKey(player)}-${index}`;
+}
+
 export function squadFromEnrichedPlayers(
   status: TeamSquad["status"],
   manager: SquadManager | undefined,
@@ -53,6 +81,6 @@ export function squadFromEnrichedPlayers(
   return {
     status,
     manager,
-    players: players.map(normalizedPlayerToSquadPlayer),
+    players: dedupeSquadPlayers(players.map(normalizedPlayerToSquadPlayer)),
   };
 }

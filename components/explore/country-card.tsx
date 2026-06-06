@@ -46,7 +46,7 @@ export function CountryCard({
 }: CountryCardProps) {
   const accentClass = accent === "pitch" ? "text-pitch-bright" : "text-gold";
   const content = (
-    <article className="group relative flex min-h-[34rem] h-full flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover md:p-7">
+    <article className="surface-panel-elevated group relative flex h-full min-h-[34rem] flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card md:p-7">
       <MediaImage
         src={getNationImage(nation)}
         alt={imageAlt}

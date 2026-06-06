@@ -20,6 +20,8 @@ export function FixtureList({ fixtures, byName, className }: FixtureListProps) {
           <FixtureCard
             key={fixture.id}
             fixture={fixture}
+            team1Name={team1?.displayName ?? fixture.team1}
+            team2Name={team2?.displayName ?? fixture.team2}
             team1Href={team1 ? `/teams/${team1.slug}` : undefined}
             team2Href={team2 ? `/teams/${team2.slug}` : undefined}
             team1Id={team1?.bsdTeamId}

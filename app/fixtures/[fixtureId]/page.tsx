@@ -15,6 +15,7 @@ import {
   getWorldCupFixtures,
 } from "@/lib/openfootball/fixtures";
 import { getWorldCupTeams, resolveTeamByName } from "@/lib/openfootball/teams";
+import { resolveTeamDisplayName } from "@/lib/teams/metadata";
 
 type PageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -36,9 +37,12 @@ export async function generateMetadata({
     return { title: "Match - Footy Arena" };
   }
 
+  const home = resolveTeamDisplayName(fixture.team1);
+  const away = resolveTeamDisplayName(fixture.team2);
+
   return {
-    title: `${fixture.team1} vs ${fixture.team2} - Footy Arena`,
-    description: `${fixture.stageLabel} match briefing for ${fixture.team1} vs ${fixture.team2}.`,
+    title: `${home} vs ${away} - Footy Arena`,
+    description: `${fixture.stageLabel} match briefing for ${home} vs ${away}.`,
   };
 }
 
@@ -57,6 +61,8 @@ export default async function FixtureDetailPage({ params }: PageProps) {
   const insight = await loadMatchInsight(fixture, byName);
   const homeTeam = resolveTeamByName(fixture.team1, byName);
   const awayTeam = resolveTeamByName(fixture.team2, byName);
+  const homeLabel = homeTeam?.displayName ?? resolveTeamDisplayName(fixture.team1);
+  const awayLabel = awayTeam?.displayName ?? resolveTeamDisplayName(fixture.team2);
 
   return (
     <PageShell>
@@ -70,8 +76,8 @@ export default async function FixtureDetailPage({ params }: PageProps) {
           eyebrow={fixture.stageLabel}
           title={
             <FixtureMatchupTitle
-              team1={fixture.team1}
-              team2={fixture.team2}
+              team1={homeLabel}
+              team2={awayLabel}
               team1Id={insight?.homeTeamId ?? homeTeam?.bsdTeamId}
               team2Id={insight?.awayTeamId ?? awayTeam?.bsdTeamId}
             />

@@ -12,7 +12,7 @@ export function StoryTemplateCard({
       variant="artifact"
       shape="artifact"
       interactive
-      className="surface-gold-glow relative h-full min-h-80 transition-all duration-500 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card-hover"
+      className="surface-gold-glow surface-panel-elevated relative h-full min-h-80"
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-gold/12 to-transparent"

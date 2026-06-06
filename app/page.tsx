@@ -74,7 +74,7 @@ export default function Home() {
                     shape="artifact"
                     padding="none"
                     interactive
-                    className="relative min-h-[30rem] p-6 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-gold/35 group-hover:shadow-card-hover md:p-8"
+                    className="surface-panel-elevated relative min-h-[30rem] p-6 md:p-8"
                   >
                     <MediaImage
                       src={getHomepageCardImage(featuredJourneyCard.href)}
@@ -158,7 +158,7 @@ export default function Home() {
                     {nation.flag}
                   </span>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <p className="type-label text-muted-foreground">
                       Host nation
                     </p>
                     <h3 className="editorial-title type-card-title text-foreground">
@@ -192,7 +192,7 @@ export default function Home() {
             </SectionHeading>
             <div className="grid gap-8 md:grid-cols-[0.75fr_1.25fr]">
               <div className="border-l border-gold/40 pl-5">
-                <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-gold">
+                <p className="type-label flex items-center gap-2 text-gold">
                   <RadioTower className="h-4 w-4" aria-hidden />
                   Venue directory
                 </p>

@@ -63,13 +63,11 @@ function HistoryLegendCard({ player }: { player: HistoryLegend }) {
           {player.flag}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-gold">
-            {player.country}
-          </p>
+          <p className="type-label text-gold">{player.country}</p>
           <h4 className="editorial-title mt-1 text-2xl leading-none text-foreground">
             {player.name}
           </h4>
-          <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="type-micro mt-2 font-semibold uppercase tracking-[var(--tracking-label)] text-muted-foreground">
             {player.role}
           </p>
         </div>
@@ -112,7 +110,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         />
         <div className="grain absolute inset-0" aria-hidden />
         <div className="absolute bottom-5 left-5 lg:bottom-8 lg:left-8">
-          <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <p className="type-micro mb-2 font-semibold uppercase tracking-[var(--tracking-board)] text-muted-foreground">
             Archive frame
           </p>
           <p
@@ -136,7 +134,7 @@ function EraSlide({ era, index }: { era: HistoryEra; index: number }) {
         </p>
 
         <div className="mt-6">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-pitch-bright/80">
+          <p className="type-stat-label tracking-[0.24em] text-pitch-bright/80">
             Legends of the era
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">

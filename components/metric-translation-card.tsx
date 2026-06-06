@@ -12,7 +12,7 @@ export function MetricTranslationCard({
       variant="elevated"
       shape="artifact"
       interactive
-      className="surface-sage-glow h-full min-h-64 transition-all duration-500 hover:-translate-y-1 hover:border-pitch-bright/30 hover:shadow-card-hover"
+      className="surface-sage-glow h-full min-h-64 transition-colors duration-200 hover:border-pitch-bright/22"
     >
       <CardContent className="p-5">
         <div className="flex flex-row items-baseline justify-between gap-3 border-b border-line-soft pb-3">

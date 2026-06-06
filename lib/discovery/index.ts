@@ -70,6 +70,10 @@ export function getPlayerBySlug(slug: string): PlayerProfile | undefined {
   return playersBySlug.get(slug);
 }
 
+export function playerPageHref(slug: string): string | undefined {
+  return playersBySlug.has(slug) ? `/players/${slug}` : undefined;
+}
+
 export function getPlayersBySlugs(slugs: string[]): PlayerProfile[] {
   return slugs
     .map((slug) => playersBySlug.get(slug))

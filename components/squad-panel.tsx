@@ -7,6 +7,7 @@ import { SubsectionTitle } from "@/components/subsection-title";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { TeamCrest } from "@/components/team-crest";
+import { playerPageHref } from "@/lib/discovery";
 import { formatPlayerMetaLine } from "@/lib/bsd/format";
 import type { TeamManagerSummary } from "@/lib/bsd/team-analytics";
 import { squadPlayerListKey } from "@/lib/tournament/map-squad";
@@ -139,63 +140,73 @@ export function SquadPanel({
                       {label}
                     </SubsectionTitle>
                     <DetailList className="space-after-label">
-                      {players.map((player, index) => (
-                        <DetailListItem
-                          key={squadPlayerListKey(player, index)}
-                          className="py-0"
-                        >
-                          <EntityRow
-                            href={`/players/${player.profileSlug}`}
-                            leading={
-                              <PlayerPortrait
-                                playerId={player.bsdPlayerId}
-                                name={player.shortName ?? player.name}
-                                variant="list"
-                              />
-                            }
-                            title={player.shortName ?? player.name}
-                            titleClassName="editorial-title text-2xl normal-case tracking-normal"
-                            meta={
-                              <span className="inline-icon-row flex-wrap items-center gap-x-2 gap-y-1">
-                                <TeamCrest
-                                  teamId={player.clubTeamId}
-                                  name={player.club}
-                                  size="xs"
-                                  className="mt-0.5"
+                      {players.map((player, index) => {
+                        const profileHref = playerPageHref(player.profileSlug);
+
+                        return (
+                          <DetailListItem
+                            key={squadPlayerListKey(player, index)}
+                            className="py-0"
+                          >
+                            <EntityRow
+                              href={profileHref}
+                              showChevron={Boolean(profileHref)}
+                              leading={
+                                <PlayerPortrait
+                                  playerId={player.bsdPlayerId}
+                                  name={player.shortName ?? player.name}
+                                  variant="list"
                                 />
-                                <span className="min-w-0 text-pretty">
-                                  {squadPlayerMeta(player)}
+                              }
+                              title={player.shortName ?? player.name}
+                              titleClassName="editorial-title text-2xl normal-case tracking-normal"
+                              meta={
+                                <span className="inline-icon-row flex-wrap items-center gap-x-2 gap-y-1">
+                                  <TeamCrest
+                                    teamId={player.clubTeamId}
+                                    name={player.club}
+                                    size="xs"
+                                    className="mt-0.5"
+                                  />
+                                  <span className="min-w-0 text-pretty">
+                                    {squadPlayerMeta(player)}
+                                  </span>
                                 </span>
-                              </span>
-                            }
-                            trailing={
-                              <div className="flex items-center gap-2">
-                                {player.isCaptain ? (
-                                  <Badge
-                                    variant="code"
-                                    className="bg-gold/15 text-gold"
-                                  >
-                                    C
-                                  </Badge>
-                                ) : null}
-                                {availabilityLabel(player.availability) ? (
-                                  <Badge
-                                    variant="code"
-                                    className="bg-red/12 text-red"
-                                  >
-                                    {availabilityLabel(player.availability)}
-                                  </Badge>
-                                ) : null}
-                                {player.number ? (
-                                  <Badge variant="code">{player.number}</Badge>
-                                ) : null}
-                              </div>
-                            }
-                            showChevron={false}
-                            className="grid-cols-[auto_1fr_auto] gap-3 py-3"
-                          />
-                        </DetailListItem>
-                      ))}
+                              }
+                              trailing={
+                                <div className="flex items-center gap-2">
+                                  {player.isCaptain ? (
+                                    <Badge
+                                      variant="code"
+                                      className="bg-gold/15 text-gold"
+                                    >
+                                      C
+                                    </Badge>
+                                  ) : null}
+                                  {availabilityLabel(player.availability) ? (
+                                    <Badge
+                                      variant="code"
+                                      className="bg-red/12 text-red"
+                                    >
+                                      {availabilityLabel(player.availability)}
+                                    </Badge>
+                                  ) : null}
+                                  {player.number ? (
+                                    <Badge variant="code">
+                                      {player.number}
+                                    </Badge>
+                                  ) : null}
+                                </div>
+                              }
+                              className={
+                                profileHref
+                                  ? "grid-cols-[auto_1fr_auto] gap-3 py-3"
+                                  : "grid-cols-[auto_1fr_auto] gap-3 py-3 hover:border-transparent hover:bg-transparent"
+                              }
+                            />
+                          </DetailListItem>
+                        );
+                      })}
                     </DetailList>
                   </div>
                 ) : null,

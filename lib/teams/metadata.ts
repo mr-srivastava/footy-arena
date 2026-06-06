@@ -23,6 +23,12 @@ export function teamSlugFromName(name: string) {
   return normalizeTeamName(name).replace(/\s+/g, "-");
 }
 
+export function teamPageHrefFromNation(name: string): string | undefined {
+  const metadata = tryGetTeamMetadata(name);
+  if (!metadata) return undefined;
+  return `/teams/${teamSlugFromName(metadata.displayName)}`;
+}
+
 export function tryGetTeamMetadata(name: string) {
   return metadataByName.get(normalizeTeamName(name));
 }

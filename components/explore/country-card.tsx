@@ -44,16 +44,26 @@ export function CountryCard({
   imageAlt = `${nation} football atmosphere`,
   children,
 }: CountryCardProps) {
+  const linked = Boolean(href && team);
   const accentClass = accent === "pitch" ? "text-pitch-bright" : "text-gold";
-  const content = (
-    <article className="surface-panel-elevated group relative flex h-full min-h-[34rem] flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card md:p-7">
+
+  return (
+    <article
+      className={cn(
+        "surface-panel-elevated relative flex h-full min-h-[34rem] flex-col justify-between overflow-hidden rounded-2xl border border-line-strong bg-artifact p-6 shadow-card md:p-7",
+        linked && "group",
+      )}
+    >
       <MediaImage
         src={getNationImage(nation)}
         alt={imageAlt}
-        className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.035]"
+        className={cn(
+          "absolute inset-0 transition-transform duration-700",
+          linked && "group-hover:scale-[1.035]",
+        )}
         sizes="(max-width: 768px) 100vw, 33vw"
       />
-      <div className="relative z-10 flex items-center justify-between">
+      <div className="relative z-10 flex items-center justify-between gap-3">
         <p
           className={cn(
             "broadcast-label rounded-full border border-white/15 bg-black/25 px-3 py-2 backdrop-blur-md",
@@ -62,18 +72,30 @@ export function CountryCard({
         >
           {eyebrow}
         </p>
-        {href ? (
+        {linked ? (
           <ArrowUpRight className="size-5 text-white transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+        ) : !team ? (
+          <Badge
+            variant="outline"
+            className="border-white/20 bg-black/25 text-[0.65rem] text-white/70 backdrop-blur-md"
+          >
+            Not in WC 2026
+          </Badge>
         ) : null}
       </div>
 
       <div className="relative z-10">
-        <h2 className="editorial-title type-section-title text-white transition-colors group-hover:text-gold">
+        <h2
+          className={cn(
+            "editorial-title type-section-title text-white",
+            linked && "transition-colors group-hover:text-gold",
+          )}
+        >
           {nation}
         </h2>
         <div className="mt-5 rounded-2xl border border-white/10 bg-black/35 p-4 text-white/80 backdrop-blur-md">
           {children}
-          {href && team ? (
+          {linked && href && team ? (
             <Link
               href={href}
               className="mt-4 flex items-center justify-between border-t border-white/10 pt-4 text-sm font-semibold text-gold"
@@ -86,8 +108,6 @@ export function CountryCard({
       </div>
     </article>
   );
-
-  return content;
 }
 
 export function CountryPlayerLinks({

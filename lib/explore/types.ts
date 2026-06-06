@@ -47,5 +47,5 @@ export type ExplorePlayerCard = {
   enriched: boolean;
   editorial?: ExplorePlayerEditorial;
   playerHref: string;
-  teamHref: string;
+  teamHref?: string;
 };

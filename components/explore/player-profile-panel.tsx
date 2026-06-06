@@ -301,13 +301,15 @@ export function PlayerProfilePanel({ player }: { player: ExplorePlayerCard }) {
             Live squad data
           </Badge>
         ) : null}
-        <Link
-          href={player.teamHref}
-          className="inline-flex items-center gap-2 rounded-full border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
-        >
-          <MapPin className="h-4 w-4" aria-hidden />
-          View {player.nation} at the World Cup
-        </Link>
+        {player.teamHref ? (
+          <Link
+            href={player.teamHref}
+            className="inline-flex items-center gap-2 rounded-full border border-gold/25 px-4 py-2 text-sm font-semibold text-gold transition-colors hover:border-gold/50 hover:text-foreground"
+          >
+            <MapPin className="h-4 w-4" aria-hidden />
+            View {player.nation} at the World Cup
+          </Link>
+        ) : null}
       </div>
     </div>
   );
